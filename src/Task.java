@@ -7,6 +7,13 @@ public class Task {
     private int taskStatus;
     private final String[] statusArray = {"NEW", "IN_PROGRESS", "DONE"};
 
+    /**
+     * Конструктор для новой задачи.
+     * Присваивается новый порядковый номер
+     * Для новых задач статус NEW
+     * @param taskTitle - название задачи
+     * @param taskDescription - описание задачи
+     */
     public Task(String taskTitle, String taskDescription) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
@@ -14,12 +21,28 @@ public class Task {
         this.taskStatus = 0;
     }
 
+    /**
+     * Конструктор для обновления эпиков.
+     * Номер остается прежним и указывается при обновлении
+     * @param taskTitle - название задачи
+     * @param taskDescription - описание задачи
+     * @param taskIdNumber - номер обновляемой задачи
+     */
     public Task(String taskTitle, String taskDescription, int taskIdNumber) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
     }
 
+    /**
+     * Конструктор для обновления простых задач и подзадач эпиков.
+     * Номер остается прежним и указывается при обновлении
+     * Статус указывается при обновлении
+     * @param taskTitle - название задачи
+     * @param taskDescription - описание задачи
+     * @param taskIdNumber - номер обновляемой задачи
+     * @param taskStatus - статус обновляемой задачи
+     */
     public Task(String taskTitle, String taskDescription, int taskIdNumber, int taskStatus) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;

@@ -2,12 +2,26 @@ import java.util.HashMap;
 
 public class Epic extends Task {
     private HashMap<Integer, Subtask> subTasks;
+
+    /**
+     * Конструктор для создания новых эпиков
+     * Присваивается новый порядковый номер
+     * @param taskTitle - название эпика
+     * @param taskDescription - описание эпика
+     */
     public Epic(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
         subTasks = new HashMap<>();
         setTaskStatus(checkStatus(subTasks));
     }
 
+    /**
+     * Конструктор для обновления эпика
+     * Номер остается прежним и указывается при обновлении
+     * @param taskTitle - название эпика
+     * @param taskDescription - описание эпика
+     * @param taskIdNumber - номер обновляемого эпика
+     */
     public Epic(String taskTitle, String taskDescription, int taskIdNumber) {
         super(taskTitle, taskDescription, taskIdNumber);
         subTasks = new HashMap<>();
