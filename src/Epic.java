@@ -5,16 +5,23 @@ public class Epic extends Task {
     public Epic(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
         subTasks = new HashMap<>();
-        checkStatus(subTasks);
+        setTaskStatus(checkStatus(subTasks));
+    }
+
+    public Epic(String taskTitle, String taskDescription, int taskIdNumber) {
+        super(taskTitle, taskDescription, taskIdNumber);
+        subTasks = new HashMap<>();
+        setTaskStatus(checkStatus(subTasks));
     }
 
     /**
      * Метод получает статус эпика на основании статусов входящих в него подзадач
      * @param subTasks - перечень подзадач в конкретном Эпике
      */
-    private void checkStatus (HashMap<Integer, Subtask> subTasks) {
+    private int checkStatus (HashMap<Integer, Subtask> subTasks) {
+        int status = -1;
         if (subTasks.isEmpty()) {
-            setTaskStatus(0);
+            status = 0;
         } else {
             int[] subTasksStatus = new int[subTasks.size()];
             int i = 0;
@@ -27,10 +34,11 @@ public class Epic extends Task {
             for (int j = 0; j < subTasksStatus.length; j++) {
                 sum += subTasksStatus[j];
             }
-            if (sum == 0) setTaskStatus(0);
-            else if (sum == (subTasksStatus.length * 2)) setTaskStatus(2);
-            else setTaskStatus(1);
+            if (sum == 0) status =  0;
+            else if (sum == (subTasksStatus.length * 2)) status =  2;
+            else status =  1;
         }
+        return status;
     }
 
     /**
@@ -39,7 +47,7 @@ public class Epic extends Task {
      */
     public void addSubTask(Subtask task) {
         subTasks.put(task.getTaskIdNumber(), task);
-        checkStatus(subTasks);
+        setTaskStatus(checkStatus(subTasks));
     }
 
     public HashMap<Integer, Subtask> getSubTasks() {
@@ -55,7 +63,7 @@ public class Epic extends Task {
         if (subTasks.isEmpty()) {
             result = result + ". Подзадачи отсутствуют.";
         } else {
-            result = result + ". Эпик содержит следующие подзадачи: \n" + subTasks.values().toString();
+            result = result + ". Эпик содержит следующие подзадачи: \n" + subTasks.values();
         }
         return  result;
     }

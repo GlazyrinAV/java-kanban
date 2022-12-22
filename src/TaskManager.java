@@ -18,22 +18,20 @@ public class TaskManager {
      * @param epics - эпики с учетом вложенных подзадач
      */
     public void printAllTasks(HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
-        System.out.println(simpleTasks.values().toString());
-        System.out.println(epics.values().toString());
+        System.out.println(simpleTasks.values());
+        System.out.println(epics.values());
     }
 
     /**
      * Удаляет все виды задач
      */
-
     public void clearAllTasks() {
         simpleTasks.clear();
         epics.clear();
     }
-//    Получение по идентификатору.
 
     /**
-     * Получение информации по задаче по объявленному номеру
+     * Получение информации о задаче по объявленному номеру
      * @param taskId - номер задачи
      * @param simpleTasks - множество простых задач
      * @param epics - множество эпиков
@@ -50,7 +48,7 @@ public class TaskManager {
         } else {
             for (int task : epics.keySet()) {
                 if (epics.get(task).getSubTasks().containsKey(taskId)) {
-                    System.out.println("\n" + epics.get(task).getSubTasks().get(taskId));
+                    System.out.println(epics.get(task).getSubTasks().get(taskId));
                     System.out.println("Данная задача является подзадачей Эпика №" + epics.get(task).getTaskIdNumber());
                     errorCheck = 0;
                 }
@@ -63,31 +61,27 @@ public class TaskManager {
     }
 
     /**
-     * Создание новой простой задачи
-     *
+     * Создание новой простой задачи     *
      * @param taskTitle       - название задачи
      * @param taskDescription - описание задачи
      */
-
     public void newTask(String taskTitle, String taskDescription) {
         Task newTask = new Task(taskTitle, taskDescription);
         simpleTasks.put(newTask.getTaskIdNumber(), newTask);
     }
 
     /**
-     * Создание нового эпика
-     *
+     * Создание нового эпика     *
      * @param taskTitle       - название эпика
      * @param taskDescription - описание эпика
      */
-
     public void newEpic(String taskTitle, String taskDescription) {
         Epic newEpic = new Epic(taskTitle, taskDescription);
         epics.put(newEpic.getTaskIdNumber(), newEpic);
     }
 
     /**
-     * Метод добавляющий в эпик подзадачи
+     * Создание подзадачи для эпика
      * @param taskId - номер Эпика
      * @param taskTitle - название подзадачи
      * @param taskDescription - описание подзадачи
@@ -100,7 +94,37 @@ public class TaskManager {
             System.out.println("Эпик с указанным номером не найден.");
         }
     }
-//    Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
+
+    /**
+     * Обновление задачи. Для простой задачи и подзадачи можно установить новый статус
+     * @param taskId - номер задачи
+     * @param taskTitle - название задачи
+     * @param taskDescription - описание задачи
+     * @param taskStatus - статус задачи
+     */
+    public void updateTask(int taskId, String taskTitle, String taskDescription, int taskStatus) {
+        int errorCheck = 1;
+        if (simpleTasks.containsKey(taskId)) {
+            Task task = new Task(taskTitle, taskDescription, taskId, taskStatus);
+            simpleTasks.put(taskId, task);
+            errorCheck = 0;
+        } else if (epics.containsKey(taskId)) {
+            Epic epic = new Epic(taskTitle, taskDescription, taskId);
+            epics.put(taskId, epic);
+            errorCheck = 0;
+        } else {
+            for (int task : epics.keySet()) {
+                if (epics.get(task).getSubTasks().containsKey(taskId)) {
+                    Subtask subtask = new Subtask(taskTitle, taskDescription, taskId, taskStatus);
+                    epics.get(task).addSubTask(subtask);
+                    errorCheck = 0;
+                }
+            }
+        }
+        if (errorCheck == 1) {
+            System.out.println("Задачи с таким номером не найдена.");
+        }
+    }
 
     /**
      * Метод проверяет все хранилища задач и удаляет задачу с объявленным номером
@@ -127,6 +151,21 @@ public class TaskManager {
         }
         if (errorCheck == 0) {
             System.out.println("Задача с таким номером не найдена.");
+        }
+    }
+
+    /**
+     * Получение списка всех подзадач определённого эпика
+     * @param taskId - номер задачи
+     */
+    public void getSubTasksOfEpicById(int taskId) {
+        int errorCheck = 0;
+        if (epics.containsKey(taskId)) {
+            System.out.println(epics.get(taskId).getSubTasks().values());
+            errorCheck = 1;
+            }
+        if (errorCheck == 0) {
+            System.out.println("Эпика с таким номером не найдено.");
         }
     }
 }

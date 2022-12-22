@@ -14,6 +14,19 @@ public class Task {
         this.taskStatus = 0;
     }
 
+    public Task(String taskTitle, String taskDescription, int taskIdNumber) {
+        this.taskTitle = taskTitle;
+        this.taskDescription = taskDescription;
+        this.taskIdNumber = taskIdNumber;
+    }
+
+    public Task(String taskTitle, String taskDescription, int taskIdNumber, int taskStatus) {
+        this.taskTitle = taskTitle;
+        this.taskDescription = taskDescription;
+        this.taskIdNumber = taskIdNumber;
+        this.taskStatus = taskStatus;
+    }
+
     public String getTaskTitle() {
         return taskTitle;
     }
@@ -37,6 +50,7 @@ public class Task {
     public void setTaskStatus(int taskStatus) {
         this.taskStatus = taskStatus;
     }
+
 
     @Override
     public String toString() {
