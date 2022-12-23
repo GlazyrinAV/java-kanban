@@ -1,7 +1,6 @@
 public class Task {
     private String taskTitle;
     private String taskDescription;
-
     private int taskIdNumber;
     private static int idSequence = 1;
     private int taskStatus;
