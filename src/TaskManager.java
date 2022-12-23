@@ -3,6 +3,7 @@ import java.util.HashMap;
 public class TaskManager {
     private HashMap<Integer, Task> simpleTasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
+    private HashMap<Integer, Task> allTasks = new HashMap<>();
 
     public HashMap<Integer, Task> getSimpleTasks() {
         return simpleTasks;
@@ -13,13 +14,25 @@ public class TaskManager {
     }
 
     /**
-     * Печатает все задачи с описанием
+     * Получение списка всех задач в виде единого хранилища
+     * Возвращает единое хранилище, которое состоит из всех задач
      * @param simpleTasks - простые задачи
      * @param epics - эпики с учетом вложенных подзадач
      */
-    public void printAllTasks(HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
-        System.out.println(simpleTasks.values());
-        System.out.println(epics.values());
+    public HashMap<Integer, Task> getAllTasks(HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
+        if (!simpleTasks.isEmpty()) {
+            for (int taskID : simpleTasks.keySet()) {
+                allTasks.put(taskID, simpleTasks.get(taskID));
+            }
+            System.out.println(simpleTasks.values());
+        }
+        if (!epics.isEmpty()) {
+            System.out.println(epics.values());
+            for (int taskID : epics.keySet()) {
+                allTasks.put(taskID, epics.get(taskID));
+            }
+        }
+        return allTasks;
     }
 
     /**
@@ -32,32 +45,25 @@ public class TaskManager {
 
     /**
      * Получение информации о задаче по объявленному номеру
+     * Возвращается искомый объект или null, если он не найден
      * @param taskId - номер задачи
-     * @param simpleTasks - множество простых задач
-     * @param epics - множество эпиков
+     * @param simpleTasks - хранилище простых задач
+     * @param epics - хранилище эпиков
      */
-    public void getTaskById (int taskId, HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
-        int errorCheck = 1;
+    public Task getTaskById (int taskId, HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
+        Task taskById = null;
         if (simpleTasks.containsKey(taskId)) {
-            System.out.println(simpleTasks.get(taskId).toString());
-            errorCheck = 0;
-        }
-        if (epics.containsKey(taskId)) {
-            System.out.println(epics.get(taskId).toString());
-            errorCheck = 0;
+            taskById = simpleTasks.get(taskId);
+        } else if (epics.containsKey(taskId)) {
+            taskById = epics.get(taskId);
         } else {
             for (int task : epics.keySet()) {
                 if (epics.get(task).getSubTasks().containsKey(taskId)) {
-                    System.out.println(epics.get(task).getSubTasks().get(taskId));
-                    System.out.println("Данная задача является подзадачей Эпика №" + epics.get(task).getTaskIdNumber());
-                    errorCheck = 0;
+                    taskById = epics.get(task).getSubTasks().get(taskId);
                 }
             }
         }
-
-        if (errorCheck == 1) {
-            System.out.println("Задача с данным номером не найдено.");
-        }
+        return taskById;
     }
 
     /**
@@ -96,33 +102,38 @@ public class TaskManager {
     }
 
     /**
-     * Обновление задачи. Для простой задачи и подзадачи можно установить новый статус
+     * Обновление простой задачи и подзадачи эпика по объявленному номеру с возможностью установить новый статус
      * @param taskId - номер задачи
      * @param taskTitle - название задачи
      * @param taskDescription - описание задачи
      * @param taskStatus - статус задачи
      */
+
     public void updateTask(int taskId, String taskTitle, String taskDescription, int taskStatus) {
-        int errorCheck = 1;
         if (simpleTasks.containsKey(taskId)) {
             Task task = new Task(taskTitle, taskDescription, taskId, taskStatus);
             simpleTasks.put(taskId, task);
-            errorCheck = 0;
-        } else if (epics.containsKey(taskId)) {
-            Epic epic = new Epic(taskTitle, taskDescription, taskId);
-            epics.put(taskId, epic);
-            errorCheck = 0;
         } else {
             for (int task : epics.keySet()) {
                 if (epics.get(task).getSubTasks().containsKey(taskId)) {
                     Subtask subtask = new Subtask(taskTitle, taskDescription, taskId, taskStatus);
                     epics.get(task).addSubTask(subtask);
-                    errorCheck = 0;
                 }
             }
         }
-        if (errorCheck == 1) {
-            System.out.println("Задачи с таким номером не найдена.");
+    }
+
+    /**
+     * Перегруженный метод обновления для эпика по объявленному номеру.
+     * При обновлении эпика вложенные подзадачи удаляются.
+     * @param taskId - номер эпика
+     * @param taskTitle - название эпика
+     * @param taskDescription - описание эпика
+     */
+    public void updateTask(int taskId, String taskTitle, String taskDescription) {
+        if (epics.containsKey(taskId)) {
+            Epic epic = new Epic(taskTitle, taskDescription, taskId);
+            epics.put(taskId, epic);
         }
     }
 
@@ -134,38 +145,27 @@ public class TaskManager {
         int errorCheck = 0;
         if (simpleTasks.containsKey(taskId)) {
             simpleTasks.remove(taskId);
-            System.out.println("Задача с номером " + taskId + " удалена.");
-            errorCheck = 1;
         }
         if (epics.containsKey(taskId)) {
             epics.remove(taskId);
-            System.out.println("Задача с номером " + taskId + " удалена.");
-            errorCheck = 1;
         }
         for (int epic : epics.keySet()) {
             if (epics.get(epic).getSubTasks().containsKey(taskId)) {
                 epics.get(epic).getSubTasks().remove(taskId);
-                System.out.println("Задача с номером " + taskId + " удалена.");
-                errorCheck = 1;
             }
-        }
-        if (errorCheck == 0) {
-            System.out.println("Задача с таким номером не найдена.");
         }
     }
 
     /**
-     * Получение списка всех подзадач определённого эпика
+     * Получение списка всех подзадач определённого эпика по номеру данного эпика
+     * Возвращает HashMap, состоящий из подзадач или null, если не найден эпик или у него отсутствуют подзадачи
      * @param taskId - номер задачи
      */
-    public void getSubTasksOfEpicById(int taskId) {
-        int errorCheck = 0;
+    public HashMap<Integer, Subtask> getSubTasksOfEpicById(int taskId) {
+        HashMap<Integer, Subtask> subtask = null;
         if (epics.containsKey(taskId)) {
-            System.out.println(epics.get(taskId).getSubTasks().values());
-            errorCheck = 1;
-            }
-        if (errorCheck == 0) {
-            System.out.println("Эпика с таким номером не найдено.");
+            subtask = epics.get(taskId).getSubTasks();
         }
+        return subtask;
     }
 }

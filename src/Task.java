@@ -3,7 +3,7 @@ public class Task {
     private String taskDescription;
 
     private int taskIdNumber;
-    protected static int idSequence = 1;
+    private static int idSequence = 1;
     private int taskStatus;
     private final String[] statusArray = {"NEW", "IN_PROGRESS", "DONE"};
 
@@ -11,7 +11,7 @@ public class Task {
      * Конструктор для новой задачи.
      * Присваивается новый порядковый номер
      * Для новых задач статус NEW
-     * @param taskTitle - название задачи
+     * @param taskTitle       - название задачи
      * @param taskDescription - описание задачи
      */
     public Task(String taskTitle, String taskDescription) {
@@ -24,9 +24,9 @@ public class Task {
     /**
      * Конструктор для обновления эпиков.
      * Номер остается прежним и указывается при обновлении
-     * @param taskTitle - название задачи
+     * @param taskTitle       - название задачи
      * @param taskDescription - описание задачи
-     * @param taskIdNumber - номер обновляемой задачи
+     * @param taskIdNumber    - номер обновляемой задачи
      */
     public Task(String taskTitle, String taskDescription, int taskIdNumber) {
         this.taskTitle = taskTitle;
@@ -38,10 +38,10 @@ public class Task {
      * Конструктор для обновления простых задач и подзадач эпиков.
      * Номер остается прежним и указывается при обновлении
      * Статус указывается при обновлении
-     * @param taskTitle - название задачи
+     * @param taskTitle       - название задачи
      * @param taskDescription - описание задачи
-     * @param taskIdNumber - номер обновляемой задачи
-     * @param taskStatus - статус обновляемой задачи
+     * @param taskIdNumber    - номер обновляемой задачи
+     * @param taskStatus      - статус обновляемой задачи
      */
     public Task(String taskTitle, String taskDescription, int taskIdNumber, int taskStatus) {
         this.taskTitle = taskTitle;
@@ -74,12 +74,13 @@ public class Task {
         this.taskStatus = taskStatus;
     }
 
-
     @Override
     public String toString() {
-        return  "№" + taskIdNumber + ". Задача" +
+        String result = "";
+        result= "№" + taskIdNumber + ". Задача" +
                 ". Название задачи - " + taskTitle +
                 ". Описание задачи: " + taskDescription +
                 ". Статус задачи: " + getStatusName(taskStatus);
+        return result;
     }
 }

@@ -56,10 +56,10 @@ public class Epic extends Task {
     }
 
     /**
-     * Метод добавляет подзадачу к конкретному эпику
-     * @param task
+     * Метод добавляет подзадачу к конкретному эпику и обновляет статус Эпика
+     * @param task - подзадача, которая будет добавлена к эпику
      */
-    public void addSubTask(Subtask task) {
+    protected void addSubTask(Subtask task) {
         subTasks.put(task.getTaskIdNumber(), task);
         setTaskStatus(checkStatus(subTasks));
     }
