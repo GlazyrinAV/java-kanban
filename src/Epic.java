@@ -1,7 +1,8 @@
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Epic extends Task {
-    private HashMap<Integer, Subtask> subTasks;
+    private HashMap<Integer, Subtask> subTasks = new HashMap<>();
 
     /**
      * Конструктор для создания новых эпиков
@@ -11,8 +12,7 @@ public class Epic extends Task {
      */
     public Epic(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
-        subTasks = new HashMap<>();
-        setTaskStatus(checkStatus(subTasks));
+        updateStatus(subTasks);
     }
 
     /**
@@ -24,35 +24,39 @@ public class Epic extends Task {
      */
     public Epic(String taskTitle, String taskDescription, int taskIdNumber) {
         super(taskTitle, taskDescription, taskIdNumber);
-        subTasks = new HashMap<>();
-        setTaskStatus(checkStatus(subTasks));
+        updateStatus(subTasks);
     }
 
     /**
      * Метод получает статус эпика на основании статусов входящих в него подзадач
      * @param subTasks - перечень подзадач в конкретном Эпике
      */
-    private int checkStatus (HashMap<Integer, Subtask> subTasks) {
-        int status = -1;
+    private void updateStatus(HashMap<Integer, Subtask> subTasks) {
+        int sum = 0;
         if (subTasks.isEmpty()) {
-            status = 0;
+            setTaskStatus(TaskStatus.NEW);
         } else {
-            int[] subTasksStatus = new int[subTasks.size()];
-            int i = 0;
             for (Integer subTask : subTasks.keySet()) {
-                int taskStatus = subTasks.get(subTask).getTaskStatus();
-                subTasksStatus[i] = taskStatus;
-                i++;
+                TaskStatus taskStatus = subTasks.get(subTask).getTaskStatus();
+                switch (taskStatus) {
+                    case NEW: {
+                        sum += 0;
+                        break;
+                    }
+                    case IN_PROGRESS: {
+                        sum += 1;
+                        break;
+                    }
+                    case DONE: {
+                        sum += 2;
+                        break;
+                    }
+                }
             }
-            int sum = 0;
-            for (int j = 0; j < subTasksStatus.length; j++) {
-                sum += subTasksStatus[j];
-            }
-            if (sum == 0) status =  0;
-            else if (sum == (subTasksStatus.length * 2)) status =  2;
-            else status =  1;
+            if (sum == 0) setTaskStatus(TaskStatus.NEW);
+            else if (sum == (subTasks.size() * 2)) setTaskStatus(TaskStatus.DONE);
+            else setTaskStatus(TaskStatus.IN_PROGRESS);
         }
-        return status;
     }
 
     /**
@@ -61,7 +65,7 @@ public class Epic extends Task {
      */
     protected void addSubTask(Subtask task) {
         subTasks.put(task.getTaskIdNumber(), task);
-        setTaskStatus(checkStatus(subTasks));
+        updateStatus(subTasks);
     }
 
     public HashMap<Integer, Subtask> getSubTasks() {
@@ -70,10 +74,10 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String result = "№" + getTaskIdNumber() + ". Эпик" +
+        String result = "\n№" + getTaskIdNumber() + ". Эпик" +
                 ". Название задачи - " + getTaskTitle() +
                 ". Описание задачи: " + getTaskDescription() +
-                ". Статус задачи: " + getStatusName(getTaskStatus());
+                ". Статус задачи: " + getTaskStatus();
         if (subTasks.isEmpty()) {
             result = result + ". Подзадачи отсутствуют.";
         } else {

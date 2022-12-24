@@ -15,9 +15,9 @@ public class TaskManager {
 
     /**
      * Получение списка всех задач в виде единого хранилища
-     * Возвращает единое хранилище, которое состоит из всех задач
      * @param simpleTasks - простые задачи
      * @param epics - эпики с учетом вложенных подзадач
+     * @return - единое хранилище, которое состоит из всех задач
      */
     public HashMap<Integer, Task> getAllTasks(HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
         if (!simpleTasks.isEmpty()) {
@@ -45,10 +45,10 @@ public class TaskManager {
 
     /**
      * Получение информации о задаче по объявленному номеру
-     * Возвращается искомый объект или null, если он не найден
      * @param taskId - номер задачи
      * @param simpleTasks - хранилище простых задач
      * @param epics - хранилище эпиков
+     * @return - искомый объект или null, если он не найден
      */
     public Task getTaskById (int taskId, HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
         Task taskById = null;
@@ -108,7 +108,7 @@ public class TaskManager {
      * @param taskDescription - описание задачи
      * @param taskStatus - статус задачи
      */
-    public void updateTask(int taskId, String taskTitle, String taskDescription, int taskStatus) {
+    public void updateTask(int taskId, String taskTitle, String taskDescription, Task.TaskStatus taskStatus) {
         if (simpleTasks.containsKey(taskId)) {
             Task task = new Task(taskTitle, taskDescription, taskId, taskStatus);
             simpleTasks.put(taskId, task);
@@ -173,6 +173,7 @@ public class TaskManager {
      * Получение списка всех подзадач определённого эпика по номеру данного эпика
      * Возвращает HashMap, состоящий из подзадач или null, если не найден эпик или у него отсутствуют подзадачи
      * @param taskId - номер задачи
+     * @return - список подзадач выбранного эпика
      */
     public HashMap<Integer, Subtask> getSubTasksOfEpicById(int taskId) {
         HashMap<Integer, Subtask> subtask = null;
@@ -180,5 +181,37 @@ public class TaskManager {
             subtask = epics.get(taskId).getSubTasks();
         }
         return subtask;
+    }
+
+    /**
+     * Метод возвращает номер задачи по имени данной задачи
+     * @param name - имя искомой задачи
+     * @return - номер искомой задачи
+     */
+    public int getTaskIdByName(String name) {
+        int result = -1;
+        if (!simpleTasks.isEmpty()) {
+            for (int taskID : simpleTasks.keySet()) {
+                if (simpleTasks.get(taskID).getTaskTitle().equals(name)) {
+                    result = taskID;
+                }
+            }
+        }
+        if (!epics.isEmpty()) {
+            for (int taskID : epics.keySet()) {
+                if (epics.get(taskID).getTaskTitle().equals(name)) {
+                    result = taskID;
+                } else {
+                    for (int epic : epics.keySet()) {
+                        for (int subTaskID : epics.get(epic).getSubTasks().keySet()) {
+                            if (epics.get(epic).getSubTasks().get(subTaskID).equals(name)) {
+                                result = subTaskID;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

@@ -8,7 +8,7 @@ public class Subtask extends Task {
      */
     public Subtask(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
-        setTaskStatus(0);
+        setTaskStatus(TaskStatus.NEW);
     }
 
     /**
@@ -20,7 +20,7 @@ public class Subtask extends Task {
      * @param taskIdNumber
      * @param taskStatus
      */
-    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, int taskStatus) {
+    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
         super(taskTitle, taskDescription, taskIdNumber, taskStatus);
     }
 
@@ -28,6 +28,6 @@ public class Subtask extends Task {
     public String toString() {
         return  "\n №" + getTaskIdNumber() + ". Название подзадачи: " + getTaskTitle() +
                 ". Описание подзадачи: " + getTaskDescription() +
-                ". Статус подзадачи: " + getStatusName(getTaskStatus());
+                ". Статус подзадачи: " + getTaskStatus();
     }
 }

@@ -4,8 +4,11 @@ public class Main {
         System.out.println("-- Создание 1 простой задачи, 1 эпика с 2 подзадачами.");
         manager.newTask("Task 1", "Description of Task 1");
         manager.newEpic("Epic 1", "Description of Epic 1");
-        manager.newSubtask(2, "Sub 1", "Description Sub 1");
-        manager.newSubtask(2, "Sub 2", "Description Sub 2");
+        manager.newSubtask(manager.getTaskIdByName("Epic 1"), "Sub 1", "Description Sub 1");
+        manager.newSubtask(manager.getTaskIdByName("Epic 1"), "Sub 2", "Description Sub 2");
+        manager.newEpic("Epic 2", "Description of Epic 2");
+        manager.newSubtask(manager.getTaskIdByName("Epic 2"), "Sub 1", "Description Sub 1");
+        manager.newSubtask(manager.getTaskIdByName("Epic 2"), "Sub 2", "Description Sub 2");
 
         System.out.println("-- Печать всех задач");
         manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();
@@ -19,9 +22,9 @@ public class Main {
         else System.out.println("null");
 
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
-        manager.updateTask(1, "Task1-2", "Description of Task 1-2", 2);
-        manager.updateTask(3, "Sub 1-2", "Description Sub 1-2", 1);
-        manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", 2);
+        manager.updateTask(1, "Task1-2", "Description of Task 1-2", Task.TaskStatus.DONE);
+        manager.updateTask(3, "Sub 1-2", "Description Sub 1-2", Task.TaskStatus.IN_PROGRESS);
+        manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", Task.TaskStatus.DONE);
 
         System.out.println("-- Печать всех задач");
         manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();

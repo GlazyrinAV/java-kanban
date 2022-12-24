@@ -3,8 +3,8 @@ public class Task {
     private String taskDescription;
     private int taskIdNumber;
     private static int idSequence = 1;
-    private int taskStatus;
-    private final String[] statusArray = {"NEW", "IN_PROGRESS", "DONE"};
+    protected enum TaskStatus {NEW, IN_PROGRESS, DONE};
+    TaskStatus taskStatus;
 
     /**
      * Конструктор для новой задачи.
@@ -17,7 +17,7 @@ public class Task {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = idSequence++;
-        this.taskStatus = 0;
+        taskStatus = TaskStatus.NEW;
     }
 
     /**
@@ -42,7 +42,7 @@ public class Task {
      * @param taskIdNumber    - номер обновляемой задачи
      * @param taskStatus      - статус обновляемой задачи
      */
-    public Task(String taskTitle, String taskDescription, int taskIdNumber, int taskStatus) {
+    public Task(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
@@ -61,15 +61,11 @@ public class Task {
         return taskIdNumber;
     }
 
-    public int getTaskStatus() {
+    public TaskStatus getTaskStatus() {
         return taskStatus;
     }
 
-    public String getStatusName(int taskStatus) {
-        return statusArray[taskStatus];
-    }
-
-    public void setTaskStatus(int taskStatus) {
+    public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
     }
 
@@ -79,7 +75,7 @@ public class Task {
         result= "№" + taskIdNumber + ". Задача" +
                 ". Название задачи - " + taskTitle +
                 ". Описание задачи: " + taskDescription +
-                ". Статус задачи: " + getStatusName(taskStatus);
+                ". Статус задачи: " + taskStatus;
         return result;
     }
 }
