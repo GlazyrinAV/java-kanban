@@ -73,11 +73,9 @@ public class Task {
 
     @Override
     public String toString() {
-        String result = "";
-        result= "№" + taskIdNumber + ". Задача" +
+        return "№" + taskIdNumber + ". Задача" +
                 ". Название задачи - " + taskTitle +
                 ". Описание задачи: " + taskDescription +
                 ". Статус задачи: " + taskStatus;
-        return result;
     }
 }

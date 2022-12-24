@@ -7,14 +7,6 @@ public class TasksManager {
     private HashMap<Integer, EpicTask> epics = new HashMap<>();
     private HashMap<Integer, Task> allTasks = new HashMap<>();
 
-    public HashMap<Integer, Task> getSimpleTasks() {
-        return simpleTasks;
-    }
-
-    public HashMap<Integer, EpicTask> getEpics() {
-        return epics;
-    }
-
     /**
      * Получение списка всех задач в виде единого хранилища
      * @return - единое хранилище, которое состоит из всех задач
@@ -153,7 +145,6 @@ public class TasksManager {
      * @param taskId - номер задачи, которую необходимо удалить
      */
     public void removeTaskById(int taskId) {
-        int errorCheck = 0;
         if (simpleTasks.containsKey(taskId)) {
             simpleTasks.remove(taskId);
         }
