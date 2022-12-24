@@ -1,6 +1,9 @@
+import Manager.TasksManager;
+import Model.TaskStatus;
+
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = new TaskManager();
+        TasksManager manager = new TasksManager();
         System.out.println("-- Создание 1 простой задачи, 1 эпика с 2 подзадачами.");
         manager.newTask("Task 1", "Description of Task 1");
         manager.newEpic("Epic 1", "Description of Epic 1");
@@ -22,9 +25,9 @@ public class Main {
         else System.out.println("null");
 
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
-        manager.updateTask(1, "Task1-2", "Description of Task 1-2", Task.TaskStatus.DONE);
-        manager.updateTask(3, "Sub 1-2", "Description Sub 1-2", Task.TaskStatus.IN_PROGRESS);
-        manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", Task.TaskStatus.DONE);
+        manager.updateTask(1, "Task1-2", "Description of Task 1-2", TaskStatus.Status.DONE);
+        manager.updateTask(3, "Sub 1-2", "Description Sub 1-2", TaskStatus.Status.IN_PROGRESS);
+        manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.Status.DONE);
 
         System.out.println("-- Печать всех задач");
         manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();

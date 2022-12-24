@@ -1,3 +1,4 @@
+package  Model;
 public class Subtask extends Task {
     /**
      * Конструктор для создания новых подзадач
@@ -8,7 +9,7 @@ public class Subtask extends Task {
      */
     public Subtask(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
-        setTaskStatus(TaskStatus.NEW);
+        setTaskStatus(TaskStatus.Status.NEW);
     }
 
     /**
@@ -20,7 +21,7 @@ public class Subtask extends Task {
      * @param taskIdNumber
      * @param taskStatus
      */
-    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
+    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus.Status taskStatus) {
         super(taskTitle, taskDescription, taskIdNumber, taskStatus);
     }
 

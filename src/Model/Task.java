@@ -1,10 +1,12 @@
+package Model;
+
 public class Task {
     private String taskTitle;
     private String taskDescription;
     private int taskIdNumber;
     private static int idSequence = 1;
-    protected enum TaskStatus {NEW, IN_PROGRESS, DONE};
-    TaskStatus taskStatus;
+    TaskStatus.Status taskStatus;
+
 
     /**
      * Конструктор для новой задачи.
@@ -17,7 +19,7 @@ public class Task {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = idSequence++;
-        taskStatus = TaskStatus.NEW;
+        setTaskStatus(TaskStatus.Status.NEW);
     }
 
     /**
@@ -42,11 +44,11 @@ public class Task {
      * @param taskIdNumber    - номер обновляемой задачи
      * @param taskStatus      - статус обновляемой задачи
      */
-    public Task(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
+    public Task(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus.Status taskStatus) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
-        this.taskStatus = taskStatus;
+        setTaskStatus(taskStatus);
     }
 
     public String getTaskTitle() {
@@ -61,12 +63,12 @@ public class Task {
         return taskIdNumber;
     }
 
-    public TaskStatus getTaskStatus() {
+    public TaskStatus.Status getTaskStatus() {
         return taskStatus;
     }
 
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
+    public void setTaskStatus(TaskStatus.Status newStatus) {
+        taskStatus = newStatus;
     }
 
     @Override

@@ -1,15 +1,17 @@
+package Manager;
 import java.util.HashMap;
+import Model.*;
 
-public class TaskManager {
+public class TasksManager {
     private HashMap<Integer, Task> simpleTasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
+    private HashMap<Integer, EpicTask> epics = new HashMap<>();
     private HashMap<Integer, Task> allTasks = new HashMap<>();
 
     public HashMap<Integer, Task> getSimpleTasks() {
         return simpleTasks;
     }
 
-    public HashMap<Integer, Epic> getEpics() {
+    public HashMap<Integer, EpicTask> getEpics() {
         return epics;
     }
 
@@ -19,7 +21,7 @@ public class TaskManager {
      * @param epics - эпики с учетом вложенных подзадач
      * @return - единое хранилище, которое состоит из всех задач
      */
-    public HashMap<Integer, Task> getAllTasks(HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
+    public HashMap<Integer, Task> getAllTasks(HashMap<Integer, Task> simpleTasks, HashMap<Integer, EpicTask> epics) {
         if (!simpleTasks.isEmpty()) {
             for (int taskID : simpleTasks.keySet()) {
                 allTasks.put(taskID, simpleTasks.get(taskID));
@@ -50,7 +52,7 @@ public class TaskManager {
      * @param epics - хранилище эпиков
      * @return - искомый объект или null, если он не найден
      */
-    public Task getTaskById (int taskId, HashMap<Integer, Task> simpleTasks, HashMap<Integer, Epic> epics) {
+    public Task getTaskById (int taskId, HashMap<Integer, Task> simpleTasks, HashMap<Integer, EpicTask> epics) {
         Task taskById = null;
         if (simpleTasks.containsKey(taskId)) {
             taskById = simpleTasks.get(taskId);
@@ -82,7 +84,7 @@ public class TaskManager {
      * @param taskDescription - описание эпика
      */
     public void newEpic(String taskTitle, String taskDescription) {
-        Epic newEpic = new Epic(taskTitle, taskDescription);
+        EpicTask newEpic = new EpicTask(taskTitle, taskDescription);
         epics.put(newEpic.getTaskIdNumber(), newEpic);
     }
 
@@ -108,7 +110,7 @@ public class TaskManager {
      * @param taskDescription - описание задачи
      * @param taskStatus - статус задачи
      */
-    public void updateTask(int taskId, String taskTitle, String taskDescription, Task.TaskStatus taskStatus) {
+    public void updateTask(int taskId, String taskTitle, String taskDescription, TaskStatus.Status taskStatus) {
         if (simpleTasks.containsKey(taskId)) {
             Task task = new Task(taskTitle, taskDescription, taskId, taskStatus);
             simpleTasks.put(taskId, task);
@@ -134,7 +136,7 @@ public class TaskManager {
     public void updateTask(int taskId, String taskTitle, String taskDescription, boolean saveSubTasks) {
         if (saveSubTasks) {
             if (epics.containsKey(taskId)) {
-                Epic epic = new Epic(taskTitle, taskDescription, taskId);
+                EpicTask epic = new EpicTask(taskTitle, taskDescription, taskId);
                 HashMap<Integer, Subtask> temporarySubTasks;
                 temporarySubTasks = epics.get(taskId).getSubTasks();
                 epics.put(taskId, epic);
@@ -144,7 +146,7 @@ public class TaskManager {
             }
         } else {
             if (epics.containsKey(taskId)) {
-                Epic epic = new Epic(taskTitle, taskDescription, taskId);
+                EpicTask epic = new EpicTask(taskTitle, taskDescription, taskId);
                 epics.put(taskId, epic);
             }
         }
