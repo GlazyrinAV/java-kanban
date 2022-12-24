@@ -124,7 +124,7 @@ public class TaskManager {
 
     /**
      * Перегруженный метод обновления для эпика по объявленному номеру.
-     * При обновлении эпика вложенные подзадачи удаляются.
+     * При обновлении эпика вложенные подзадачи могут сохраняться или удаляться.
      * @param taskId - номер эпика
      * @param taskTitle - название эпика
      * @param taskDescription - описание эпика
@@ -202,11 +202,9 @@ public class TaskManager {
                 if (epics.get(taskID).getTaskTitle().equals(name)) {
                     result = taskID;
                 } else {
-                    for (int epic : epics.keySet()) {
-                        for (int subTaskID : epics.get(epic).getSubTasks().keySet()) {
-                            if (epics.get(epic).getSubTasks().get(subTaskID).equals(name)) {
-                                result = subTaskID;
-                            }
+                    for (int subTaskID : epics.get(taskID).getSubTasks().keySet()) {
+                        if (epics.get(taskID).getSubTasks().get(subTaskID).equals(name)) {
+                            result = subTaskID;
                         }
                     }
                 }
