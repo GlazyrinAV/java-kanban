@@ -14,14 +14,14 @@ public class Main {
         manager.newSubtask(manager.getTaskIdByName("Epic 2"), "Sub 2", "Description Sub 2");
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();
+        manager.getAllTasks().toString();
 
         System.out.println("-- Поиск задачи номер 3 и номер 9");
-        if (manager.getTaskById(3, manager.getSimpleTasks(), manager.getEpics()) != null)
-            System.out.println(manager.getTaskById(3, manager.getSimpleTasks(), manager.getEpics()));
+        if (manager.getTaskById(3) != null)
+            System.out.println(manager.getTaskById(3));
         else System.out.println("null");
-        if (manager.getTaskById(9, manager.getSimpleTasks(), manager.getEpics()) != null)
-            System.out.println(manager.getTaskById(9, manager.getSimpleTasks(), manager.getEpics()).toString());
+        if (manager.getTaskById(9) != null)
+            System.out.println(manager.getTaskById(9).toString());
         else System.out.println("null");
 
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
@@ -30,7 +30,7 @@ public class Main {
         manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.Status.DONE);
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();
+        manager.getAllTasks().toString();
 
         System.out.println("-- Очистка задачи 4 из эпика");
         manager.removeTaskById(4);
@@ -44,18 +44,18 @@ public class Main {
         manager.updateTask(2, "Epic 1-2", "Description of Epic 1-2", true);
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();
+        manager.getAllTasks().toString();
 
         System.out.println("-- Замена эпика без сохранения подзадач.");
         manager.updateTask(2, "Epic 1-3", "Description of Epic 1-3", false);
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();
+        manager.getAllTasks().toString();
 
         System.out.println("-- Очистка всех задач");
         manager.clearAllTasks();
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks(manager.getSimpleTasks(), manager.getEpics()).toString();
+        manager.getAllTasks().toString();
     }
 }

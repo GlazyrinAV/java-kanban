@@ -17,11 +17,9 @@ public class TasksManager {
 
     /**
      * Получение списка всех задач в виде единого хранилища
-     * @param simpleTasks - простые задачи
-     * @param epics - эпики с учетом вложенных подзадач
      * @return - единое хранилище, которое состоит из всех задач
      */
-    public HashMap<Integer, Task> getAllTasks(HashMap<Integer, Task> simpleTasks, HashMap<Integer, EpicTask> epics) {
+    public HashMap<Integer, Task> getAllTasks() {
         if (!simpleTasks.isEmpty()) {
             for (int taskID : simpleTasks.keySet()) {
                 allTasks.put(taskID, simpleTasks.get(taskID));
@@ -48,11 +46,9 @@ public class TasksManager {
     /**
      * Получение информации о задаче по объявленному номеру
      * @param taskId - номер задачи
-     * @param simpleTasks - хранилище простых задач
-     * @param epics - хранилище эпиков
      * @return - искомый объект или null, если он не найден
      */
-    public Task getTaskById (int taskId, HashMap<Integer, Task> simpleTasks, HashMap<Integer, EpicTask> epics) {
+    public Task getTaskById (int taskId) {
         Task taskById = null;
         if (simpleTasks.containsKey(taskId)) {
             taskById = simpleTasks.get(taskId);
