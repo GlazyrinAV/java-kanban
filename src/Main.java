@@ -14,7 +14,9 @@ public class Main {
         manager.newSubtask(manager.getTaskIdByName("Epic 2"), "Sub 2", "Description Sub 2");
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks().toString();
+        System.out.println(manager.getTasks().values());
+        System.out.println("-- Получение списка всех задач");
+        System.out.println(manager.getAllTasks().values());
 
         System.out.println("-- Поиск задачи номер 3 и номер 9");
         if (manager.getTaskById(3) != null)
@@ -30,7 +32,7 @@ public class Main {
         manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.Status.DONE);
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks().toString();
+        System.out.println(manager.getTasks().values());
 
         System.out.println("-- Очистка задачи 4 из эпика");
         manager.removeTaskById(4);
@@ -44,18 +46,18 @@ public class Main {
         manager.updateTask(2, "Epic 1-2", "Description of Epic 1-2", true);
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks().toString();
+        System.out.println(manager.getTasks().values());
 
         System.out.println("-- Замена эпика без сохранения подзадач.");
         manager.updateTask(2, "Epic 1-3", "Description of Epic 1-3", false);
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks().toString();
+        System.out.println(manager.getTasks().values());
 
         System.out.println("-- Очистка всех задач");
         manager.clearAllTasks();
 
         System.out.println("-- Печать всех задач");
-        manager.getAllTasks().toString();
+        System.out.println(manager.getTasks().values());
     }
 }
