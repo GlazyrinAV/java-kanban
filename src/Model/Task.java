@@ -1,9 +1,9 @@
 package Model;
 
 public class Task {
-    private String taskTitle;
-    private String taskDescription;
-    private int taskIdNumber;
+    private final String taskTitle;
+    private final String taskDescription;
+    private final int taskIdNumber;
     private static int idSequence = 1;
     TaskStatus.Status taskStatus;
 
@@ -67,7 +67,7 @@ public class Task {
         return taskStatus;
     }
 
-    public void setTaskStatus(TaskStatus.Status newStatus) {
+    protected void setTaskStatus(TaskStatus.Status newStatus) {
         taskStatus = newStatus;
     }
 

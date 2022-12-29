@@ -2,7 +2,7 @@ package Model;
 import java.util.HashMap;
 
 public class EpicTask extends Task {
-    private HashMap<Integer, Subtask> subTasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
 
     /**
      * Конструктор для создания новых эпиков
