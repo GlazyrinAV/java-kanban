@@ -7,7 +7,6 @@ public class Task {
     private static int idSequence = 1;
     TaskStatus.Status taskStatus;
 
-
     /**
      * Конструктор для новой задачи.
      * Присваивается новый порядковый номер

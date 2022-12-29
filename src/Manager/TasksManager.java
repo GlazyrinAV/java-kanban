@@ -23,7 +23,7 @@ public class TasksManager {
                 }
             }
         }
-        return allTasks;
+        return allTasks; // maybe null
     }
 
     /**
@@ -52,7 +52,7 @@ public class TasksManager {
                 }
             }
         }
-        return taskById;
+        return taskById; // maybe null
     }
 
     /**
@@ -173,7 +173,7 @@ public class TasksManager {
             EpicTask task = (EpicTask) tasks.get(taskId);
             subtasks = task.getSubTasks();
         }
-        return subtasks;
+        return subtasks; // maybe null
     }
 
     /**
@@ -203,6 +203,6 @@ public class TasksManager {
     }
 
     public HashMap<Integer, Task> getTasks() {
-        return tasks;
+        return tasks; // maybe null
     }
 }
