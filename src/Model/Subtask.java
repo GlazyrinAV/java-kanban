@@ -4,7 +4,7 @@ public class Subtask extends Task {
      * Конструктор для создания новых подзадач
      * Присваивается новый порядковый номер
      * Статус для новых задач NEW
-     * @param taskTitle - название подзадачи
+     * @param taskTitle       - название подзадачи
      * @param taskDescription - описание подзадачи
      */
     public Subtask(String taskTitle, String taskDescription) {
