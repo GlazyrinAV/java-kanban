@@ -1,5 +1,6 @@
 package  Model;
 public class Subtask extends Task {
+
     /**
      * Конструктор для создания новых подзадач
      * Присваивается новый порядковый номер
@@ -16,10 +17,10 @@ public class Subtask extends Task {
      * Конструктор для обновления подзадач
      * Номер остается прежним и указывается при обновлении
      * Статус указывается при обновлении
-     * @param taskTitle - название подзадачи
+     * @param taskTitle       - название подзадачи
      * @param taskDescription - описание подзадачи
-     * @param taskIdNumber - номер подзадачи
-     * @param taskStatus - статус подзадачи
+     * @param taskIdNumber    - номер подзадачи
+     * @param taskStatus      - статус подзадачи
      */
     public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus.Status taskStatus) {
         super(taskTitle, taskDescription, taskIdNumber, taskStatus);

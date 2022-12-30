@@ -36,7 +36,7 @@ public class TasksManager {
     /**
      * Получение информации о задаче по объявленному номеру
      * @param taskId - номер задачи
-     * @return - искомый объект или null, если он не найден
+     * @return       - искомый объект или null, если он не найден
      */
     public Task getTaskById (int taskId) {
         Task taskById = null;
@@ -61,7 +61,7 @@ public class TasksManager {
      * @param taskDescription - описание задачи
      */
     public void newTask(String taskTitle, String taskDescription) {
-        Task newTask = new Task(taskTitle, taskDescription);
+        SimpleTask newTask = new SimpleTask(taskTitle, taskDescription);
         tasks.put(newTask.getTaskIdNumber(), newTask);
     }
 
@@ -77,8 +77,8 @@ public class TasksManager {
 
     /**
      * Создание подзадачи для эпика
-     * @param taskId - номер Эпика
-     * @param taskTitle - название подзадачи
+     * @param taskId          - номер Эпика
+     * @param taskTitle       - название подзадачи
      * @param taskDescription - описание подзадачи
      */
     public void newSubtask (int taskId, String taskTitle, String taskDescription) {
@@ -91,14 +91,14 @@ public class TasksManager {
 
     /**
      * Обновление простой задачи и подзадачи эпика по объявленному номеру с возможностью установить новый статус
-     * @param taskId - номер задачи
-     * @param taskTitle - название задачи
+     * @param taskId          - номер задачи
+     * @param taskTitle       - название задачи
      * @param taskDescription - описание задачи
-     * @param taskStatus - статус задачи
+     * @param taskStatus      - статус задачи
      */
     public void updateTask(int taskId, String taskTitle, String taskDescription, TaskStatus.Status taskStatus) {
         if (tasks.containsKey(taskId)) {
-            Task task = new Task(taskTitle, taskDescription, taskId, taskStatus);
+            SimpleTask task = new SimpleTask(taskTitle, taskDescription, taskId, taskStatus);
             tasks.put(taskId, task);
         } else {
             for (int taskID : tasks.keySet()) {
@@ -116,10 +116,10 @@ public class TasksManager {
     /**
      * Перегруженный метод обновления для эпика по объявленному номеру.
      * При обновлении эпика вложенные подзадачи могут сохраняться или удаляться.
-     * @param taskId - номер эпика
-     * @param taskTitle - название эпика
+     * @param taskId          - номер эпика
+     * @param taskTitle       - название эпика
      * @param taskDescription - описание эпика
-     * @param saveSubTasks - опредеяет необходимость сохранения подзадач в обновленном эпике
+     * @param saveSubTasks    - опредеяет необходимость сохранения подзадач в обновленном эпике
      * (true - сохранить, false - удалить).
      */
     public void updateTask(int taskId, String taskTitle, String taskDescription, boolean saveSubTasks) {
@@ -165,7 +165,7 @@ public class TasksManager {
      * Получение списка всех подзадач определённого эпика по номеру данного эпика
      * Возвращает HashMap, состоящий из подзадач или null, если не найден эпик или у него отсутствуют подзадачи
      * @param taskId - номер задачи
-     * @return - список подзадач выбранного эпика
+     * @return       - список подзадач выбранного эпика
      */
     public HashMap<Integer, Subtask> getSubTasksOfEpicById(int taskId) {
         HashMap<Integer, Subtask> subtasks = null;
@@ -179,7 +179,7 @@ public class TasksManager {
     /**
      * Метод возвращает номер задачи по имени данной задачи
      * @param name - имя искомой задачи
-     * @return - номер искомой задачи
+     * @return     - номер искомой задачи
      */
     public int getTaskIdByName(String name) {
         int result = -1;

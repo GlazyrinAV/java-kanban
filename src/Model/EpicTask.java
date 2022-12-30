@@ -7,7 +7,7 @@ public class EpicTask extends Task {
     /**
      * Конструктор для создания новых эпиков
      * Присваивается новый порядковый номер
-     * @param taskTitle - название эпика
+     * @param taskTitle       - название эпика
      * @param taskDescription - описание эпика
      */
     public EpicTask(String taskTitle, String taskDescription) {
@@ -18,9 +18,9 @@ public class EpicTask extends Task {
     /**
      * Конструктор для обновления эпика
      * Номер остается прежним и указывается при обновлении
-     * @param taskTitle - название эпика
+     * @param taskTitle       - название эпика
      * @param taskDescription - описание эпика
-     * @param taskIdNumber - номер обновляемого эпика
+     * @param taskIdNumber    - номер обновляемого эпика
      */
     public EpicTask(String taskTitle, String taskDescription, int taskIdNumber) {
         super(taskTitle, taskDescription, taskIdNumber);
