@@ -1,7 +1,7 @@
 package Manager;
 import java.util.HashMap;
-
 import Model.*;
+
 
 public class TasksManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();

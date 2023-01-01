@@ -1,10 +1,10 @@
 package Model;
 
 public abstract class Task {
-    protected  String taskTitle;
-    protected  String taskDescription;
-    protected  int taskIdNumber;
-    protected static int idSequence = 1;
+    private   String taskTitle;
+    private  String taskDescription;
+    private  int taskIdNumber;
+    private static int idSequence = 1;
     TaskStatus.Status taskStatus;
 
     /**
