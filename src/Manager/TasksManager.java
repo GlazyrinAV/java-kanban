@@ -154,7 +154,7 @@ public class TasksManager {
                 if (tasks.get(epicID).getClass().equals(EpicTask.class)) {
                     EpicTask task = (EpicTask) tasks.get(epicID);
                     if (task.getSubTasks().containsKey(taskId)) {
-                        task.getSubTasks().remove(taskId);
+                        task.removeSubTask(taskId);
                     }
                 }
             }

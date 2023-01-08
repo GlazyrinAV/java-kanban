@@ -4,7 +4,7 @@ import Model.TaskStatus;
 public class Main {
     public static void main(String[] args) {
         TasksManager manager = new TasksManager();
-        System.out.println("-- Создание 1 простой задачи, 1 эпика с 2 подзадачами.");
+        System.out.println("-- Создание 1 простой задачи, 2 эпика с 2 подзадачами.");
         manager.newTask("Task 1", "Description of Task 1");
         manager.newEpic("Epic 1", "Description of Epic 1");
         manager.newSubtask(manager.getTaskIdByName("Epic 1"), "Sub 1", "Description Sub 1");

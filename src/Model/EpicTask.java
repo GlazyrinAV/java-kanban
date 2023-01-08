@@ -67,6 +67,11 @@ public class EpicTask extends Task {
         updateStatus();
     }
 
+    public void removeSubTask(Integer subTaskID) {
+        subTasks.remove(subTaskID);
+        updateStatus();
+    }
+
     public HashMap<Integer, Subtask> getSubTasks() {
         return subTasks;
     }
