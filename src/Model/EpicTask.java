@@ -33,10 +33,10 @@ public class EpicTask extends Task {
     private void updateStatus() {
         int sum = 0;
         if (subTasks.isEmpty()) {
-            setTaskStatus(TaskStatus.Status.NEW);
+            setTaskStatus(TaskStatus.NEW);
         } else {
             for (Integer subTask : subTasks.keySet()) {
-                TaskStatus.Status taskStatus = subTasks.get(subTask).getTaskStatus();
+                TaskStatus taskStatus = subTasks.get(subTask).getTaskStatus();
                 switch (taskStatus) {
                     case NEW: {
                         sum += 0;
@@ -52,9 +52,9 @@ public class EpicTask extends Task {
                     }
                 }
             }
-            if (sum == 0) setTaskStatus(TaskStatus.Status.NEW);
-            else if (sum == (subTasks.size() * 2)) setTaskStatus(TaskStatus.Status.DONE);
-            else setTaskStatus(TaskStatus.Status.IN_PROGRESS);
+            if (sum == 0) setTaskStatus(TaskStatus.NEW);
+            else if (sum == (subTasks.size() * 2)) setTaskStatus(TaskStatus.DONE);
+            else setTaskStatus(TaskStatus.IN_PROGRESS);
         }
     }
 

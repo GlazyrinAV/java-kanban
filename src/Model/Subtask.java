@@ -10,7 +10,7 @@ public class Subtask extends Task {
      */
     public Subtask(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
-        setTaskStatus(TaskStatus.Status.NEW);
+        setTaskStatus(TaskStatus.NEW);
     }
 
     /**
@@ -22,7 +22,7 @@ public class Subtask extends Task {
      * @param taskIdNumber    - номер подзадачи
      * @param taskStatus      - статус подзадачи
      */
-    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus.Status taskStatus) {
+    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
         super(taskTitle, taskDescription, taskIdNumber, taskStatus);
     }
 

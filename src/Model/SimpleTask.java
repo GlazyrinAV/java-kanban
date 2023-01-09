@@ -22,7 +22,7 @@ public class SimpleTask extends Task{
      * @param taskIdNumber    - номер обновляемой задачи
      * @param taskStatus      - статус обновляемой задачи
      */
-    public SimpleTask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus.Status taskStatus) {
+    public SimpleTask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
         super(taskTitle, taskDescription, taskIdNumber, taskStatus);
     }
 

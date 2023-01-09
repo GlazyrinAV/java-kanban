@@ -1,11 +1,11 @@
 package Model;
 
 public abstract class Task {
-    private   String taskTitle;
-    private  String taskDescription;
-    private  int taskIdNumber;
+    private final String taskTitle;
+    private final String taskDescription;
+    private final int taskIdNumber;
     private static int idSequence = 1;
-    TaskStatus.Status taskStatus;
+    TaskStatus taskStatus;
 
     /**
      * Конструктор для новой задачи.
@@ -18,7 +18,7 @@ public abstract class Task {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = idSequence++;
-        setTaskStatus(TaskStatus.Status.NEW);
+        setTaskStatus(TaskStatus.NEW);
     }
 
     /**
@@ -43,7 +43,7 @@ public abstract class Task {
      * @param taskIdNumber    - номер обновляемой задачи
      * @param taskStatus      - статус обновляемой задачи
      */
-    public Task(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus.Status taskStatus) {
+    public Task(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
@@ -62,11 +62,11 @@ public abstract class Task {
         return taskIdNumber;
     }
 
-    public TaskStatus.Status getTaskStatus() {
+    public TaskStatus getTaskStatus() {
         return taskStatus;
     }
 
-    protected void setTaskStatus(TaskStatus.Status newStatus) {
+    protected void setTaskStatus(TaskStatus newStatus) {
         taskStatus = newStatus;
     }
 

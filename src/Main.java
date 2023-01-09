@@ -27,9 +27,9 @@ public class Main {
         else System.out.println("null");
 
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
-        manager.updateTask(1, "Task1-2", "Description of Task 1-2", TaskStatus.Status.DONE);
-        manager.updateTask(3, "Sub 1-2", "Description Sub 1-2", TaskStatus.Status.IN_PROGRESS);
-        manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.Status.DONE);
+        manager.updateTask(1, "Task1-2", "Description of Task 1-2", TaskStatus.DONE);
+        manager.updateTask(3, "Sub 1-2", "Description Sub 1-2", TaskStatus.IN_PROGRESS);
+        manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.DONE);
 
         System.out.println("-- Печать всех задач");
         System.out.println(manager.getTasks().values());

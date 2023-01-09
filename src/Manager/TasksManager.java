@@ -96,7 +96,7 @@ public class TasksManager {
      * @param taskDescription - описание задачи
      * @param taskStatus      - статус задачи
      */
-    public void updateTask(int taskId, String taskTitle, String taskDescription, TaskStatus.Status taskStatus) {
+    public void updateTask(int taskId, String taskTitle, String taskDescription, TaskStatus taskStatus) {
         if (tasks.containsKey(taskId)) {
             SimpleTask task = new SimpleTask(taskTitle, taskDescription, taskId, taskStatus);
             tasks.put(taskId, task);
