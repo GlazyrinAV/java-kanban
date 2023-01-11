@@ -77,13 +77,13 @@ public class TasksManager {
 
     /**
      * Создание подзадачи для эпика
-     * @param taskId          - номер Эпика
+     * @param epicId          - номер Эпика
      * @param taskTitle       - название подзадачи
      * @param taskDescription - описание подзадачи
      */
-    public void newSubtask (int taskId, String taskTitle, String taskDescription) {
-        if (tasks.containsKey(taskId) && tasks.get(taskId).getClass().equals(EpicTask.class)) {
-            EpicTask task = (EpicTask) tasks.get(taskId);
+    public void newSubtask (int epicId, String taskTitle, String taskDescription) {
+        if (tasks.containsKey(epicId) && tasks.get(epicId).getClass().equals(EpicTask.class)) {
+            EpicTask task = (EpicTask) tasks.get(epicId);
             Subtask subTask = new Subtask(taskTitle, taskDescription);
             task.addSubTask(subTask);
         }
@@ -130,8 +130,8 @@ public class TasksManager {
                 HashMap<Integer, Subtask> temporarySubTasks;
                 temporarySubTasks = task.getSubTasks();
                 tasks.put(taskId, epic);
-                for (int taskID : temporarySubTasks.keySet()) {
-                    epic.addSubTask(temporarySubTasks.get(taskID));
+                for (int subTaskID : temporarySubTasks.keySet()) {
+                    epic.addSubTask(temporarySubTasks.get(subTaskID));
                 }
             }
         } else if (tasks.get(taskId) instanceof EpicTask) {
@@ -141,7 +141,7 @@ public class TasksManager {
     }
 
     /**
-     * Метод проверяет все хранилища задач и удаляет задачу с объявленным номером
+     * Метод проверяет все задачи и подзадачи и удаляет задачу с объявленным номером
      * @param taskId - номер задачи, которую необходимо удалить
      */
     public void removeTaskById(int taskId) {
@@ -162,13 +162,13 @@ public class TasksManager {
     /**
      * Получение списка всех подзадач определённого эпика по номеру данного эпика
      * Возвращает HashMap, состоящий из подзадач или null, если не найден эпик или у него отсутствуют подзадачи
-     * @param taskId - номер задачи
+     * @param epicId - номер задачи
      * @return       - список подзадач выбранного эпика
      */
-    public HashMap<Integer, Subtask> getSubTasksOfEpicById(int taskId) {
+    public HashMap<Integer, Subtask> getSubTasksOfEpicById(int epicId) {
         HashMap<Integer, Subtask> subtasks = null;
-        if (tasks.get(taskId) instanceof EpicTask) {
-            EpicTask task = (EpicTask) tasks.get(taskId);
+        if (tasks.get(epicId) instanceof EpicTask) {
+            EpicTask task = (EpicTask) tasks.get(epicId);
             subtasks = task.getSubTasks();
         }
         return subtasks; // maybe null
@@ -185,15 +185,14 @@ public class TasksManager {
             for (int taskID : tasks.keySet()) {
                 if (tasks.get(taskID).getTaskTitle().equals(name)) {
                     result = taskID;
-                } else {
-                    if (tasks.get(taskID) instanceof EpicTask) {
-                        EpicTask task = (EpicTask) tasks.get(taskID);
-                        for (int subTaskID : task.getSubTasks().keySet()) {
-                            if (task.getSubTasks().get(subTaskID).getTaskTitle().equals(name)) {
-                                result = subTaskID;
-                            }
+                } else if (tasks.get(taskID) instanceof EpicTask) {
+                    EpicTask task = (EpicTask) tasks.get(taskID);
+                    for (int subTaskID : task.getSubTasks().keySet()) {
+                        if (task.getSubTasks().get(subTaskID).getTaskTitle().equals(name)) {
+                            result = subTaskID;
                         }
                     }
+
                 }
             }
         }
