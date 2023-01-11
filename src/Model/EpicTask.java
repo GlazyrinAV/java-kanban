@@ -67,6 +67,10 @@ public class EpicTask extends Task {
         updateStatus();
     }
 
+    /**
+     * Метод удаляет подзадачу по заданному номеру подзадачи
+     * @param subTaskID - номер подзадачи
+     */
     public void removeSubTask(Integer subTaskID) {
         subTasks.remove(subTaskID);
         updateStatus();

@@ -25,5 +25,4 @@ public class SimpleTask extends Task{
     public SimpleTask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
         super(taskTitle, taskDescription, taskIdNumber, taskStatus);
     }
-
 }
