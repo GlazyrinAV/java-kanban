@@ -1,64 +1,83 @@
-import Manager.TasksManager;
+import Manager.HistoryManager;
+import Manager.InMemoryTaskManager;
+import Manager.Managers;
 import Model.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {
-        TasksManager manager = new TasksManager();
-        System.out.println(manager.getAllTasks());
+        var managers = Managers.getDefault();
+        System.out.println(managers.getAllTasks());
         System.out.println("-- Создание 1 простой задачи, 2 эпика с 2 подзадачами.");
-        manager.newTask("Task 1", "Description of Task 1");
-        manager.newEpic("Epic 1", "Description of Epic 1");
-        manager.newSubtask(manager.getTaskIdByName("Epic 1"), "Sub 1", "Description Sub 1");
-        manager.newSubtask(manager.getTaskIdByName("Epic 1"), "Sub 2", "Description Sub 2");
-        manager.newEpic("Epic 2", "Description of Epic 2");
-        manager.newSubtask(manager.getTaskIdByName("Epic 2"), "Sub 1", "Description Sub 1");
-        manager.newSubtask(manager.getTaskIdByName("Epic 2"), "Sub 2", "Description Sub 2");
+        managers.newTask("Task 1", "Description of Task 1");
+        managers.newEpic("Epic 1", "Description of Epic 1");
+        managers.newSubtask(managers.getTaskIdByName("Epic 1"), "Sub 1", "Description Sub 1");
+        managers.newSubtask(managers.getTaskIdByName("Epic 1"), "Sub 2", "Description Sub 2");
+        managers.newEpic("Epic 2", "Description of Epic 2");
+        managers.newSubtask(managers.getTaskIdByName("Epic 2"), "Sub 1", "Description Sub 1");
+        managers.newSubtask(managers.getTaskIdByName("Epic 2"), "Sub 2", "Description Sub 2");
 
         System.out.println("-- Печать всех задач");
-        System.out.println(manager.getTasks().values());
+        System.out.println(managers.getTasks().values());
         System.out.println("-- Получение списка всех задач");
-        System.out.println(manager.getAllTasks().values());
+        System.out.println(managers.getAllTasks().values());
+        System.out.println();
 
         System.out.println("-- Поиск задачи номер 3 и номер 9");
-        if (manager.getTaskById(3) != null)
-            System.out.println(manager.getTaskById(3));
+        if (managers.getTaskById(3) != null)
+            System.out.println("Задача найдена");
         else System.out.println("null");
-        if (manager.getTaskById(9) != null)
-            System.out.println(manager.getTaskById(9).toString());
+        if (managers.getTaskById(9) != null)
+            System.out.println(managers.getTaskById(9).toString());
         else System.out.println("null");
+        System.out.println("История " + Managers.getDefaultHistory());
 
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
-        manager.updateTask(1, "Task1-2", "Description of Task 1-2", TaskStatus.DONE);
-        manager.updateTask(3, "Sub 1-2", "Description Sub 1-2", TaskStatus.IN_PROGRESS);
-        manager.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.DONE);
+        managers.updateTask(1, "Task1-2", "Description of Task 1-2", TaskStatus.DONE);
+        managers.updateTask(3, "Sub 1-2", "Description Sub 1-2", TaskStatus.IN_PROGRESS);
+        managers.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.DONE);
 
         System.out.println("-- Печать всех задач");
-        System.out.println(manager.getTasks().values());
+        System.out.println(managers.getTasks().values());
 
         System.out.println("-- Очистка задачи 4 из эпика");
-        manager.removeTaskById(4);
+        managers.removeTaskById(4);
 
         System.out.println("-- Печать подзадач из эпика");
-        if (manager.getSubTasksOfEpicById(2) != null)
-            System.out.println(manager.getSubTasksOfEpicById(2).values());
+        if (managers.getSubTasksOfEpicById(2) != null)
+            System.out.println(managers.getSubTasksOfEpicById(2).values());
         else System.out.println("null");
 
         System.out.println("-- Замена эпика с сохранением подзадач.");
-        manager.updateTask(2, "Epic 1-2", "Description of Epic 1-2", true);
+        managers.updateTask(2, "Epic 1-2", "Description of Epic 1-2", true);
 
         System.out.println("-- Печать всех задач");
-        System.out.println(manager.getTasks().values());
+        System.out.println(managers.getTasks().values());
+
+        System.out.println("-- вызов задач");
+        managers.getTaskById(1);
+        managers.getTaskById(2);
+        managers.getTaskById(3);
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(2);
+        managers.getTaskById(1);
+        System.out.println("История \n\n" + Managers.getDefaultHistory());
+
 
         System.out.println("-- Замена эпика без сохранения подзадач.");
-        manager.updateTask(2, "Epic 1-3", "Description of Epic 1-3", false);
+        managers.updateTask(2, "Epic 1-3", "Description of Epic 1-3", false);
 
         System.out.println("-- Печать всех задач");
-        System.out.println(manager.getTasks().values());
+        System.out.println(managers.getTasks().values());
 
         System.out.println("-- Очистка всех задач");
-        manager.clearAllTasks();
+        managers.clearAllTasks();
 
         System.out.println("-- Печать всех задач");
-        System.out.println(manager.getTasks().values());
+        System.out.println(managers.getTasks().values());
     }
 }

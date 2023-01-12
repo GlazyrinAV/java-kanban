@@ -3,13 +3,11 @@ import java.util.HashMap;
 import Model.*;
 
 
-public class TasksManager {
+public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager(10);
 
-    /**
-     * Получение списка всех задач в виде единого хранилища
-     * @return - единое хранилище, которое состоит из всех задач
-     */
+    @Override
     public HashMap<Integer, Task> getAllTasks() {
         HashMap<Integer, Task> allTasks = new HashMap<>();
         if (!tasks.isEmpty()) {
@@ -26,28 +24,24 @@ public class TasksManager {
         return allTasks; // maybe null
     }
 
-    /**
-     * Удаляет все виды задач
-     */
+    @Override
     public void clearAllTasks() {
         tasks.clear();
     }
 
-    /**
-     * Получение задачи по объявленному номеру
-     * @param taskId - номер задачи
-     * @return       - искомый объект или null, если он не найден
-     */
+    @Override
     public Task getTaskById (int taskId) {
         Task taskById = null;
         if (tasks.containsKey(taskId)) {
             taskById = tasks.get(taskId);
+            historyManager.addHistory(taskById);
         } else {
             for (int taskID : tasks.keySet()) {
                 if (tasks.get(taskID) instanceof EpicTask) {
                     EpicTask task = (EpicTask) tasks.get(taskID);
                     if (task.getSubTasks().containsKey(taskId)) {
                         taskById = task.getSubTasks().get(taskId);
+                        historyManager.addHistory(taskById);
                     }
                 }
             }
@@ -55,32 +49,19 @@ public class TasksManager {
         return taskById; // maybe null
     }
 
-    /**
-     * Создание новой простой задачи     *
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
-     */
+    @Override
     public void newTask(String taskTitle, String taskDescription) {
         SimpleTask newTask = new SimpleTask(taskTitle, taskDescription);
         tasks.put(newTask.getTaskIdNumber(), newTask);
     }
 
-    /**
-     * Создание нового эпика     *
-     * @param taskTitle       - название эпика
-     * @param taskDescription - описание эпика
-     */
+    @Override
     public void newEpic(String taskTitle, String taskDescription) {
         EpicTask newEpic = new EpicTask(taskTitle, taskDescription);
         tasks.put(newEpic.getTaskIdNumber(), newEpic);
     }
 
-    /**
-     * Создание подзадачи для эпика
-     * @param epicId          - номер Эпика
-     * @param taskTitle       - название подзадачи
-     * @param taskDescription - описание подзадачи
-     */
+    @Override
     public void newSubtask (int epicId, String taskTitle, String taskDescription) {
         if (tasks.containsKey(epicId) && tasks.get(epicId).getClass().equals(EpicTask.class)) {
             EpicTask task = (EpicTask) tasks.get(epicId);
@@ -89,13 +70,7 @@ public class TasksManager {
         }
     }
 
-    /**
-     * Обновление простой задачи и подзадачи эпика по объявленному номеру с возможностью установить новый статус
-     * @param taskId          - номер задачи
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
-     * @param taskStatus      - статус задачи
-     */
+    @Override
     public void updateTask(int taskId, String taskTitle, String taskDescription, TaskStatus taskStatus) {
         if (tasks.containsKey(taskId)) {
             SimpleTask task = new SimpleTask(taskTitle, taskDescription, taskId, taskStatus);
@@ -113,15 +88,7 @@ public class TasksManager {
         }
     }
 
-    /**
-     * Перегруженный метод обновления для эпика по объявленному номеру.
-     * При обновлении эпика вложенные подзадачи могут сохраняться или удаляться.
-     * @param taskId          - номер эпика
-     * @param taskTitle       - название эпика
-     * @param taskDescription - описание эпика
-     * @param saveSubTasks    - опредеяет необходимость сохранения подзадач в обновленном эпике
-     * (true - сохранить, false - удалить).
-     */
+    @Override
     public void updateTask(int taskId, String taskTitle, String taskDescription, boolean saveSubTasks) {
         if (saveSubTasks) {
             if (tasks.get(taskId) instanceof EpicTask) {
@@ -140,10 +107,7 @@ public class TasksManager {
         }
     }
 
-    /**
-     * Метод проверяет все задачи и подзадачи и удаляет задачу с объявленным номером
-     * @param taskId - номер задачи, которую необходимо удалить
-     */
+    @Override
     public void removeTaskById(int taskId) {
         if (tasks.containsKey(taskId)) {
             tasks.remove(taskId);
@@ -159,12 +123,7 @@ public class TasksManager {
         }
     }
 
-    /**
-     * Получение списка всех подзадач определённого эпика по номеру данного эпика
-     * Возвращает HashMap, состоящий из подзадач или null, если не найден эпик или у него отсутствуют подзадачи
-     * @param epicId - номер задачи
-     * @return       - список подзадач выбранного эпика
-     */
+    @Override
     public HashMap<Integer, Subtask> getSubTasksOfEpicById(int epicId) {
         HashMap<Integer, Subtask> subtasks = null;
         if (tasks.get(epicId) instanceof EpicTask) {
@@ -174,11 +133,7 @@ public class TasksManager {
         return subtasks; // maybe null
     }
 
-    /**
-     * Метод возвращает номер задачи по имени данной задачи
-     * @param name - имя искомой задачи
-     * @return     - номер искомой задачи
-     */
+    @Override
     public Integer getTaskIdByName(String name) {
         Integer result = null;
         if (!tasks.isEmpty()) {
