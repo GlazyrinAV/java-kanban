@@ -30,7 +30,7 @@ public class Main {
         else System.out.println("null");
 
         System.out.println("-- История запросов");
-        for (Task task : managers.getHistory()) {
+        for (Task task : Managers.getDefaultHistory()) {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
         }
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
@@ -55,7 +55,7 @@ public class Main {
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getTasks().values());
 
-        System.out.println("-- вызов 11 задач");
+        System.out.println("-- вызов 14 задач");
         managers.getTaskById(1);
         managers.getTaskById(1);
         managers.getTaskById(5);
@@ -67,6 +67,9 @@ public class Main {
         managers.getTaskById(1);
         managers.getTaskById(2);
         managers.getTaskById(2);
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(3);
         System.out.println("-- История запросов");
         for (Task task : Managers.getDefaultHistory()) {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());

@@ -1,12 +1,21 @@
 package Manager;
 import Model.*;
-import java.util.List;
+import java.util.ArrayDeque;
 
 public interface HistoryManager {
-    void addHistory(Task task);
-    List<Task> getHistory();
+    /**
+     * Метод добавления последней вызванной такски в историю
+     * @param task - последняя вызванная такска
+     */
+    static void addDefaultHistory(Task task) {
+        InMemoryHistoryManager.addHistory(task);
+    }
 
-    static List<Task> getDefaultHistory() {
-        return InMemoryHistoryManager.history;
+    /**
+     * Метод получения истории о последних вызванных тасках
+     * @return - возвращает лист с последними вызванными тасками
+     */
+    static ArrayDeque<Task> getDefaultHistory() {
+        return InMemoryHistoryManager.getHistory();
     }
 }

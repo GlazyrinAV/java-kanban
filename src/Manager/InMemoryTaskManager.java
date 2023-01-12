@@ -1,12 +1,10 @@
 package Manager;
 import java.util.HashMap;
-import java.util.List;
 import Model.*;
 
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager(10);
 
     @Override
     public HashMap<Integer, Task> getAllTasks() {
@@ -35,14 +33,14 @@ public class InMemoryTaskManager implements TaskManager {
         Task taskById = null;
         if (tasks.containsKey(taskId)) {
             taskById = tasks.get(taskId);
-            historyManager.addHistory(taskById);
+            Managers.addDefaultHistory(taskById);
         } else {
             for (int taskID : tasks.keySet()) {
                 if (tasks.get(taskID) instanceof EpicTask) {
                     EpicTask task = (EpicTask) tasks.get(taskID);
                     if (task.getSubTasks().containsKey(taskId)) {
                         taskById = task.getSubTasks().get(taskId);
-                        historyManager.addHistory(taskById);
+                        Managers.addDefaultHistory(taskById);
                     }
                 }
             }
@@ -153,11 +151,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return result; // maybe null
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return historyManager.getHistory();
     }
 
     public HashMap<Integer, Task> getTasks() {

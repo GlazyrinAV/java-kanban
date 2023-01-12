@@ -1,37 +1,26 @@
 package Manager;
 import Model.Task;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
-    static private int historyLength = 10;
-
-    static protected List<Task> history = new ArrayList<>(historyLength);
-
-    /**
-     * Конструктор истории посещений
-     * @param historyLength - максимальная длинна истории
-     */
-    public InMemoryHistoryManager(int historyLength) {
-        InMemoryHistoryManager.historyLength = historyLength;
-    }
+    static private final int historyDefaultLength = 10;
+    static private final int historyLength = historyDefaultLength;
+    static private final ArrayDeque<Task> history = new ArrayDeque<>(historyLength);
 
     static private int count = 0;
-    @Override
-    public void addHistory(Task task) {
+
+    public static void addHistory(Task task) {
         if (count < historyLength) {
             history.add(task);
             count++;
         } else if (count == historyLength) {
-            history.remove(0);
-            List<Task> swap = new ArrayList<>(history);
-            history.clear();
-            history.addAll(swap);
+            history.removeFirst();
             history.add(task);
         }
     }
 
-    public List<Task> getHistory() {
+    public static ArrayDeque<Task> getHistory() {
         return history;
     }
 }
