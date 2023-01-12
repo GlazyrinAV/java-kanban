@@ -1,12 +1,13 @@
 package Manager;
 import Model.*;
 import java.util.ArrayDeque;
+import java.util.List;
 
 public interface HistoryManager {
     void addHistory(Task task);
-    ArrayDeque<Task> getHistory();
+    List<Task> getHistory();
 
-    static ArrayDeque<Task> getDefaultHistory() {
+    static List<Task> getDefaultHistory() {
         return InMemoryHistoryManager.history;
     }
 }

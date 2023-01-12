@@ -1,7 +1,9 @@
-import Manager.HistoryManager;
-import Manager.InMemoryTaskManager;
 import Manager.Managers;
+import Model.Task;
 import Model.TaskStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -29,8 +31,11 @@ public class Main {
         if (managers.getTaskById(9) != null)
             System.out.println(managers.getTaskById(9).toString());
         else System.out.println("null");
-        System.out.println("История " + Managers.getDefaultHistory());
 
+        System.out.println("-- История запросов");
+        for (Task task : managers.getHistory()) {
+            System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
+        }
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
         managers.updateTask(1, "Task1-2", "Description of Task 1-2", TaskStatus.DONE);
         managers.updateTask(3, "Sub 1-2", "Description Sub 1-2", TaskStatus.IN_PROGRESS);
@@ -54,19 +59,22 @@ public class Main {
         System.out.println(managers.getTasks().values());
 
         System.out.println("-- вызов задач");
-        managers.getTaskById(1);
-        managers.getTaskById(2);
-        managers.getTaskById(3);
-        managers.getTaskById(1);
-        managers.getTaskById(1);
-        managers.getTaskById(1);
-        managers.getTaskById(1);
-        managers.getTaskById(1);
-        managers.getTaskById(1);
-        managers.getTaskById(2);
-        managers.getTaskById(1);
-        System.out.println("История \n\n" + Managers.getDefaultHistory());
-
+        List<Task> list = new ArrayList<>();
+        list.add(managers.getTaskById(1));
+        list.add(managers.getTaskById(1));
+        list.add(managers.getTaskById(5));
+        list.add(managers.getTaskById(5));
+        list.add(managers.getTaskById(2));
+        list.add(managers.getTaskById(5));
+        list.add(managers.getTaskById(6));
+        list.add(managers.getTaskById(1));
+        list.add(managers.getTaskById(1));
+        list.add(managers.getTaskById(2));
+        list.add(managers.getTaskById(2));
+        System.out.println("-- История запросов");
+        for (Task task : Managers.getDefaultHistory()) {
+            System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
+        }
 
         System.out.println("-- Замена эпика без сохранения подзадач.");
         managers.updateTask(2, "Epic 1-3", "Description of Epic 1-3", false);

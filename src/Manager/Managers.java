@@ -2,6 +2,7 @@ package Manager;
 import Model.Task;
 
 import java.util.ArrayDeque;
+import java.util.List;
 
 public class Managers {
 
@@ -9,7 +10,7 @@ public class Managers {
         return new InMemoryTaskManager();
     }
 
-    public static ArrayDeque<Task> getDefaultHistory() {
+    public static List<Task> getDefaultHistory() {
        return HistoryManager.getDefaultHistory();
     }
 }

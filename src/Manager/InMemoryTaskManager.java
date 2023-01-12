@@ -1,5 +1,6 @@
 package Manager;
 import java.util.HashMap;
+import java.util.List;
 import Model.*;
 
 
@@ -152,6 +153,11 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return result; // maybe null
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
     public HashMap<Integer, Task> getTasks() {
