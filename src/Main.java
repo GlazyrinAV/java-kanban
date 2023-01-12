@@ -2,9 +2,6 @@ import Manager.Managers;
 import Model.Task;
 import Model.TaskStatus;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
     public static void main(String[] args) {
         var managers = Managers.getDefault();
@@ -58,19 +55,18 @@ public class Main {
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getTasks().values());
 
-        System.out.println("-- вызов задач");
-        List<Task> list = new ArrayList<>();
-        list.add(managers.getTaskById(1));
-        list.add(managers.getTaskById(1));
-        list.add(managers.getTaskById(5));
-        list.add(managers.getTaskById(5));
-        list.add(managers.getTaskById(2));
-        list.add(managers.getTaskById(5));
-        list.add(managers.getTaskById(6));
-        list.add(managers.getTaskById(1));
-        list.add(managers.getTaskById(1));
-        list.add(managers.getTaskById(2));
-        list.add(managers.getTaskById(2));
+        System.out.println("-- вызов 11 задач");
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(5);
+        managers.getTaskById(5);
+        managers.getTaskById(2);
+        managers.getTaskById(5);
+        managers.getTaskById(6);
+        managers.getTaskById(1);
+        managers.getTaskById(1);
+        managers.getTaskById(2);
+        managers.getTaskById(2);
         System.out.println("-- История запросов");
         for (Task task : Managers.getDefaultHistory()) {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());

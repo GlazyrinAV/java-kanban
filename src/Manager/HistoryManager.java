@@ -1,6 +1,5 @@
 package Manager;
 import Model.*;
-import java.util.ArrayDeque;
 import java.util.List;
 
 public interface HistoryManager {
