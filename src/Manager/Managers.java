@@ -1,7 +1,4 @@
 package Manager;
-import Model.Task;
-import java.util.ArrayDeque;
-
 
 public class Managers {
 
@@ -9,12 +6,7 @@ public class Managers {
         return new InMemoryTaskManager();
     }
 
-    public static ArrayDeque<Task> getDefaultHistory() {
-        return HistoryManager.getDefaultHistory();
+    public static InMemoryHistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager(10);
     }
-
-    public static void addDefaultHistory(Task task) {
-        HistoryManager.addDefaultHistory(task);
-    }
-
 }

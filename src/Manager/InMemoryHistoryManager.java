@@ -4,13 +4,17 @@ import java.util.ArrayDeque;
 
 
 public class InMemoryHistoryManager implements HistoryManager {
-    static private final int historyDefaultLength = 10;
-    static private final int historyLength = historyDefaultLength;
-    static private final ArrayDeque<Task> history = new ArrayDeque<>(historyLength);
+    int historyLength;
+    private final ArrayDeque<Task> history;
 
-    static private int count = 0;
+    public InMemoryHistoryManager(int historyLength) {
+        history = new ArrayDeque<>(historyLength);
+        this.historyLength = historyLength;
+    }
 
-    public static void addHistory(Task task) {
+    private int count = 0;
+
+    public void addHistory(Task task) {
         if (count < historyLength) {
             history.add(task);
             count++;
@@ -20,7 +24,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    public static ArrayDeque<Task> getHistory() {
+    public ArrayDeque<Task> getHistory() {
         return history;
     }
 }
