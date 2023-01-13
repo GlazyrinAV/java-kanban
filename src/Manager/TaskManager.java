@@ -2,7 +2,6 @@ package Manager;
 import Model.*;
 import java.util.HashMap;
 
-
 public interface TaskManager {
     /**
      * Получение списка всех задач в виде единого хранилища

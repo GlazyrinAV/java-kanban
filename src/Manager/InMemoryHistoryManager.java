@@ -1,10 +1,10 @@
 package Manager;
 import Model.Task;
 import java.util.ArrayDeque;
-
+import java.util.Collection;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    int historyLength;
+    private final int historyLength;
     private final ArrayDeque<Task> history;
 
     public InMemoryHistoryManager(int historyLength) {
@@ -24,7 +24,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    public ArrayDeque<Task> getHistory() {
+    public Collection<Task> getHistory() {
         return history;
     }
 }

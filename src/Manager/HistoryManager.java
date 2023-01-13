@@ -1,6 +1,6 @@
 package Manager;
 import Model.*;
-import java.util.ArrayDeque;
+import java.util.Collection;
 
 public interface HistoryManager {
     /**
@@ -13,5 +13,5 @@ public interface HistoryManager {
      * Метод получения истории о последних вызванных тасках
      * @return - возвращает лист с последними вызванными тасками
      */
-    ArrayDeque<Task> getHistory();
+    Collection<Task> getHistory();
 }
