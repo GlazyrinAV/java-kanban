@@ -1,8 +1,7 @@
 package Manager;
-import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import Model.*;
-
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -155,7 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
         return result; // maybe null
     }
 
-    public ArrayDeque<Task> getHistory() {
+    public Collection<Task> getHistory() {
         return historyManager.getHistory();
     }
 
