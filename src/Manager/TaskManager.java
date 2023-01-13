@@ -1,5 +1,7 @@
 package Manager;
 import Model.*;
+
+import java.util.Collection;
 import java.util.HashMap;
 
 public interface TaskManager {
@@ -83,6 +85,12 @@ public interface TaskManager {
      * @return     - номер искомой задачи
      */
     Integer getTaskIdByName(String name);
+
+    /**
+     * Получение истории вызовозов задач
+     * @return - список вызванных задач
+     */
+    Collection<Task> getHistory();
 
     HashMap<Integer, Task> getTasks();
 }

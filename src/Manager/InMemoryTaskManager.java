@@ -62,7 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void newSubtask (int epicId, String taskTitle, String taskDescription) {
+    public void newSubtask(int epicId, String taskTitle, String taskDescription) {
         if (tasks.containsKey(epicId) && tasks.get(epicId).getClass().equals(EpicTask.class)) {
             EpicTask task = (EpicTask) tasks.get(epicId);
             Subtask subTask = new Subtask(taskTitle, taskDescription);
@@ -154,6 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
         return result; // maybe null
     }
 
+    @Override
     public Collection<Task> getHistory() {
         return historyManager.getHistory();
     }

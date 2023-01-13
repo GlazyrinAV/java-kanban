@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final int historyLength;
+    private final int historyLength; // желаемый объем хранимой истории
     private final ArrayDeque<Task> history;
 
     public InMemoryHistoryManager(int historyLength) {
@@ -12,8 +12,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         this.historyLength = historyLength;
     }
 
-    private int count = 0;
+    private int count = 0; // техническая величина для проверки заполнения истории
 
+    @Override
     public void addHistory(Task task) {
         if (count < historyLength) {
             history.add(task);
@@ -24,6 +25,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
+    @Override
     public Collection<Task> getHistory() {
         return history;
     }
