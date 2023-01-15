@@ -109,15 +109,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTaskById(int taskId) {
-        if (tasks.containsKey(taskId)) {
-            tasks.remove(taskId);
-        } else  {
+        tasks.remove(taskId);
+        if (tasks.remove(taskId) == null) {
             for (int epicID : tasks.keySet()) {
                 if (tasks.get(epicID) instanceof EpicTask) {
                     EpicTask task = (EpicTask) tasks.get(epicID);
-                    if (task.getSubTasks().containsKey(taskId)) {
-                        task.removeSubTask(taskId);
-                    }
+                    task.removeSubTask(taskId);
                 }
             }
         }
