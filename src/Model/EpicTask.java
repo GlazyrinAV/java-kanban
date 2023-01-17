@@ -32,6 +32,7 @@ public class EpicTask extends Task {
      */
     private void updateStatus() {
         int sum = 0;
+        int sumIfAllDone = subTasks.size() * 2; // при выполнении всех задач, sum равна удвоенному количеству подзадач
         if (subTasks.isEmpty()) {
             setTaskStatus(TaskStatus.NEW);
         } else {
@@ -53,7 +54,7 @@ public class EpicTask extends Task {
                 }
             }
             if (sum == 0) setTaskStatus(TaskStatus.NEW);
-            else if (sum == (subTasks.size() * 2)) setTaskStatus(TaskStatus.DONE);
+            else if (sum == sumIfAllDone) setTaskStatus(TaskStatus.DONE);
             else setTaskStatus(TaskStatus.IN_PROGRESS);
         }
     }
