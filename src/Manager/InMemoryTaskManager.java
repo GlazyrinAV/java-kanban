@@ -5,7 +5,15 @@ import Model.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final InMemoryHistoryManager historyManager = Managers.getDefaultHistory();
+    private final InMemoryHistoryManager historyManager;
+
+    /**
+     * Конструктор менеджера тасков, в который необходимо передавать объект менеджер историй просмотра
+     * @param history - объект классса менеджер историй просмотра
+     */
+    public InMemoryTaskManager(InMemoryHistoryManager history) {
+        historyManager = history;
+    }
 
     @Override
     public HashMap<Integer, Task> getAllTasks() {
