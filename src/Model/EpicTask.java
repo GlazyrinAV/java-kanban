@@ -1,8 +1,13 @@
 package Model;
-import java.util.HashMap;
+
+import Manager.InMemoryTaskManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class EpicTask extends Task {
-    private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
+    private final List<Integer> subTasks = new ArrayList<>();
 
     /**
      * Конструктор для создания новых эпиков
@@ -12,7 +17,6 @@ public class EpicTask extends Task {
      */
     public EpicTask(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
-        updateStatus();
     }
 
     /**
@@ -24,61 +28,22 @@ public class EpicTask extends Task {
      */
     public EpicTask(String taskTitle, String taskDescription, int taskIdNumber) {
         super(taskTitle, taskDescription, taskIdNumber);
-        updateStatus();
     }
 
-    /**
-     * Метод получает статус эпика на основании статусов входящих в него подзадач
-     */
-    private void updateStatus() {
-        int sum = 0;
-        int sumIfAllDone = subTasks.size() * 2; // при выполнении всех задач, sum равна удвоенному количеству подзадач
-        if (subTasks.isEmpty()) {
-            setTaskStatus(TaskStatus.NEW);
-        } else {
-            for (Integer subTask : subTasks.keySet()) {
-                TaskStatus taskStatus = subTasks.get(subTask).getTaskStatus();
-                switch (taskStatus) {
-                    case NEW: {
-                        sum += 0;
-                        break;
-                    }
-                    case IN_PROGRESS: {
-                        sum += 1;
-                        break;
-                    }
-                    case DONE: {
-                        sum += 2;
-                        break;
-                    }
-                }
-            }
-            if (sum == 0) setTaskStatus(TaskStatus.NEW);
-            else if (sum == sumIfAllDone) setTaskStatus(TaskStatus.DONE);
-            else setTaskStatus(TaskStatus.IN_PROGRESS);
-        }
+    public void addSubTask(int subTaskId) {
+        subTasks.add(subTaskId);
     }
 
-    /**
-     * Метод добавляет подзадачу к конкретному эпику и обновляет статус Эпика
-     * @param task - подзадача, которая будет добавлена к эпику
-     */
-    public void addSubTask(Subtask task) {
-        subTasks.put(task.getTaskIdNumber(), task);
-        updateStatus();
+    public void removeSubTask(int subTaskId) {
+        subTasks.remove((Integer) subTaskId);
     }
 
-    /**
-     * Метод удаляет подзадачу по заданному номеру подзадачи
-     * @param subTaskID - номер подзадачи
-     */
-    public void removeSubTask(Integer subTaskID) {
-        subTasks.remove(subTaskID);
-        updateStatus();
-    }
-
-    public HashMap<Integer, Subtask> getSubTasks() {
+    public List<Integer> getSubTasks() {
         return subTasks;
+    }
+
+    public void setStatus(InMemoryTaskManager o, int epicID) {
+        taskStatus = o.updateStatus(epicID);
     }
 
     @Override
@@ -90,7 +55,7 @@ public class EpicTask extends Task {
         if (subTasks.isEmpty()) {
             result = result + ". Подзадачи отсутствуют.";
         } else {
-            result = result + ". Эпик содержит следующие подзадачи: \n" + subTasks.values();
+            result = result + ". Эпик содержит следующие подзадачи: \n" + Arrays.toString(subTasks.toArray());
         }
         return  result;
     }

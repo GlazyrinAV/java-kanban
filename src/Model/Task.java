@@ -70,6 +70,8 @@ public abstract class Task {
         taskStatus = newStatus;
     }
 
+
+
     @Override
     public String toString() {
         return "№" + taskIdNumber + ". Задача" +

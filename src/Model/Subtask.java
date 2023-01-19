@@ -1,6 +1,8 @@
 package  Model;
 public class Subtask extends Task {
 
+    int epicId;
+
     /**
      * Конструктор для создания новых подзадач
      * Присваивается новый порядковый номер
@@ -8,8 +10,9 @@ public class Subtask extends Task {
      * @param taskTitle       - название подзадачи
      * @param taskDescription - описание подзадачи
      */
-    public Subtask(String taskTitle, String taskDescription) {
+    public Subtask(String taskTitle, String taskDescription, int epicId) {
         super(taskTitle, taskDescription);
+        this.epicId = epicId;
         setTaskStatus(TaskStatus.NEW);
     }
 
@@ -22,8 +25,13 @@ public class Subtask extends Task {
      * @param taskIdNumber    - номер подзадачи
      * @param taskStatus      - статус подзадачи
      */
-    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
+    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus, int epicId) {
         super(taskTitle, taskDescription, taskIdNumber, taskStatus);
+        this.epicId = epicId;
+    }
+
+    public int getEpicId() {
+        return epicId;
     }
 
     @Override
