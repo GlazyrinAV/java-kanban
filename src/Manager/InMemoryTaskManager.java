@@ -27,16 +27,15 @@ public class InMemoryTaskManager implements TaskManager {
     public void newEpic(String taskTitle, String taskDescription) {
         EpicTask newEpic = new EpicTask(taskTitle, taskDescription);
         tasks.put(newEpic.getTaskIdNumber(), newEpic);
-        newEpic.updateStatus(this, newEpic.getTaskIdNumber());
+//        newEpic.updateStatus(this, newEpic.getTaskIdNumber());
     }
 
     @Override
     public void newSubtask(String taskTitle, String taskDescription, int epicId) {
         if (tasks.containsKey(epicId) && tasks.get(epicId).getClass().equals(EpicTask.class)) {
-            EpicTask task = (EpicTask) tasks.get(epicId);
             Subtask newSubtask = new Subtask(taskTitle, taskDescription, epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
-            task.addSubTask(newSubtask.getTaskIdNumber());
+            ((EpicTask) tasks.get(epicId)).addSubTask(newSubtask.getTaskIdNumber());
         }
     }
 
@@ -47,7 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (tasks.containsKey(taskId) && tasks.get(taskId) instanceof Subtask) {
             int epicId = ((Subtask) tasks.get(taskId)).getEpicId();
             tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskId, taskStatus, epicId));
-            ((EpicTask) tasks.get(epicId)).updateStatus(this, epicId);
+//            ((EpicTask) tasks.get(epicId)).updateStatus(this, epicId);
         }
     }
 
@@ -60,12 +59,12 @@ public class InMemoryTaskManager implements TaskManager {
                 for (int subTaskId : task.getSubTasks()) {
                     newEpic.addSubTask(subTaskId);
                 }
-                newEpic.updateStatus(this, epicId);
+//                newEpic.updateStatus(this, epicId);
                 tasks.put(epicId, newEpic);
             }
         } else if (tasks.get(epicId) instanceof EpicTask) {
             tasks.put(epicId, new EpicTask(taskTitle, taskDescription, epicId));
-            ((EpicTask) tasks.get(epicId)).updateStatus(this, epicId);
+//            ((EpicTask) tasks.get(epicId)).updateStatus(this, epicId);
         }
     }
 
@@ -93,7 +92,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.get(taskId) instanceof Subtask) {
             EpicTask task = (EpicTask) tasks.get(((Subtask) tasks.get(taskId)).getEpicId());
             task.removeSubTask(taskId);
-            task.updateStatus(this, ((Subtask) tasks.get(taskId)).getEpicId());
+//            task.updateStatus(this, ((Subtask) tasks.get(taskId)).getEpicId());
             tasks.remove(taskId);
         } else if (tasks.get(taskId) instanceof EpicTask) {
             EpicTask task = (EpicTask) tasks.get(taskId);

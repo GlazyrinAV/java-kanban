@@ -91,8 +91,10 @@ public interface TaskManager {
     Integer getTaskIdByName(String name);
 
     /**
-     //     * Метод получает статус эпика на основании статусов входящих в него подзадач
-     //     */
+     * Определяет статус эпика на основании статусов подзадач, входящих в него
+     * @param epicID - номер эпика
+     * @return - обновленный статус эпика
+     */
     TaskStatus defineStatus(int epicID);
 
     /**

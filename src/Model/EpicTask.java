@@ -1,6 +1,6 @@
 package Model;
 
-import Manager.InMemoryTaskManager;
+import Manager.Managers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +17,7 @@ public class EpicTask extends Task {
      */
     public EpicTask(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
+        updateStatus(getTaskIdNumber());
     }
 
     /**
@@ -32,18 +33,29 @@ public class EpicTask extends Task {
 
     public void addSubTask(int subTaskId) {
         subTasks.add(subTaskId);
+        updateStatus(getTaskIdNumber());
     }
 
     public void removeSubTask(int subTaskId) {
         subTasks.remove((Integer) subTaskId);
+        updateStatus(getTaskIdNumber());
     }
 
+    /**
+     * Возвращает лист с сабтасками входящими в эпик
+     * @return - копия листа с сабтасками
+     */
     public List<Integer> getSubTasks() {
         return new ArrayList<>(subTasks);
     }
 
-    public void updateStatus(InMemoryTaskManager taskManager, int epicID) {
-        taskStatus = taskManager.defineStatus(epicID);
+    /**
+     * определяет статус эпика через проверку статусов сабтасков,
+     * хранящихся в таскмэнеджере
+     * @param epicID - номер эпика, который подлежит обновлению
+     */
+    private void updateStatus(int epicID) {
+        taskStatus = Managers.getDefault().defineStatus(epicID);
     }
 
     @Override
