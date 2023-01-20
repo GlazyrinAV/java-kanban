@@ -20,14 +20,11 @@ public class Subtask extends Task {
      * Конструктор для обновления подзадач
      * Номер остается прежним и указывается при обновлении
      * Статус указывается при обновлении
-     * @param taskTitle       - название подзадачи
-     * @param taskDescription - описание подзадачи
-     * @param taskIdNumber    - номер подзадачи
      * @param taskStatus      - статус подзадачи
      */
-    public Subtask(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus, int epicId) {
-        super(taskTitle, taskDescription, taskIdNumber, taskStatus);
-        this.epicId = epicId;
+    public Subtask(Task subTask, TaskStatus taskStatus) {
+        super(subTask, taskStatus);
+        this.epicId = ((Subtask) subTask).getEpicId();
     }
 
     public int getEpicId() {
@@ -38,6 +35,7 @@ public class Subtask extends Task {
     public String toString() {
         return  "\n №" + getTaskIdNumber() + ". Название подзадачи: " + getTaskTitle() +
                 ". Описание подзадачи: " + getTaskDescription() +
+                ". эпик задачи " + getEpicId() +
                 ". Статус подзадачи: " + getTaskStatus();
     }
 }

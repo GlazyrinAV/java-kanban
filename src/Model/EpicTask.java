@@ -22,12 +22,9 @@ public class EpicTask extends Task {
     /**
      * Конструктор для обновления эпика
      * Номер остается прежним и указывается при обновлении
-     * @param taskTitle       - название эпика
-     * @param taskDescription - описание эпика
-     * @param taskIdNumber    - номер обновляемого эпика
      */
-    public EpicTask(String taskTitle, String taskDescription, int taskIdNumber) {
-        super(taskTitle, taskDescription, taskIdNumber);
+    public EpicTask(Task epic) {
+        super(epic);
     }
 
     public void addSubTask(int subTaskId) {

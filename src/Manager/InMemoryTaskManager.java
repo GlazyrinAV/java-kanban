@@ -39,21 +39,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(int taskId, String taskTitle, String taskDescription, TaskStatus taskStatus) {
+    public void updateTask(int taskId, TaskStatus taskStatus) {
         if (tasks.containsKey(taskId) && isSimpleTask(taskId)) {
-            tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskId, taskStatus));
+            tasks.put(taskId, new SimpleTask(tasks.get(taskId), taskStatus));
         } else if (tasks.containsKey(taskId) && isSubTask(taskId)) {
-            int epicId = getEpicBySubtaskId(taskId).getTaskIdNumber();
-            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskId, taskStatus, epicId));
-            getEpicByEpicId(epicId).updateStatus(this, epicId);
+            tasks.put(taskId, new Subtask(tasks.get(taskId), taskStatus));
+            getEpicBySubtaskId(taskId).updateStatus(this, getEpicBySubtaskId(taskId).getTaskIdNumber());
         }
     }
 
     @Override
-    public void updateTask(int epicId, String taskTitle, String taskDescription, boolean saveSubTasks) {
+    public void updateTask(int epicId, boolean saveSubTasks) {
         if (saveSubTasks) {
             if (isEpic(epicId)) {
-                EpicTask newEpic = new EpicTask(taskTitle, taskDescription, epicId);
+                EpicTask newEpic = new EpicTask(tasks.get(epicId));
                 for (int subTaskId : getEpicByEpicId(epicId).getSubTasks()) {
                     newEpic.addSubTask(subTaskId);
                 }
@@ -61,7 +60,10 @@ public class InMemoryTaskManager implements TaskManager {
                 tasks.put(epicId, newEpic);
             }
         } else if (isEpic(epicId)) {
-            tasks.put(epicId, new EpicTask(taskTitle, taskDescription, epicId));
+            for (int subTaskId : getEpicByEpicId(epicId).getSubTasks()) {
+                tasks.remove(subTaskId);
+            }
+            tasks.put(epicId, new EpicTask(tasks.get(epicId)));
             getEpicByEpicId(epicId).updateStatus(this, epicId);
         }
     }
@@ -138,6 +140,11 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
+    @Override
+    public Collection<Task> getHistory() {
+        return historyManager.getHistory();
+    }
+
     private boolean isEpic(int taskID) {
         return tasks.get(taskID) instanceof EpicTask;
     }
@@ -156,10 +163,5 @@ public class InMemoryTaskManager implements TaskManager {
 
     private EpicTask getEpicByEpicId (int epicTaskId) {
         return (EpicTask) tasks.get(epicTaskId);
-    }
-
-    @Override
-    public Collection<Task> getHistory() {
-        return historyManager.getHistory();
     }
 }

@@ -34,22 +34,18 @@ public interface TaskManager {
     /**
      * Обновление простой задачи и подзадачи эпика по объявленному номеру с возможностью установить новый статус
      * @param taskId          - номер задачи
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
      * @param taskStatus      - статус задачи
      */
-    void updateTask(int taskId, String taskTitle, String taskDescription, TaskStatus taskStatus);
+    void updateTask(int taskId, TaskStatus taskStatus);
 
     /**
      * Перегруженный метод обновления для эпика по объявленному номеру.
      * При обновлении эпика вложенные подзадачи могут сохраняться или удаляться.
      * @param taskId          - номер эпика
-     * @param taskTitle       - название эпика
-     * @param taskDescription - описание эпика
      * @param saveSubTasks    - опредеяет необходимость сохранения подзадач в обновленном эпике
      * (true - сохранить, false - удалить).
      */
-    void updateTask(int taskId, String taskTitle, String taskDescription, boolean saveSubTasks);
+    void updateTask(int taskId, boolean saveSubTasks);
 
     /**
      * Получение списка всех задач в виде единого хранилища

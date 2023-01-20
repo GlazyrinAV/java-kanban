@@ -32,9 +32,9 @@ public class Main {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
         }
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
-        managers.updateTask(1, "Task1-2", "Description of Task 1-2", TaskStatus.DONE);
-        managers.updateTask(3, "Sub 1-2", "Description Sub 1-2", TaskStatus.IN_PROGRESS);
-        managers.updateTask(4, "Sub 2-2", "Description Sub 2-2", TaskStatus.DONE);
+        managers.updateTask(1, TaskStatus.DONE);
+        managers.updateTask(3, TaskStatus.IN_PROGRESS);
+        managers.updateTask(4, TaskStatus.DONE);
 
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getAllTasks().values());
@@ -48,7 +48,7 @@ public class Main {
         else System.out.println("null");
 
         System.out.println("-- Замена эпика с сохранением подзадач.");
-        managers.updateTask(2, "Epic 1-2", "Description of Epic 1-2", true);
+        managers.updateTask(2, true);
 
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getAllTasks().values());
@@ -74,7 +74,7 @@ public class Main {
         }
 
         System.out.println("-- Замена эпика без сохранения подзадач.");
-        managers.updateTask(2, "Epic 1-3", "Description of Epic 1-3", false);
+        managers.updateTask(2, false);
 
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getAllTasks().values());

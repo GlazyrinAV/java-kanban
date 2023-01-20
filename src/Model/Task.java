@@ -24,29 +24,24 @@ public abstract class Task {
     /**
      * Конструктор для обновления эпиков.
      * Номер остается прежним и указывается при обновлении
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
-     * @param taskIdNumber    - номер обновляемой задачи
      */
-    public Task(String taskTitle, String taskDescription, int taskIdNumber) {
-        this.taskTitle = taskTitle;
-        this.taskDescription = taskDescription;
-        this.taskIdNumber = taskIdNumber;
+    public Task(Task epicTask) {
+        this.taskTitle = epicTask.taskTitle;
+        this.taskDescription = epicTask.taskDescription;
+        this.taskIdNumber = epicTask.taskIdNumber;
+        this.taskStatus = epicTask.taskStatus;
     }
 
     /**
      * Конструктор для обновления простых задач и подзадач эпиков.
      * Номер остается прежним и указывается при обновлении
      * Статус указывается при обновлении
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
-     * @param taskIdNumber    - номер обновляемой задачи
      * @param taskStatus      - статус обновляемой задачи
      */
-    public Task(String taskTitle, String taskDescription, int taskIdNumber, TaskStatus taskStatus) {
-        this.taskTitle = taskTitle;
-        this.taskDescription = taskDescription;
-        this.taskIdNumber = taskIdNumber;
+    public Task(Task task, TaskStatus taskStatus) {
+        this.taskTitle = task.taskTitle;
+        this.taskDescription = task.taskDescription;
+        this.taskIdNumber = task.getTaskIdNumber();
         setTaskStatus(taskStatus);
     }
 
