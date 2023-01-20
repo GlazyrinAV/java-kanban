@@ -39,11 +39,11 @@ public class EpicTask extends Task {
     }
 
     public List<Integer> getSubTasks() {
-        return subTasks;
+        return new ArrayList<>(subTasks);
     }
 
-    public void setStatus(InMemoryTaskManager o, int epicID) {
-        taskStatus = o.updateStatus(epicID);
+    public void updateStatus(InMemoryTaskManager taskManager, int epicID) {
+        taskStatus = taskManager.defineStatus(epicID);
     }
 
     @Override

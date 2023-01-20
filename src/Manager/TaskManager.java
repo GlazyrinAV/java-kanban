@@ -93,7 +93,7 @@ public interface TaskManager {
     /**
      //     * Метод получает статус эпика на основании статусов входящих в него подзадач
      //     */
-    TaskStatus updateStatus(int epicID);
+    TaskStatus defineStatus(int epicID);
 
     /**
      * Получение истории вызовозов задач
