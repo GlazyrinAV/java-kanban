@@ -1,7 +1,7 @@
 package  Model;
 public class Subtask extends Task {
 
-    int epicId;
+    private final int epicId;
 
     /**
      * Конструктор для создания новых подзадач
@@ -20,7 +20,7 @@ public class Subtask extends Task {
      * Конструктор для обновления подзадач
      * Номер остается прежним и указывается при обновлении
      * Статус указывается при обновлении
-     * @param taskStatus      - статус подзадачи
+     * @param taskStatus - статус подзадачи
      */
     public Subtask(Task subTask, TaskStatus taskStatus) {
         super(subTask, taskStatus);

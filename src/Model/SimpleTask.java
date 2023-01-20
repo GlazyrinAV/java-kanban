@@ -17,7 +17,7 @@ public class SimpleTask extends Task{
      * Конструктор для обновления простой задачи.
      * Номер остается прежним и указывается при обновлении
      * Статус указывается при обновлении
-     * @param taskStatus      - статус обновляемой задачи
+     * @param taskStatus - статус обновляемой задачи
      */
     public SimpleTask(Task simpleTask, TaskStatus taskStatus) {
         super(simpleTask, taskStatus);

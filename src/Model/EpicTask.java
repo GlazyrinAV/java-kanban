@@ -49,7 +49,7 @@ public class EpicTask extends Task {
      * @param epicID - номер эпика, который подлежит обновлению
      */
     public void updateStatus(TaskManager taskManager, int epicID) {
-        taskStatus = taskManager.defineStatus(epicID);
+        setTaskStatus(taskManager.defineStatus(epicID));
     }
 
     @Override

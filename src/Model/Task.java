@@ -5,7 +5,7 @@ public abstract class Task {
     private final String taskDescription;
     private final int taskIdNumber;
     private static int idSequence = 1;
-    TaskStatus taskStatus;
+    private TaskStatus taskStatus;
 
     /**
      * Конструктор для новой задачи.
@@ -64,8 +64,6 @@ public abstract class Task {
     protected void setTaskStatus(TaskStatus newStatus) {
         taskStatus = newStatus;
     }
-
-
 
     @Override
     public String toString() {

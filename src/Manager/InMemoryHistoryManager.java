@@ -12,14 +12,15 @@ public class InMemoryHistoryManager implements HistoryManager {
         this.historyLength = historyLength;
     }
 
-    private int count = 0; // техническая величина для проверки заполнения истории
+    private int historyItemsCounter = 0; // техническая величина для проверки заполнения истории
 
     @Override
     public void addHistory(Task task) {
-        if (count < historyLength) {
+
+        if (historyItemsCounter < historyLength) {
             history.add(task);
-            count++;
-        } else if (count == historyLength) {
+            historyItemsCounter++;
+        } else if (historyItemsCounter == historyLength) {
             history.removeFirst();
             history.add(task);
         }
