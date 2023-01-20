@@ -1,7 +1,5 @@
 package Manager;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import Model.*;
 
@@ -56,8 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (saveSubTasks) {
             if (tasks.get(epicId) instanceof EpicTask) {
                 EpicTask newEpic = new EpicTask(taskTitle, taskDescription, epicId);
-                EpicTask task = (EpicTask) tasks.get(epicId);
-                for (int subTaskId : task.getSubTasks()) {
+                for (int subTaskId : ((EpicTask) tasks.get(epicId)).getSubTasks()) {
                     newEpic.addSubTask(subTaskId);
                 }
                 newEpic.updateStatus(this, epicId);
@@ -96,8 +93,7 @@ public class InMemoryTaskManager implements TaskManager {
             task.updateStatus(this, ((Subtask) tasks.get(taskId)).getEpicId());
             tasks.remove(taskId);
         } else if (tasks.get(taskId) instanceof EpicTask) {
-            EpicTask task = (EpicTask) tasks.get(taskId);
-            for (int subTaskId : task.getSubTasks()) {
+            for (int subTaskId : ((EpicTask) tasks.get(taskId)).getSubTasks()) {
                 tasks.remove(subTaskId);
             }
             tasks.remove(taskId);
@@ -109,8 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Integer> getSubTasksOfEpicById(int epicId) {
         if (tasks.get(epicId) instanceof EpicTask) {
-            EpicTask task = (EpicTask) tasks.get(epicId);
-            return task.getSubTasks();
+            return ((EpicTask) tasks.get(epicId)).getSubTasks();
         } else return null; // maybe null
     }
 
@@ -129,32 +124,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public TaskStatus defineStatus(int epicID) {
         if (tasks.get(epicID) instanceof EpicTask) {
-            EpicTask task = (EpicTask) tasks.get(epicID);
-            int sum = 0;
-            int sumIfAllDone = task.getSubTasks().size() * 2; // при выполнении всех задач, sum равна удвоенному количеству подзадач
-            if (task.getSubTasks().isEmpty()) {
+            if (((EpicTask) tasks.get(epicID)).getSubTasks().isEmpty()) {
                 return TaskStatus.NEW;
             } else {
-                for (Integer subTaskId : task.getSubTasks()) {
-                    TaskStatus taskStatus = tasks.get(subTaskId).getTaskStatus();
-                    switch (taskStatus) {
-                        case NEW: {
-                            sum += 0;
-                            break;
-                        }
-                        case IN_PROGRESS: {
-                            sum += 1;
-                            break;
-                        }
-                        case DONE: {
-                            sum += 2;
-                            break;
-                        }
-                    }
+                Set<TaskStatus> epicStatuses = new LinkedHashSet<>();
+                for (Integer subTaskId : ((EpicTask) tasks.get(epicID)).getSubTasks()) {
+                    epicStatuses.add(tasks.get(subTaskId).getTaskStatus());
                 }
-                if (sum == 0) return TaskStatus.NEW;
-                else if (sum == sumIfAllDone) return TaskStatus.DONE;
-                else return TaskStatus.IN_PROGRESS;
+                if (epicStatuses.size() == 1) {
+                    for (TaskStatus status : epicStatuses) return status;
+                } else return TaskStatus.IN_PROGRESS;
             }
         }
         return null;
