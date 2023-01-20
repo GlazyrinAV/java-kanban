@@ -1,6 +1,6 @@
 package Model;
 
-import Manager.InMemoryTaskManager;
+import Manager.TaskManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,8 +51,8 @@ public class EpicTask extends Task {
      * хранящихся в таскмэнеджере
      * @param epicID - номер эпика, который подлежит обновлению
      */
-    public void updateStatus(InMemoryTaskManager inMemoryTaskManager, int epicID) {
-        taskStatus = inMemoryTaskManager.defineStatus(epicID);
+    public void updateStatus(TaskManager taskManager, int epicID) {
+        taskStatus = taskManager.defineStatus(epicID);
     }
 
     @Override
