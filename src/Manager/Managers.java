@@ -1,6 +1,6 @@
 package Manager;
 
-public class Managers {
+public final class Managers {
 
     public static InMemoryTaskManager getDefault() {
         return new InMemoryTaskManager(getDefaultHistory(10));
