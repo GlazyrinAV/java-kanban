@@ -1,7 +1,10 @@
 package Manager;
-import java.util.*;
 
 import Model.*;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -75,7 +78,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTaskById (int taskId) {
+    public Task getTaskById(int taskId) {
         if (tasks.containsKey(taskId)) {
             historyManager.addHistory(tasks.get(taskId));
             return tasks.get(taskId);
@@ -134,11 +137,11 @@ public class InMemoryTaskManager implements TaskManager {
         return tasks.get(taskID) instanceof Subtask;
     }
 
-    private EpicTask getEpicBySubtaskId (int subTaskId) {
+    private EpicTask getEpicBySubtaskId(int subTaskId) {
         return (EpicTask) tasks.get(((Subtask) tasks.get(subTaskId)).getEpicId());
     }
 
-    private EpicTask getEpicByEpicId (int epicTaskId) {
+    private EpicTask getEpicByEpicId(int epicTaskId) {
         return (EpicTask) tasks.get(epicTaskId);
     }
 }
