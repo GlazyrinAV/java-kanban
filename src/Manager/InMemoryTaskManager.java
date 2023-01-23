@@ -25,7 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void newEpic(String taskTitle, String taskDescription) {
         EpicTask newEpic = new EpicTask(taskTitle, taskDescription);
         tasks.put(newEpic.getTaskIdNumber(), newEpic);
-        newEpic.updateStatus(this, newEpic.getTaskIdNumber());
     }
 
     @Override
@@ -33,8 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(epicId) && isEpic(epicId)) {
             Subtask newSubtask = new Subtask(taskTitle, taskDescription, epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
-            getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber());
-            getEpicByEpicId(epicId).updateStatus(this, epicId);
+            getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus());
         }
     }
 
@@ -44,7 +42,7 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.put(taskId, new SimpleTask(tasks.get(taskId), taskStatus));
         } else if (tasks.containsKey(taskId) && isSubTask(taskId)) {
             tasks.put(taskId, new Subtask(tasks.get(taskId), taskStatus));
-            getEpicBySubtaskId(taskId).updateStatus(this, getEpicBySubtaskId(taskId).getTaskIdNumber());
+            getEpicBySubtaskId(taskId).addSubTask(taskId, taskStatus);
         }
     }
 
@@ -53,18 +51,16 @@ public class InMemoryTaskManager implements TaskManager {
         if (saveSubTasks) {
             if (isEpic(epicId)) {
                 EpicTask newEpic = new EpicTask(tasks.get(epicId));
-                for (int subTaskId : getEpicByEpicId(epicId).getSubTasks()) {
-                    newEpic.addSubTask(subTaskId);
+                for (int subTaskId : getEpicByEpicId(epicId).getSubTasksId()) {
+                    newEpic.addSubTask(subTaskId, tasks.get(subTaskId).getTaskStatus());
                 }
-                newEpic.updateStatus(this, epicId);
                 tasks.put(epicId, newEpic);
             }
         } else if (isEpic(epicId)) {
-            for (int subTaskId : getEpicByEpicId(epicId).getSubTasks()) {
+            for (int subTaskId : getEpicByEpicId(epicId).getSubTasksId()) {
                 tasks.remove(subTaskId);
             }
             tasks.put(epicId, new EpicTask(tasks.get(epicId)));
-            getEpicByEpicId(epicId).updateStatus(this, epicId);
         }
     }
 
@@ -91,10 +87,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeTaskById(int taskId) {
         if (isSubTask(taskId)) {
             getEpicBySubtaskId(taskId).removeSubTask(taskId);
-            getEpicBySubtaskId(taskId).updateStatus(this, ((Subtask) tasks.get(taskId)).getEpicId());
             tasks.remove(taskId);
         } else if (isEpic(taskId)) {
-            for (int subTaskId : getEpicByEpicId(taskId).getSubTasks()) {
+            for (int subTaskId : getEpicByEpicId(taskId).getSubTasksId()) {
                 tasks.remove(subTaskId);
             }
             tasks.remove(taskId);
@@ -106,7 +101,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Integer> getSubTasksOfEpicById(int epicId) {
         if (isEpic(epicId)) {
-            return getEpicByEpicId(epicId).getSubTasks();
+            return getEpicByEpicId(epicId).getSubTasksId();
         } else return null; // maybe null
     }
 
@@ -120,24 +115,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return null; // maybe null
-    }
-
-    @Override
-    public TaskStatus defineStatus(int epicID) {
-        if (isEpic(epicID)) {
-            if (getEpicByEpicId(epicID).getSubTasks().isEmpty()) {
-                return TaskStatus.NEW;
-            } else {
-                Set<TaskStatus> epicStatuses = new LinkedHashSet<>();
-                for (Integer subTaskId : getEpicByEpicId(epicID).getSubTasks()) {
-                    epicStatuses.add(tasks.get(subTaskId).getTaskStatus());
-                }
-                if (epicStatuses.size() == 1) {
-                    for (TaskStatus status : epicStatuses) return status;
-                } else return TaskStatus.IN_PROGRESS;
-            }
-        }
-        return null;
     }
 
     @Override

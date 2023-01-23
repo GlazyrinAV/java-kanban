@@ -87,13 +87,6 @@ public interface TaskManager {
     Integer getTaskIdByName(String name);
 
     /**
-     * Определяет статус эпика на основании статусов подзадач, входящих в него
-     * @param epicID - номер эпика
-     * @return - обновленный статус эпика
-     */
-    TaskStatus defineStatus(int epicID);
-
-    /**
      * Получение истории вызовозов задач
      * @return - список вызванных задач
      */

@@ -1,13 +1,9 @@
 package Model;
 
-import Manager.TaskManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class EpicTask extends Task {
-    private final List<Integer> subTasks = new ArrayList<>();
+    private final HashMap<Integer, TaskStatus> subTasks = new HashMap<>();
 
     /**
      * Конструктор для создания новых эпиков
@@ -17,6 +13,7 @@ public class EpicTask extends Task {
      */
     public EpicTask(String taskTitle, String taskDescription) {
         super(taskTitle, taskDescription);
+        updateStatus();
     }
 
     /**
@@ -25,31 +22,47 @@ public class EpicTask extends Task {
      */
     public EpicTask(Task epic) {
         super(epic);
+        updateStatus();
     }
 
-    public void addSubTask(int subTaskId) {
-        subTasks.add(subTaskId);
+    public void addSubTask(int subTaskId, TaskStatus status) {
+        subTasks.put(subTaskId, status);
+        updateStatus();
     }
 
     public void removeSubTask(int subTaskId) {
-        subTasks.remove((Integer) subTaskId);
+        subTasks.remove(subTaskId);
+        updateStatus();
     }
 
     /**
      * Возвращает лист с сабтасками входящими в эпик
      * @return - копия листа с сабтасками
      */
-    public List<Integer> getSubTasks() {
-        return new ArrayList<>(subTasks);
+    public List<Integer> getSubTasksId() {
+        return new ArrayList<>(subTasks.keySet());
     }
 
     /**
-     * определяет статус эпика через проверку статусов сабтасков,
-     * хранящихся в таскмэнеджере
-     * @param epicID - номер эпика, который подлежит обновлению
+     * Возвращает лист с уникальными статусами подзадач, входящих в эпик
+     * @return - лист с уникальными статусами подзадач
      */
-    public void updateStatus(TaskManager taskManager, int epicID) {
-        setTaskStatus(taskManager.defineStatus(epicID));
+    private LinkedHashSet<TaskStatus> getSubTasksStatuses() {
+        return new LinkedHashSet<>(subTasks.values());
+    }
+
+    /**
+     * определяет статус эпика через проверку статусов сабтасков, хранящихся в таскмэнеджере
+     */
+    private void updateStatus() {
+        if (getSubTasksId().isEmpty()) {
+            setTaskStatus(TaskStatus.NEW);
+        } else {
+
+            if (getSubTasksStatuses().size() == 1) {
+                for (TaskStatus status : getSubTasksStatuses()) setTaskStatus(status);
+            } else setTaskStatus(TaskStatus.IN_PROGRESS);
+        }
     }
 
     @Override
@@ -61,7 +74,7 @@ public class EpicTask extends Task {
         if (subTasks.isEmpty()) {
             result = result + ". Подзадачи отсутствуют.";
         } else {
-            result = result + ". Эпик содержит следующие подзадачи: \n" + Arrays.toString(subTasks.toArray());
+            result = result + ". Эпик содержит следующие подзадачи: \n" + Arrays.toString(getSubTasksId().toArray());
         }
         return  result;
     }
