@@ -37,9 +37,10 @@ public class EpicTask extends Task {
 
     /**
      * Возвращает лист с сабтасками входящими в эпик
+     *
      * @return - копия листа с сабтасками
      */
-    public List<Integer> getSubTasksId() {
+    public List<Integer> getSubTasksIds() {
         return new ArrayList<>(subTasks.keySet());
     }
 
@@ -55,7 +56,7 @@ public class EpicTask extends Task {
      * определяет статус эпика через проверку статусов сабтасков, хранящихся в таскмэнеджере
      */
     private void updateStatus() {
-        if (getSubTasksId().isEmpty()) {
+        if (getSubTasksIds().isEmpty()) {
             setTaskStatus(TaskStatus.NEW);
         } else {
 
@@ -74,7 +75,7 @@ public class EpicTask extends Task {
         if (subTasks.isEmpty()) {
             result = result + ". Подзадачи отсутствуют.";
         } else {
-            result = result + ". Эпик содержит следующие подзадачи: \n" + Arrays.toString(getSubTasksId().toArray());
+            result = result + ". Эпик содержит следующие подзадачи: \n" + Arrays.toString(getSubTasksIds().toArray());
         }
         return  result;
     }
