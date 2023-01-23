@@ -37,7 +37,6 @@ public class EpicTask extends Task {
 
     /**
      * Возвращает лист с сабтасками входящими в эпик
-     *
      * @return - копия листа с сабтасками
      */
     public List<Integer> getSubTasksIds() {
