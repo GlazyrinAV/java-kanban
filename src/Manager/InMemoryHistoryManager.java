@@ -1,19 +1,16 @@
 package Manager;
+
+import History.Node;
 import Model.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final int historyLength; // желаемый объем хранимой истории
-    private final List<Task> history;
-    private final Map<Integer, Node> temporaryMapForHistory = new HashMap<>();
 
-    public InMemoryHistoryManager(int historyLength) {
-        history = new ArrayList<>(historyLength);
-        this.historyLength = historyLength;
-    }
-
-    private int historyItemsCounter = 0; // техническая величина для проверки заполнения истории
+    private final LinkedHashMap<Integer, Node<Task>> bufferHistoryMap = new LinkedHashMap<>();
 
     @Override
     public void addHistory(Task task) {
@@ -21,77 +18,48 @@ public class InMemoryHistoryManager implements HistoryManager {
             removeHistoryNote(task.getTaskIdNumber());
             linkLast(task);
         } else {
-            if (historyItemsCounter <= historyLength) {
-                linkLast(task);
-            } else {
-                removeLink(tail);
-                linkLast(task);
-            }
+            linkLast(task);
         }
     }
 
     @Override
     public Collection<Task> getHistory() {
-        Node<Task> currentNode = head;
-        while (currentNode.next != null) {
-            history.add(currentNode.data);
-            currentNode = currentNode.next;
+        final ArrayList<Task> history = new ArrayList<>();
+        for (int taskId : bufferHistoryMap.keySet()) {
+            history.add(bufferHistoryMap.get(taskId).data);
         }
         return history;
     }
 
     @Override
     public void removeHistoryNote(int id) {
-        removeLink(temporaryMapForHistory.get(id));
-        temporaryMapForHistory.remove(id);
-        historyItemsCounter--;
+        removeLink(bufferHistoryMap.get(id));
+        bufferHistoryMap.remove(id);
     }
-
-    private Node<Task> head = null;
-    private Node<Task> tail = null;
 
     private void linkLast(Task task) {
-        final Node<Task> oldTail = tail;
+        final Node<Task> oldTail = Node.getTail();
         final Node<Task> newNode = new Node<>(oldTail, task, null);
-        tail = newNode;
-        if (oldTail == null) head = newNode;
-        else oldTail.prev = newNode;
-        temporaryMapForHistory.put(task.getTaskIdNumber(), newNode);
+        Node.setTail(newNode);
+        if (oldTail == null) Node.setHead(newNode);
+        else oldTail.next = newNode;
+        bufferHistoryMap.put(task.getTaskIdNumber(), newNode);
     }
 
-    private void removeLink(Node node) {
-        if (node.equals(head)) {
-            head = node.next;
-            head.prev = null;
-        } else if (node.equals(tail)) {
-            tail = node.prev;
-            tail.next = null;
+    private void removeLink(Node<Task> node) {
+        if (node.equals(Node.getHead())) {
+            node.next.prev = null;
+            Node.setHead(node.next);
+        } else if (node.equals(Node.getTail())) {
+            node.prev.next = null;
+            Node.setTail(node.prev);
         } else {
-            Node<Task> newHead = node.prev;
-            Node<Task> newTail = node.next;
-            newHead.next = node.next;
-            newTail.prev = node.prev;
+            node.next.prev = node.prev;
+            node.prev.next = node.next;
         }
     }
 
     private boolean isPresentInHistory(Task task) {
-        return temporaryMapForHistory.containsKey(task.getTaskIdNumber());
-    }
-
-    static class Node<T extends Task> {
-        public T data;
-        public Node<T> next;
-        public Node<T> prev;
-
-        public Node(Node<T> prev, T data, Node<T> next) {
-            this.data = data;
-            this.next = next;
-            this.prev = prev;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return Arrays.toString(history.toArray());
+        return bufferHistoryMap.containsKey(task.getTaskIdNumber());
     }
 }

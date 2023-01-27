@@ -68,6 +68,7 @@ public class Main {
         managers.getTaskById(1);
         managers.getTaskById(1);
         managers.getTaskById(3);
+        managers.getTaskById(3);
         System.out.println("-- История запросов");
         for (Task task : managers.getHistory()) {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
