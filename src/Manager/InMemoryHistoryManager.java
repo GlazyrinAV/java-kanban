@@ -23,6 +23,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
+    public void removeHistoryNote(int id) {
+        removeLink(bufferHistoryMap.get(id));
+        bufferHistoryMap.remove(id);
+    }
+
+    @Override
     public Collection<Task> getHistory() {
         final ArrayList<Task> history = new ArrayList<>();
         Node<Task> currentNode = Node.getHead();
@@ -31,12 +37,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             currentNode = currentNode.next;
         }
         return history;
-    }
-
-    @Override
-    public void removeHistoryNote(int id) {
-        removeLink(bufferHistoryMap.get(id));
-        bufferHistoryMap.remove(id);
     }
 
     private void linkLast(Task task) {
