@@ -5,12 +5,12 @@ import Model.Task;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final LinkedHashMap<Integer, Node<Task>> bufferHistoryMap = new LinkedHashMap<>();
+    private final HashMap<Integer, Node<Task>> bufferHistoryMap = new HashMap<>();
 
     @Override
     public void addHistory(Task task) {
@@ -25,8 +25,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public Collection<Task> getHistory() {
         final ArrayList<Task> history = new ArrayList<>();
-        for (int taskId : bufferHistoryMap.keySet()) {
-            history.add(bufferHistoryMap.get(taskId).data);
+        Node<Task> currentNode = Node.getHead();
+        while (currentNode != null) {
+            history.add(currentNode.data);
+            currentNode = currentNode.next;
         }
         return history;
     }
