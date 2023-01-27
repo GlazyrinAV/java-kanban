@@ -31,4 +31,3 @@ public class Node<T extends Task> {
         Node.tail = tail;
     }
 }
-
