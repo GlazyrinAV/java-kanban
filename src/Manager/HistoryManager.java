@@ -13,8 +13,9 @@ public interface HistoryManager {
 
     /**
      * Удаляет задачу из истории
+     * @param id - номер задачи для удаления
      */
-    void clearHistory();
+    void removeHistory(int id);
 
     /**
      * Метод получения истории о последних вызванных тасках

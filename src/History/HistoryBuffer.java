@@ -25,10 +25,9 @@ public class HistoryBuffer {
         }
     }
 
-    public void clearHistoryBuffer() {
-        bufferHistoryMap.clear();
-        head = null;
-        tail = null;
+    public void removeHistoryFromBuffer(int id) {
+        removeNode(bufferHistoryMap.get(id));
+        bufferHistoryMap.remove(id);
     }
 
     public Collection<Task> getHistoryFromBuffer() {
@@ -39,11 +38,6 @@ public class HistoryBuffer {
             currentNode = currentNode.getNext();
         }
         return history;
-    }
-
-    private void removeHistoryFromBuffer(int id) {
-        removeNode(bufferHistoryMap.get(id));
-        bufferHistoryMap.remove(id);
     }
 
     private void addNode(Task task) {

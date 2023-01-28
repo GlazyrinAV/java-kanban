@@ -125,8 +125,8 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    public void clearHistory() {
-        historyManager.clearHistory();
+    public void removeHistory(int id) {
+        historyManager.removeHistory(id);
     }
 
     private boolean isEpic(int taskID) {
