@@ -16,21 +16,21 @@ public class HistoryBuffer {
         this.tail = null;
     }
 
-    public void addHistoryToBuffer(Task task){
+    public void addNoteToHistoryBuffer(Task task){
         if (isPresentInHistory(task)) {
-            removeHistoryFromBuffer(task.getTaskIdNumber());
+            removeNoteFromHistoryBuffer(task.getTaskIdNumber());
             addNode(task);
         } else {
             addNode(task);
         }
     }
 
-    public void removeHistoryFromBuffer(int id) {
+    public void removeNoteFromHistoryBuffer(int id) {
         removeNode(bufferHistoryMap.get(id));
         bufferHistoryMap.remove(id);
     }
 
-    public Collection<Task> getHistoryFromBuffer() {
+    public Collection<Task> getHistoryListFromBuffer() {
         final ArrayList<Task> history = new ArrayList<>();
         Node<Task> currentNode = head;
         while (currentNode != null) {
@@ -40,6 +40,10 @@ public class HistoryBuffer {
         return history;
     }
 
+    /**
+     * добавление просмотренной задачи в связанный список
+     * @param task - просмотренная задача
+     */
     private void addNode(Task task) {
         final Node<Task> oldTail = tail;
         final Node<Task> newNode = new Node<>(oldTail, task, null);
@@ -49,6 +53,10 @@ public class HistoryBuffer {
         bufferHistoryMap.put(task.getTaskIdNumber(), newNode);
     }
 
+    /**
+     * удаление задачи из связанного списка
+     * @param node - узел подлежащий удалению
+     */
     private void removeNode(Node<Task> node) {
         if (node.equals(head)) {
             node.getNext().setPrev(null);

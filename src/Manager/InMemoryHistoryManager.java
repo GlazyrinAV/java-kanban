@@ -15,16 +15,16 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void addHistory(Task task) {
-        historyBuffer.addHistoryToBuffer(task);
+        historyBuffer.addNoteToHistoryBuffer(task);
     }
 
     @Override
     public void removeHistory(int id) {
-        historyBuffer.removeHistoryFromBuffer(id);
+        historyBuffer.removeNoteFromHistoryBuffer(id);
     }
 
     @Override
     public Collection<Task> getHistory() {
-        return historyBuffer.getHistoryFromBuffer();
+        return historyBuffer.getHistoryListFromBuffer();
     }
 }
