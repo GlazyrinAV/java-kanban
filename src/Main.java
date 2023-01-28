@@ -74,6 +74,17 @@ public class Main {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
         }
 
+        System.out.println("-- Очистить историю запросов");
+        managers.clearHistory();
+        System.out.println("-- История запросов");
+        if (managers.getHistory().size() == 0) {
+            System.out.println("null");
+        } else {
+            for (Task task : managers.getHistory()) {
+                System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
+            }
+        }
+
         System.out.println("-- Замена эпика без сохранения подзадач.");
         managers.updateTask(2, false);
 

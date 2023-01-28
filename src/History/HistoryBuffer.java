@@ -2,6 +2,8 @@ package History;
 
 import Model.Task;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class HistoryBuffer {
@@ -14,7 +16,37 @@ public class HistoryBuffer {
         this.tail = null;
     }
 
-    public void addLink(Task task) {
+    public void addHistoryToBuffer(Task task){
+        if (isPresentInHistory(task)) {
+            removeHistoryFromBuffer(task.getTaskIdNumber());
+            addNode(task);
+        } else {
+            addNode(task);
+        }
+    }
+
+    public void clearHistoryBuffer() {
+        bufferHistoryMap.clear();
+        head = null;
+        tail = null;
+    }
+
+    public Collection<Task> getHistoryFromBuffer() {
+        final ArrayList<Task> history = new ArrayList<>();
+        Node<Task> currentNode = head;
+        while (currentNode != null) {
+            history.add(currentNode.getData());
+            currentNode = currentNode.getNext();
+        }
+        return history;
+    }
+
+    private void removeHistoryFromBuffer(int id) {
+        removeNode(bufferHistoryMap.get(id));
+        bufferHistoryMap.remove(id);
+    }
+
+    private void addNode(Task task) {
         final Node<Task> oldTail = tail;
         final Node<Task> newNode = new Node<>(oldTail, task, null);
         tail = newNode;
@@ -23,7 +55,7 @@ public class HistoryBuffer {
         bufferHistoryMap.put(task.getTaskIdNumber(), newNode);
     }
 
-    public void removeLink(Node<Task> node) {
+    private void removeNode(Node<Task> node) {
         if (node.equals(head)) {
             node.getNext().setPrev(null);
             head = node.getNext();
@@ -36,11 +68,7 @@ public class HistoryBuffer {
         }
     }
 
-    public Node<Task> getHead() {
-        return head;
-    }
-
-    public HashMap<Integer, Node<Task>> getBufferHistoryMap() {
-        return bufferHistoryMap;
+    private boolean isPresentInHistory(Task task) {
+        return bufferHistoryMap.containsKey(task.getTaskIdNumber());
     }
 }

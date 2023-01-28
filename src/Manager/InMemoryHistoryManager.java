@@ -1,43 +1,30 @@
 package Manager;
 
-import History.Node;
+import History.HistoryBuffer;
 import Model.Task;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    History.HistoryBuffer historyManager = new History.HistoryBuffer();
+    private final History.HistoryBuffer historyBuffer;
 
-    @Override
-    public void addHistory(Task task) {
-        if (isPresentInHistory(task)) {
-            removeHistoryNote(task.getTaskIdNumber());
-            historyManager.addLink(task);
-        } else {
-            historyManager.addLink(task);
-        }
+    public InMemoryHistoryManager() {
+        this.historyBuffer = new HistoryBuffer();
     }
 
     @Override
-    public void removeHistoryNote(int id) {
-        historyManager.removeLink(historyManager.getBufferHistoryMap().get(id));
-        historyManager.getBufferHistoryMap().remove(id);
+    public void addHistory(Task task) {
+        historyBuffer.addHistoryToBuffer(task);
+    }
+
+    @Override
+    public void clearHistory() {
+        historyBuffer.clearHistoryBuffer();
     }
 
     @Override
     public Collection<Task> getHistory() {
-        final ArrayList<Task> history = new ArrayList<>();
-        Node<Task> currentNode = historyManager.getHead();
-        while (currentNode != null) {
-            history.add(currentNode.getData());
-            currentNode = currentNode.getNext();
-        }
-        return history;
-    }
-
-    private boolean isPresentInHistory(Task task) {
-        return historyManager.getBufferHistoryMap().containsKey(task.getTaskIdNumber());
+        return historyBuffer.getHistoryFromBuffer();
     }
 }
