@@ -7,24 +7,24 @@ import java.util.Collection;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final History.HistoryBuffer historyBufferMap;
+    private final History.HistoryBuffer historyBuffer;
 
     public InMemoryHistoryManager() {
-        this.historyBufferMap = new HistoryBuffer();
+        this.historyBuffer = new HistoryBuffer();
     }
 
     @Override
     public void addHistory(Task task) {
-        historyBufferMap.addHistoryToBuffer(task);
+        historyBuffer.addHistoryToBuffer(task);
     }
 
     @Override
     public void removeHistory(int id) {
-        historyBufferMap.removeHistoryFromBuffer(id);
+        historyBuffer.removeHistoryFromBuffer(id);
     }
 
     @Override
     public Collection<Task> getHistory() {
-        return historyBufferMap.getHistoryFromBuffer();
+        return historyBuffer.getHistoryFromBuffer();
     }
 }
