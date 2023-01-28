@@ -6,8 +6,13 @@ import java.util.HashMap;
 
 public class HistoryBuffer {
     private final HashMap<Integer, Node<Task>> bufferHistoryMap = new HashMap<>();
-    private Node<Task> head = null;
-    private Node<Task> tail = null;
+    private Node<Task> head;
+    private Node<Task> tail;
+
+    public HistoryBuffer() {
+        this.head = null;
+        this.tail = null;
+    }
 
     public void addLink(Task task) {
         final Node<Task> oldTail = tail;
