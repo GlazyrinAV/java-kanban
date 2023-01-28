@@ -4,30 +4,33 @@ import Model.Task;
 
 public class Node<T extends Task> {
 
-    private static Node<Task> head = null;
-    private static Node<Task> tail = null;
-    public T data;
-    public Node<T> next;
-    public Node<T> prev;
+    private final T data;
+    private Node<T> next;
+    private Node<T> prev;
+
     public Node(Node<T> prev, T data, Node<T> next) {
         this.data = data;
         this.next = next;
         this.prev = prev;
     }
 
-    public static Node<Task> getHead() {
-        return head;
+    public T getData() {
+        return data;
     }
 
-    public static void setHead(Node<Task> head) {
-        Node.head = head;
+    public Node<T> getNext() {
+        return next;
     }
 
-    public static Node<Task> getTail() {
-        return tail;
+    public void setNext(Node<T> next) {
+        this.next = next;
     }
 
-    public static void setTail(Node<Task> tail) {
-        Node.tail = tail;
+    public Node<T> getPrev() {
+        return prev;
+    }
+
+    public void setPrev(Node<T> prev) {
+        this.prev = prev;
     }
 }
