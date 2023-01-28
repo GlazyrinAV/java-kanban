@@ -74,13 +74,6 @@ public class Main {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
         }
 
-        System.out.println("-- Удаление их истории 3 задачи");
-        managers.removeHistory(3);
-        System.out.println("-- История запросов");
-        for (Task task : managers.getHistory()) {
-            System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
-        }
-
         System.out.println("-- Замена эпика без сохранения подзадач.");
         managers.updateTask(2, false);
 

@@ -15,12 +15,18 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void addHistory(Task task) {
-        historyBuffer.addNoteToHistoryBuffer(task);
+        if (historyBuffer.isPresentInHistory(task)) {
+            removeHistory(task.getTaskIdNumber());
+            historyBuffer.addLinkToLastNode(task);
+        } else {
+            historyBuffer.addLinkToLastNode(task);
+        }
     }
 
     @Override
     public void removeHistory(int id) {
-        historyBuffer.removeNoteFromHistoryBuffer(id);
+        historyBuffer.removeLinksToNode(id);
+        historyBuffer.removeNodeFromHistoryBuffer(id);
     }
 
     @Override

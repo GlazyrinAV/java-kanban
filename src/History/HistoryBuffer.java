@@ -16,17 +16,11 @@ public class HistoryBuffer {
         this.tail = null;
     }
 
-    public void addNoteToHistoryBuffer(Task task){
-        if (isPresentInHistory(task)) {
-            removeNoteFromHistoryBuffer(task.getTaskIdNumber());
-            addNode(task);
-        } else {
-            addNode(task);
-        }
-    }
-
-    public void removeNoteFromHistoryBuffer(int id) {
-        removeNode(bufferHistoryMap.get(id));
+    /**
+     * Удаление задачи по его номеру из промежуточного хранилища задач, которое обеспечивает работу связанного списка
+     * @param id - номер задачи к удалению
+     */
+    public void removeNodeFromHistoryBuffer(int id) {
         bufferHistoryMap.remove(id);
     }
 
@@ -44,7 +38,7 @@ public class HistoryBuffer {
      * добавление просмотренной задачи в связанный список
      * @param task - просмотренная задача
      */
-    private void addNode(Task task) {
+    public void addLinkToLastNode(Task task) {
         final Node<Task> oldTail = tail;
         final Node<Task> newNode = new Node<>(oldTail, task, null);
         tail = newNode;
@@ -54,10 +48,11 @@ public class HistoryBuffer {
     }
 
     /**
-     * удаление задачи из связанного списка
-     * @param node - узел подлежащий удалению
+     * удаление просмотренной задачи из связанного списка
+     * @param id - неомер задачи для удаления
      */
-    private void removeNode(Node<Task> node) {
+    public void removeLinksToNode(int id) {
+        Node<Task> node = bufferHistoryMap.get(id);
         if (node.equals(head)) {
             node.getNext().setPrev(null);
             head = node.getNext();
@@ -70,7 +65,7 @@ public class HistoryBuffer {
         }
     }
 
-    private boolean isPresentInHistory(Task task) {
+    public boolean isPresentInHistory(Task task) {
         return bufferHistoryMap.containsKey(task.getTaskIdNumber());
     }
 }
