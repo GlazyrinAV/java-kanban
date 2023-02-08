@@ -4,8 +4,8 @@ import Model.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {
-        var managers = Managers.getDefault();
-        System.out.println(managers.getAllTasks());
+//        var managers = Managers.getDefault();
+        var managers = Managers.getWithAutosave();
         System.out.println("-- Создание 1 простой задачи, 2 эпика с 2 подзадачами.");
         managers.newSimpleTask("Task 1", "Description of Task 1");
         managers.newEpic("Epic 1", "Description of Epic 1");
@@ -85,5 +85,8 @@ public class Main {
 
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getAllTasks().values());
+        var managers2 = Managers.getWithAutosave();
+        System.out.println("--Перезапуск системы");
+        System.out.println(managers2.getAllTasks().values());
     }
 }
