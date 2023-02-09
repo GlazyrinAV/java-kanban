@@ -21,7 +21,6 @@ public class Reader {
             while (bufferedReader.ready()) {
                 String line = bufferedReader.readLine();
                 dataFromFile.add(line);
-                dataFromFile.add("\n");
             }
             return dataFromFile;
         } catch (IOException e) {

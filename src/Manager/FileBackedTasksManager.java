@@ -61,9 +61,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             dataToBeSaved.add(taskToString(task));
         }
         dataToBeSaved.add("");
+        StringJoiner history = new StringJoiner(",");
         for (Task task : getHistory()) {
-            dataToBeSaved.add(String.valueOf(task.getTaskIdNumber()));
+            history.add(String.valueOf(task.getTaskIdNumber()));
         }
+        dataToBeSaved.add(history.toString());
         try {
             new Writer().writeDataToFile(dataToBeSaved);
         } catch (RuntimeException | IOException e) {
@@ -78,7 +80,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerLoadException("Ошибка при сохранении данных в файл.");
         }
-        loadTaskFromStorage(getTasksFromDataFile(dataFromStorage));
+        if (!dataFromStorage.isEmpty()) loadTaskFromStorage(getTasksFromDataFile(dataFromStorage));
     }
 
     private String taskToString(Task task) {
@@ -110,20 +112,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void loadTaskFromStorage(List<String[]> list) {
         String taskType;
-        for (String[] line : list) {
-            taskType = line[1];
-            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(line);
+        for (int i = 0; i < list.size() - 2; i++) {
+            taskType = list.get(i)[1];
+            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(list.get(i));
         }
-        for (String[] line : list) {
-            taskType = line[1];
-            if (taskType.equals("SUBTASK")) createTaskFromDataFile(line);
+        for (int i = 0; i < list.size() - 2; i++) {
+            taskType = list.get(i)[1];
+            if (taskType.equals("SUBTASK")) createTaskFromDataFile(list.get(i));
         }
     }
 
     private List<String[]> getTasksFromDataFile(List<String> list) {
         List<String[]> dataSeparated = new ArrayList<>();
-        for (int i = 2; i < list.size(); i += 2) {
-            if (list.get(i).isBlank()) break;
+        for (int i = 1; i < list.size(); i++) {
             dataSeparated.add(list.get(i).split(","));
         }
         return dataSeparated;
@@ -131,14 +132,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private List<String[]> getHistoryFromDataFile(List<String> list) {
         List<String[]> dataSeparated = new ArrayList<>();
-        boolean isStartOfHistory = false;
-        for (int i = 1; i < list.size(); i++) {
-            if (list.get(i).isBlank()) isStartOfHistory = true;
-            while (!isStartOfHistory) {
-                continue;
-            }
-            dataSeparated.add(list.get(i).split(","));
-        }
+        dataSeparated.add(list.get(list.size() - 1).split(","));
         return dataSeparated;
     }
 
