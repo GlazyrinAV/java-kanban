@@ -10,6 +10,12 @@ import java.util.List;
 public class Writer {
     private final Path dataFile = Path.of("./Resources/Data.csv");
 
+    /**
+     * Записывает данные в файл-хранилище
+     *
+     * @param list - свод данных для записи в файл-хранилище
+     * @throws IOException - ошибка при записи данных
+     */
     public void writeDataToFile(List<String> list) throws IOException {
         fileChecker();
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {
@@ -26,6 +32,11 @@ public class Writer {
         }
     }
 
+    /**
+     * Проверяет наличие предыдущего файла и его удаление при наличии
+     *
+     * @throws ManagerSaveException - ошибка при удалении файла
+     */
     public void fileChecker() throws ManagerSaveException {
         if (Files.exists(dataFile)) {
             try {

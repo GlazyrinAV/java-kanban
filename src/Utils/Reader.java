@@ -14,6 +14,12 @@ public class Reader {
     private final Path dataDir = Path.of("./Resources");
     private final Path dataFile = Path.of("./Resources/Data.csv");
 
+    /**
+     * Считывает данные из файла-хранилища
+     *
+     * @return - возвращает лист, где каждая строчка представляет собой одну задачу или историю просмотров
+     * @throws IOException - ошибка при считывании данных
+     */
     public List<String> readDataFromFile() throws IOException {
         List<String> dataFromFile = new ArrayList<>();
         checkPresence();
@@ -28,6 +34,9 @@ public class Reader {
         }
     }
 
+    /**
+     * Проверяет наличие директории и файла-хранилища
+     */
     private void checkPresence() {
         if (!Files.exists(dataDir)) {
             try {
