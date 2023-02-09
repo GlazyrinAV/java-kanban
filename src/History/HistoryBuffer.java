@@ -1,15 +1,13 @@
 package History;
 
-import Model.Task;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
 public class HistoryBuffer {
-    private final HashMap<Integer, Node<Task>> bufferHistoryMap = new HashMap<>();
-    private Node<Task> head;
-    private Node<Task> tail;
+    private final HashMap<Integer, Node<Integer>> bufferHistoryMap = new HashMap<>();
+    private Node<Integer> head;
+    private Node<Integer> tail;
 
     public HistoryBuffer() {
         this.head = null;
@@ -24,9 +22,9 @@ public class HistoryBuffer {
         bufferHistoryMap.remove(id);
     }
 
-    public Collection<Task> getHistoryListFromBuffer() {
-        final ArrayList<Task> history = new ArrayList<>();
-        Node<Task> currentNode = head;
+    public Collection<Integer> getHistoryListFromBuffer() {
+        final ArrayList<Integer> history = new ArrayList<>();
+        Node<Integer> currentNode = head;
         while (currentNode != null) {
             history.add(currentNode.getData());
             currentNode = currentNode.getNext();
@@ -36,15 +34,15 @@ public class HistoryBuffer {
 
     /**
      * добавление просмотренной задачи в связанный список
-     * @param task - просмотренная задача
+     * @param id - номер задачи
      */
-    public void addLinkToLastNode(Task task) {
-        final Node<Task> oldTail = tail;
-        final Node<Task> newNode = new Node<>(oldTail, task, null);
+    public void addLinkToLastNode(int id) {
+        final Node<Integer> oldTail = tail;
+        final Node<Integer> newNode = new Node<>(oldTail, id, null);
         tail = newNode;
         if (oldTail == null) head = newNode;
         else oldTail.setNext(newNode);
-        bufferHistoryMap.put(task.getTaskIdNumber(), newNode);
+        bufferHistoryMap.put(id, newNode);
     }
 
     /**
@@ -52,7 +50,7 @@ public class HistoryBuffer {
      * @param id - неомер задачи для удаления
      */
     public void removeLinksToNode(int id) {
-        Node<Task> node = bufferHistoryMap.get(id);
+        Node<Integer> node = bufferHistoryMap.get(id);
         if (node.equals(head)) {
             node.getNext().setPrev(null);
             head = node.getNext();
@@ -65,7 +63,7 @@ public class HistoryBuffer {
         }
     }
 
-    public boolean isPresentInHistory(Task task) {
-        return bufferHistoryMap.containsKey(task.getTaskIdNumber());
+    public boolean isPresentInHistory(int id) {
+        return bufferHistoryMap.containsKey(id);
     }
 }

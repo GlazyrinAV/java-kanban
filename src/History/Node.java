@@ -1,8 +1,6 @@
 package History;
 
-import Model.Task;
-
-public class Node<T extends Task> {
+public class Node<T extends Integer> {
 
     private final T data;
     private Node<T> next;

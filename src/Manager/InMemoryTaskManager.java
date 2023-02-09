@@ -80,7 +80,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int taskId) {
         if (tasks.containsKey(taskId)) {
-            historyManager.addHistory(tasks.get(taskId));
+            historyManager.addHistory(taskId);
             return tasks.get(taskId);
         }
         return null; // maybe null
@@ -121,7 +121,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Collection<Task> getHistory() {
+    public Collection<Integer> getHistory() {
         return historyManager.getHistory();
     }
 

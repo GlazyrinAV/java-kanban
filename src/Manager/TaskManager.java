@@ -93,5 +93,5 @@ public interface TaskManager {
      * Получение истории вызовозов задач
      * @return - список вызванных задач
      */
-    Collection<Task> getHistory();
+    Collection<Integer> getHistory();
 }

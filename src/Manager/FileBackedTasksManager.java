@@ -73,8 +73,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         dataToBeSaved.add("\n");
         StringJoiner history = new StringJoiner(",");
-        for (Task task : historyManager.getHistory()) {
-            history.add(String.valueOf(task.getTaskIdNumber()));
+        for (Integer taskId : historyManager.getHistory()) {
+            history.add(String.valueOf(taskId));
         }
         dataToBeSaved.add(history.toString());
         try {
@@ -99,7 +99,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         if (!dataFromStorage.isEmpty()) {
             Loader loader = new Loader();
             loader.loadTaskFromStorage(loader.getTasksFromDataFile(dataFromStorage), tasks);
-            loader.loadHistoryFromStorage(loader.getHistoryFromDataFile(dataFromStorage), historyManager, tasks);
+            loader.loadHistoryFromStorage(loader.getHistoryFromDataFile(dataFromStorage), historyManager);
         }
     }
 

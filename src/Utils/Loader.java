@@ -4,6 +4,7 @@ import Manager.HistoryManager;
 import Model.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,13 +18,17 @@ public class Loader {
      */
     public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks) {
         String taskType;
-        for (int i = 0; i < list.size() - 2; i++) {
-            taskType = list.get(i)[1];
-            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(list.get(i), tasks);
+        for (String[] strings : list) {
+            boolean isEndOfTasks = strings[0].equals(" ");
+            if (isEndOfTasks) break;
+            taskType = strings[1];
+            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
         }
-        for (int i = 0; i < list.size() - 2; i++) {
-            taskType = list.get(i)[1];
-            if (taskType.equals("SUBTASK")) createTaskFromDataFile(list.get(i), tasks);
+        for (String[] strings : list) {
+            boolean isEndOfTasks = strings[0].equals(" ");
+            if (isEndOfTasks) break;
+            taskType = strings[1];
+            if (taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
         }
     }
 
@@ -32,13 +37,11 @@ public class Loader {
      *
      * @param list           - данные из файла-хранилища
      * @param historyManager - экземпляр класса менеджера историй
-     * @param tasks          - хранилище задач в оперативной памяти
      */
-    public void loadHistoryFromStorage(List<String[]> list, HistoryManager historyManager,
-                                       HashMap<Integer, Task> tasks) {
+    public void loadHistoryFromStorage(List<String[]> list, HistoryManager historyManager) {
         String[] historyFromStorage = list.get(list.size() - 1);
         for (String taskId : historyFromStorage) {
-            historyManager.addHistory(tasks.get(Integer.parseInt(taskId)));
+            historyManager.addHistory(Integer.parseInt(taskId));
         }
     }
 
@@ -51,8 +54,11 @@ public class Loader {
     public List<String[]> getTasksFromDataFile(List<String> list) {
         List<String[]> dataSeparated = new ArrayList<>();
         for (int i = 1; i < list.size(); i++) {
+            boolean isEndOfTasks = list.get(i).isBlank();
+            if (isEndOfTasks) break;
             dataSeparated.add(list.get(i).split(","));
         }
+        dataSeparated.sort(comparator);
         return dataSeparated;
     }
 
@@ -90,4 +96,6 @@ public class Loader {
             ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus);
         }
     }
+
+    Comparator<String[]> comparator = Comparator.comparingInt(o -> Integer.parseInt(o[0]));
 }

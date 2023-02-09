@@ -41,6 +41,6 @@ public class Subtask extends Task {
         return "\n №" + getTaskIdNumber() + ". Название подзадачи: " + getTaskTitle() +
                 ". Описание подзадачи: " + getTaskDescription() +
                 ". эпик задачи " + getEpicId() +
-                ". Статус подзадачи: " + getTaskStatus();
+                ". Статус подзадачи: " + getTaskStatus() + "\n";
     }
 }

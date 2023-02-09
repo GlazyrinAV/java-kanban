@@ -1,7 +1,6 @@
 package Manager;
 
 import History.HistoryBuffer;
-import Model.Task;
 
 import java.util.Collection;
 
@@ -14,15 +13,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void addHistory(Task task) {
-        if (task != null) {
-            if (historyBuffer.isPresentInHistory(task) && historyBuffer.getHistoryListFromBuffer().size() != 1) {
-                removeHistory(task.getTaskIdNumber());
-                historyBuffer.addLinkToLastNode(task);
-            } else {
-                historyBuffer.addLinkToLastNode(task);
-            }
+    public void addHistory(int id) {
+        if (historyBuffer.isPresentInHistory(id) && historyBuffer.getHistoryListFromBuffer().size() != 1) {
+            removeHistory(id);
+            historyBuffer.addLinkToLastNode(id);
+        } else {
+            historyBuffer.addLinkToLastNode(id);
         }
+
     }
 
     @Override
@@ -32,7 +30,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public Collection<Task> getHistory() {
+    public Collection<Integer> getHistory() {
         return historyBuffer.getHistoryListFromBuffer();
     }
 }

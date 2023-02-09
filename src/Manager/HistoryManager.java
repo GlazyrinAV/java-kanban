@@ -1,15 +1,13 @@
 package Manager;
 
-import Model.Task;
-
 import java.util.Collection;
 
 public interface HistoryManager {
     /**
      * Добавляет последнюю вызванную задачу в историю
-     * @param task - последняя вызванная такска
+     * @param id - номер просмотренного таска
      */
-    void addHistory(Task task);
+    void addHistory(int id);
 
     /**
      * Удаляет задачу из истории
@@ -21,5 +19,5 @@ public interface HistoryManager {
      * Метод получения истории о последних вызванных тасках
      * @return - возвращает лист с последними вызванными тасками
      */
-    Collection<Task> getHistory();
+    Collection<Integer> getHistory();
 }
