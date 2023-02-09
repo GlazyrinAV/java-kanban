@@ -87,6 +87,7 @@ public class Main {
         System.out.println(managers.getAllTasks().values());
         var managers2 = Managers.getWithAutosave();
         System.out.println("--Перезапуск системы");
+        managers2.newSimpleTask("newSimple", "JustSimple");
         System.out.println(managers2.getAllTasks().values());
     }
 }

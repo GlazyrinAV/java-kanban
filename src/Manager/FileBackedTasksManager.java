@@ -6,7 +6,6 @@ import Utils.Writer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -110,7 +109,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void loadTaskFromStorage(List<String[]> list) {
-        list.sort(new ListComparator());
         String taskType;
         for (String[] line : list) {
             taskType = line[1];
@@ -173,11 +171,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId));
             ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus);
         }
-    }
-}
-
-class ListComparator implements Comparator<String[]> {
-    public int compare(String[] o1, String[] o2) {
-        return Integer.parseInt(o1[0]) - Integer.parseInt(o2[0]);
     }
 }

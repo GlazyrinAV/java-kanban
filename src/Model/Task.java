@@ -58,6 +58,7 @@ public abstract class Task {
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
         this.taskStatus = taskStatus;
+        idSequence = taskIdNumber + 1;
     }
 
     public String getTaskTitle() {
