@@ -73,9 +73,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         dataToBeSaved.add(history.toString());
         try {
-            Writer writer = new Writer();
-            writer.fileChecker();
-            writer.writeDataToFile(dataToBeSaved);
+            new Writer().writeDataToFile(dataToBeSaved);
         } catch (RuntimeException | IOException e) {
             throw new ManagerSaveException("Ошибка при записи данных в файл.");
         }

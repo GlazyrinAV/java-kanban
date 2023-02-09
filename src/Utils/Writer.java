@@ -11,6 +11,7 @@ public class Writer {
     private final Path dataFile = Path.of("./Resources/Data.csv");
 
     public void writeDataToFile(List<String> list) throws IOException {
+        fileChecker();
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {
             bufferedWriter.write("id,type,name,status,description,epic\n");
         } catch (IOException e) {
