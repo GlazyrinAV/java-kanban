@@ -11,22 +11,27 @@ public class Writer {
     private final Path dataFile = Path.of("./Resources/Data.csv");
 
     public void writeDataToFile(List<String> list) throws IOException {
-        if (Files.exists(dataFile)) {
-            Files.delete(dataFile);
-        }
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {
-            bufferedWriter.write("id,type,name,status,description,epic");
-            bufferedWriter.write("\n");
+            bufferedWriter.write("id,type,name,status,description,epic\n");
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при записи данных в файл.");
         }
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile(), true))) {
             for (String line : list) {
                 bufferedWriter.write(line);
-                bufferedWriter.write("\n");
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при записи данных в файл.");
+        }
+    }
+
+    public void fileChecker() throws ManagerSaveException {
+        if (Files.exists(dataFile)) {
+            try {
+                Files.delete(dataFile);
+            } catch (IOException e) {
+                throw new ManagerSaveException("Ошибка при удалении предыдущего файла с данными.");
+            }
         }
     }
 

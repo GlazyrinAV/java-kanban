@@ -8,7 +8,7 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final InMemoryHistoryManager historyManager;
+    protected final InMemoryHistoryManager historyManager;
 
     /**
      * Конструктор менеджера тасков, в который необходимо передавать объект менеджер историй просмотра

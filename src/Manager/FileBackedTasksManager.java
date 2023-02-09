@@ -60,14 +60,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (Task task : getAllTasks().values()) {
             dataToBeSaved.add(taskToString(task));
         }
-        dataToBeSaved.add("");
+        dataToBeSaved.add("\n");
         StringJoiner history = new StringJoiner(",");
-        for (Task task : getHistory()) {
+        for (Task task : historyManager.getHistory()) {
             history.add(String.valueOf(task.getTaskIdNumber()));
         }
         dataToBeSaved.add(history.toString());
         try {
-            new Writer().writeDataToFile(dataToBeSaved);
+            Writer writer = new Writer();
+            writer.fileChecker();
+            writer.writeDataToFile(dataToBeSaved);
         } catch (RuntimeException | IOException e) {
             throw new ManagerSaveException("Ошибка при записи данных в файл.");
         }
@@ -80,7 +82,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerLoadException("Ошибка при сохранении данных в файл.");
         }
-        if (!dataFromStorage.isEmpty()) loadTaskFromStorage(getTasksFromDataFile(dataFromStorage));
+        if (!dataFromStorage.isEmpty()) {
+            loadTaskFromStorage(getTasksFromDataFile(dataFromStorage));
+            loadHistoryFromStorage(getHistoryFromDataFile(dataFromStorage));
+        }
     }
 
     private String taskToString(Task task) {
@@ -91,7 +96,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         taskInString.add(String.valueOf(task.getTaskStatus()));
         taskInString.add(task.getTaskDescription());
         taskInString.add(getEpicIdOfSubtask(task));
-        return String.valueOf(taskInString);
+        return String.valueOf(taskInString) + "\n";
     }
 
     private String getTaskTypeInString(Task task) {
@@ -119,6 +124,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (int i = 0; i < list.size() - 2; i++) {
             taskType = list.get(i)[1];
             if (taskType.equals("SUBTASK")) createTaskFromDataFile(list.get(i));
+        }
+    }
+
+    private void loadHistoryFromStorage(List<String[]> list) {
+        String[] historyFromStorage = list.get(list.size() - 1);
+        for (String taskId : historyFromStorage) {
+            historyManager.addHistory(tasks.get(Integer.parseInt(taskId)));
         }
     }
 
