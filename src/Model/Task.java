@@ -45,6 +45,21 @@ public abstract class Task {
         setTaskStatus(taskStatus);
     }
 
+    /**
+     * Конструктор для загрузки задач из файла данных
+     *
+     * @param taskTitle       - название задачи
+     * @param taskDescription - описание задачи
+     * @param taskStatus      - статус задачи
+     * @param taskIdNumber    - номер задачи
+     */
+    public Task(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber) {
+        this.taskTitle = taskTitle;
+        this.taskDescription = taskDescription;
+        this.taskIdNumber = taskIdNumber;
+        this.taskStatus = taskStatus;
+    }
+
     public String getTaskTitle() {
         return taskTitle;
     }

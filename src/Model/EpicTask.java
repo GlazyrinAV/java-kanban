@@ -25,6 +25,10 @@ public class EpicTask extends Task {
         updateStatus();
     }
 
+    public EpicTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber) {
+        super(taskTitle, taskDescription, taskStatus, taskIdNumber);
+    }
+
     public void addSubTask(int subTaskId, TaskStatus status) {
         subTasks.put(subTaskId, status);
         updateStatus();

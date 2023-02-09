@@ -18,21 +18,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void newSimpleTask(String taskTitle, String taskDescription) {
-        super.newSimpleTask(taskTitle, taskDescription);
+    public Task newSimpleTask(String taskTitle, String taskDescription) {
+        Task task = super.newSimpleTask(taskTitle, taskDescription);
         save();
+        return task;
     }
 
     @Override
-    public void newEpic(String taskTitle, String taskDescription) {
-        super.newEpic(taskTitle, taskDescription);
+    public Task newEpic(String taskTitle, String taskDescription) {
+        Task task = super.newEpic(taskTitle, taskDescription);
         save();
+        return task;
     }
 
     @Override
-    public void newSubtask(String taskTitle, String taskDescription, int epicId) {
-        super.newSubtask(taskTitle, taskDescription, epicId);
+    public Task newSubtask(String taskTitle, String taskDescription, int epicId) {
+        Task task = super.newSubtask(taskTitle, taskDescription, epicId);
         save();
+        return task;
     }
 
     @Override
@@ -80,7 +83,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private String taskToString(Task task) {
-
         StringJoiner taskInString = new StringJoiner(",");
         taskInString.add(String.valueOf(task.getTaskIdNumber()));
         taskInString.add(getTaskTypeInString(task));
@@ -89,14 +91,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         taskInString.add(task.getTaskDescription());
         taskInString.add(getEpicIdOfSubtask(task));
         return String.valueOf(taskInString);
-
-//        String id = String.valueOf(task.getTaskIdNumber());
-//        String taskType = getTaskTypeInString(task);
-//        String name = task.getTaskTitle();
-//        String status = String.valueOf(task.getTaskStatus());
-//        String description = task.getTaskDescription();
-//        String connectedIds = getEpicIdOfSubtask(task);
-//        return String.join(taskType, id, name, status, description, connectedIds);
     }
 
     private String getTaskTypeInString(Task task) {
@@ -117,24 +111,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void loadTaskFromStorage(List<String[]> list) {
         list.sort(new ListComparator());
+        String taskType;
         for (String[] line : list) {
-            boolean isTask = line[1].equals("TASK");
-            boolean isEpic = line[1].equals("EPIC");
-            boolean isSubTask = line[1].equals("SUBTASK");
-            String taskTitle = line[2];
-            String taskStatus = line[3];
-            String taskDescription = line[4];
-            if (isTask) {
-                super.newSimpleTask(taskTitle, taskDescription);
-                super.updateTask(getTaskIdByName(taskTitle), TaskStatus.valueOf(taskStatus));
-            }
-            if (isEpic) {
-                super.newEpic(taskTitle, taskDescription);
-            }
-            if (isSubTask) {
-                int subtaskEpicId = Integer.parseInt(line[5]);
-                super.newSubtask(taskTitle, taskDescription, subtaskEpicId);
-            }
+            taskType = line[1];
+            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(line);
+        }
+        for (String[] line : list) {
+            taskType = line[1];
+            if (taskType.equals("SUBTASK")) createTaskFromDataFile(line);
         }
     }
 
@@ -151,7 +135,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         List<String[]> dataSeparated = new ArrayList<>();
         boolean isStartOfHistory = false;
         for (int i = 1; i < list.size(); i++) {
-            if (list.get(i).isBlank()) isStartOfHistory=true;
+            if (list.get(i).isBlank()) isStartOfHistory = true;
             while (!isStartOfHistory) {
                 continue;
             }
@@ -171,6 +155,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         public ManagerLoadException(final String message) {
             super(message);
+        }
+    }
+
+    private void createTaskFromDataFile(String[] line) {
+        String taskTitle = line[2];
+        TaskStatus taskStatus = TaskStatus.valueOf(line[3]);
+        String taskDescription = line[4];
+        int taskId = Integer.parseInt(line[0]);
+        boolean isTask = line[1].equals("TASK");
+        boolean isEpic = line[1].equals("EPIC");
+        boolean isSubTask = line[1].equals("SUBTASK");
+        if (isTask) tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId));
+        else if (isEpic) tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId));
+        else if (isSubTask) {
+            int subtaskEpicId = Integer.parseInt(line[5]);
+            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId));
+            ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus);
         }
     }
 }

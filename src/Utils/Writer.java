@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Writer {
-    private final Path dataFile = Path.of("C:\\Users\\alexe\\dev\\kanban\\out\\production\\java-kanban\\Resources\\Data.csv");
+    private final Path dataFile = Path.of("C:\\Users\\alexg\\dev\\kanban\\out\\production\\java-kanban\\Resources\\Data.csv");
 
     public void writeDataToFile(List<String> list) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {
@@ -25,10 +25,11 @@ public class Writer {
             throw new ManagerSaveException("Ошибка при записи данных в файл.");
         }
     }
-}
 
-class ManagerSaveException extends IOException {
-    public ManagerSaveException(final String message) {
-        super(message);
+    static class ManagerSaveException extends IOException {
+        public ManagerSaveException(final String message) {
+            super(message);
+        }
     }
 }
+
