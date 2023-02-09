@@ -55,6 +55,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
+    @Override
+    public void clearAllTasks() {
+        super.clearAllTasks();
+        save();
+    }
+
     private void save() throws ManagerSaveException {
         List<String> dataToBeSaved = new ArrayList<>();
         for (Task task : getAllTasks().values()) {
@@ -96,7 +102,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         taskInString.add(String.valueOf(task.getTaskStatus()));
         taskInString.add(task.getTaskDescription());
         taskInString.add(getEpicIdOfSubtask(task));
-        return String.valueOf(taskInString) + "\n";
+        return taskInString + "\n";
     }
 
     private String getTaskTypeInString(Task task) {

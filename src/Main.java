@@ -80,12 +80,6 @@ public class Main {
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getAllTasks().values());
 
-//        System.out.println("-- Очистка всех задач");
-//        managers.clearAllTasks();
-//
-//        System.out.println("-- Печать всех задач");
-//        System.out.println(managers.getAllTasks().values());
-
         var managers2 = Managers.getWithAutosave();
         System.out.println("--Перезапуск системы");
         System.out.println("-- История запросов");
@@ -95,6 +89,15 @@ public class Main {
         managers2.newSimpleTask("newSimple", "JustSimple");
         System.out.println(managers2.getAllTasks().values());
         managers2.getTaskById(managers2.getTaskIdByName("newSimple"));
+        System.out.println("-- История запросов");
+        for (Task task : managers2.getHistory()) {
+            System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
+        }
+
+        System.out.println("-- Очистка всех задач");
+        managers2.clearAllTasks();
+        System.out.println("-- Печать всех задач");
+        System.out.println(managers2.getAllTasks().values());
         System.out.println("-- История запросов");
         for (Task task : managers2.getHistory()) {
             System.out.println(task.getTaskIdNumber() + " " + task.getTaskTitle());
