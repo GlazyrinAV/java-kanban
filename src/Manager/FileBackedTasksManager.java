@@ -1,7 +1,10 @@
 package Manager;
 
-import Model.*;
+import Model.Task;
+import Model.TaskStatus;
+import Utils.Loader;
 import Utils.Reader;
+import Utils.SupportFunctions;
 import Utils.Writer;
 
 import java.io.IOException;
@@ -63,8 +66,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() throws ManagerSaveException {
         List<String> dataToBeSaved = new ArrayList<>();
+        SupportFunctions supportFunctions = new SupportFunctions();
         for (Task task : getAllTasks().values()) {
-            dataToBeSaved.add(taskToString(task));
+            dataToBeSaved.add(supportFunctions.taskToString(task));
         }
         dataToBeSaved.add("\n");
         StringJoiner history = new StringJoiner(",");
@@ -87,69 +91,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new ManagerLoadException("Ошибка при сохранении данных в файл.");
         }
         if (!dataFromStorage.isEmpty()) {
-            loadTaskFromStorage(getTasksFromDataFile(dataFromStorage));
-            loadHistoryFromStorage(getHistoryFromDataFile(dataFromStorage));
+            Loader loader = new Loader();
+            loader.loadTaskFromStorage(loader.getTasksFromDataFile(dataFromStorage), tasks);
+            loader.loadHistoryFromStorage(loader.getHistoryFromDataFile(dataFromStorage), historyManager, tasks);
         }
-    }
-
-    private String taskToString(Task task) {
-        StringJoiner taskInString = new StringJoiner(",");
-        taskInString.add(String.valueOf(task.getTaskIdNumber()));
-        taskInString.add(getTaskTypeInString(task));
-        taskInString.add(task.getTaskTitle());
-        taskInString.add(String.valueOf(task.getTaskStatus()));
-        taskInString.add(task.getTaskDescription());
-        taskInString.add(getEpicIdOfSubtask(task));
-        return taskInString + "\n";
-    }
-
-    private String getTaskTypeInString(Task task) {
-        if (task instanceof EpicTask) {
-            return TaskType.EPIC.toString();
-        } else if (task instanceof Subtask) {
-            return TaskType.SUBTASK.toString();
-        }
-        return TaskType.TASK.toString();
-    }
-
-    private String getEpicIdOfSubtask(Task task) {
-        if (task instanceof Subtask) {
-            return String.valueOf(((Subtask) task).getEpicId());
-        }
-        return " ";
-    }
-
-    private void loadTaskFromStorage(List<String[]> list) {
-        String taskType;
-        for (int i = 0; i < list.size() - 2; i++) {
-            taskType = list.get(i)[1];
-            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(list.get(i));
-        }
-        for (int i = 0; i < list.size() - 2; i++) {
-            taskType = list.get(i)[1];
-            if (taskType.equals("SUBTASK")) createTaskFromDataFile(list.get(i));
-        }
-    }
-
-    private void loadHistoryFromStorage(List<String[]> list) {
-        String[] historyFromStorage = list.get(list.size() - 1);
-        for (String taskId : historyFromStorage) {
-            historyManager.addHistory(tasks.get(Integer.parseInt(taskId)));
-        }
-    }
-
-    private List<String[]> getTasksFromDataFile(List<String> list) {
-        List<String[]> dataSeparated = new ArrayList<>();
-        for (int i = 1; i < list.size(); i++) {
-            dataSeparated.add(list.get(i).split(","));
-        }
-        return dataSeparated;
-    }
-
-    private List<String[]> getHistoryFromDataFile(List<String> list) {
-        List<String[]> dataSeparated = new ArrayList<>();
-        dataSeparated.add(list.get(list.size() - 1).split(","));
-        return dataSeparated;
     }
 
     static class ManagerSaveException extends RuntimeException {
@@ -163,23 +108,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         public ManagerLoadException(final String message) {
             super(message);
-        }
-    }
-
-    private void createTaskFromDataFile(String[] line) {
-        String taskTitle = line[2];
-        TaskStatus taskStatus = TaskStatus.valueOf(line[3]);
-        String taskDescription = line[4];
-        int taskId = Integer.parseInt(line[0]);
-        boolean isTask = line[1].equals("TASK");
-        boolean isEpic = line[1].equals("EPIC");
-        boolean isSubTask = line[1].equals("SUBTASK");
-        if (isTask) tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId));
-        else if (isEpic) tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId));
-        else if (isSubTask) {
-            int subtaskEpicId = Integer.parseInt(line[5]);
-            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId));
-            ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus);
         }
     }
 }
