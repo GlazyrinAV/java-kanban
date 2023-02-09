@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Writer {
-    private final Path dataFile = Path.of("C:\\Users\\alexg\\dev\\kanban\\out\\production\\java-kanban\\Resources\\Data.csv");
+    private final Path dataFile = Path.of("./Resources/Data.csv");
 
     public void writeDataToFile(List<String> list) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {

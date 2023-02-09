@@ -11,8 +11,8 @@ import java.util.List;
 
 public class Reader {
 
-    private final Path dataDir = Path.of("C:\\Users\\alexg\\dev\\kanban\\out\\production\\java-kanban\\Resources");
-    private final Path dataFile = Path.of("C:\\Users\\alexg\\dev\\kanban\\out\\production\\java-kanban\\Resources\\Data.csv");
+    private final Path dataDir = Path.of("./Resources");
+    private final Path dataFile = Path.of("./Resources/Data.csv");
 
     public List<String> readDataFromFile() throws IOException {
         List<String> dataFromFile = new ArrayList<>();
