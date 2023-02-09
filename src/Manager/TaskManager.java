@@ -15,7 +15,7 @@ public interface TaskManager {
      * @param taskTitle       - название задачи
      * @param taskDescription - описание задачи
      */
-    Task newSimpleTask(String taskTitle, String taskDescription);
+    void newSimpleTask(String taskTitle, String taskDescription);
 
     /**
      * Создание нового эпика
@@ -23,7 +23,7 @@ public interface TaskManager {
      * @param taskTitle       - название эпика
      * @param taskDescription - описание эпика
      */
-    Task newEpic(String taskTitle, String taskDescription);
+    void newEpic(String taskTitle, String taskDescription);
 
     /**
      * Создание подзадачи для эпика
@@ -32,7 +32,7 @@ public interface TaskManager {
      * @param taskTitle       - название подзадачи
      * @param taskDescription - описание подзадачи
      */
-    Task newSubtask(String taskTitle, String taskDescription, int epicId);
+    void newSubtask(String taskTitle, String taskDescription, int epicId);
 
     /**
      * Обновление простой задачи и подзадачи эпика по объявленному номеру с возможностью установить новый статус

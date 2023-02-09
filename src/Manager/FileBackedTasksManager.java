@@ -20,24 +20,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task newSimpleTask(String taskTitle, String taskDescription) {
-        Task task = super.newSimpleTask(taskTitle, taskDescription);
+    public void newSimpleTask(String taskTitle, String taskDescription) {
+        super.newSimpleTask(taskTitle, taskDescription);
         save();
-        return task;
     }
 
     @Override
-    public Task newEpic(String taskTitle, String taskDescription) {
-        Task task = super.newEpic(taskTitle, taskDescription);
+    public void newEpic(String taskTitle, String taskDescription) {
+        super.newEpic(taskTitle, taskDescription);
         save();
-        return task;
     }
 
     @Override
-    public Task newSubtask(String taskTitle, String taskDescription, int epicId) {
-        Task task = super.newSubtask(taskTitle, taskDescription, epicId);
+    public void newSubtask(String taskTitle, String taskDescription, int epicId) {
+        super.newSubtask(taskTitle, taskDescription, epicId);
         save();
-        return task;
     }
 
     @Override

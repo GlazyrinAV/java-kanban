@@ -19,28 +19,24 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task newSimpleTask(String taskTitle, String taskDescription) {
+    public void newSimpleTask(String taskTitle, String taskDescription) {
         SimpleTask newTask = new SimpleTask(taskTitle, taskDescription);
         tasks.put(newTask.getTaskIdNumber(), newTask);
-        return newTask;
     }
 
     @Override
-    public Task newEpic(String taskTitle, String taskDescription) {
+    public void newEpic(String taskTitle, String taskDescription) {
         EpicTask newEpic = new EpicTask(taskTitle, taskDescription);
         tasks.put(newEpic.getTaskIdNumber(), newEpic);
-        return newEpic;
     }
 
     @Override
-    public Task newSubtask(String taskTitle, String taskDescription, int epicId) {
+    public void newSubtask(String taskTitle, String taskDescription, int epicId) {
         if (tasks.containsKey(epicId) && isEpic(epicId)) {
             Subtask newSubtask = new Subtask(taskTitle, taskDescription, epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
             getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus());
-            return newSubtask;
         }
-        return null;
     }
 
     @Override
