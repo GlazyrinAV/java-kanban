@@ -15,18 +15,6 @@ public class Loader {
      */
     public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks) throws NoEpicForSubTaskException {
         String taskType;
-//        for (String[] strings : list) {
-//            boolean isEndOfTasks = strings[0].equals(" ");
-//            if (isEndOfTasks) break;
-//            taskType = strings[1];
-//            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
-//        }
-//        for (String[] strings : list) {
-//            boolean isEndOfTasks = strings[0].equals(" ");
-//            if (isEndOfTasks) break;
-//            taskType = strings[1];
-//            if (taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
-//        }
         for (String[] strings : list) {
             boolean isEndOfTasks = strings[0].equals(" ");
             if (isEndOfTasks) break;
@@ -69,6 +57,7 @@ public class Loader {
 
     /**
      * Выделяет блок информации о задачах и разделяет строчные данные на элементы массива
+     *
      * @param list - выгруженные данные из файла-хранилища
      * @return - возвращает лист с массивами данных. Каждая строка содержит массив с информацией об одной задаче
      */
@@ -85,6 +74,7 @@ public class Loader {
 
     /**
      * Выделяет блок информации об истории просмотров и разделяет данные на элементы массива
+     *
      * @param list - выгруженные данные из файла-хранилища
      * @return - возращает массив, элементы которого являются ID просмотренных задач
      */
@@ -102,6 +92,7 @@ public class Loader {
 
     /**
      * Преобразует данные из строчного массива в объект класса Task
+     *
      * @param line  - строчный массив с данными по одной задаче
      * @param tasks - хранилище задач в оперативной памяти
      */
