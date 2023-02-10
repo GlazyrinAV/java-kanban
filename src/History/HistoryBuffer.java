@@ -16,6 +16,7 @@ public class HistoryBuffer {
 
     /**
      * Удаление задачи по его номеру из промежуточного хранилища задач, которое обеспечивает работу связанного списка
+     *
      * @param id - номер задачи к удалению
      */
     public void removeNodeFromHistoryBuffer(int id) {
@@ -34,6 +35,7 @@ public class HistoryBuffer {
 
     /**
      * добавление просмотренной задачи в связанный список
+     *
      * @param id - номер задачи
      */
     public void addLinkToLastNode(int id) {
@@ -47,13 +49,19 @@ public class HistoryBuffer {
 
     /**
      * удаление просмотренной задачи из связанного списка
+     *
      * @param id - неомер задачи для удаления
      */
     public void removeLinksToNode(int id) {
         Node<Integer> node = bufferHistoryMap.get(id);
         if (node.equals(head)) {
-            node.getNext().setPrev(null);
-            head = node.getNext();
+            if (node.getNext() == null) {
+                head = null;
+                tail = null;
+            } else {
+                node.getNext().setPrev(null);
+                head = node.getNext();
+            }
         } else if (node.equals(tail)) {
             node.getPrev().setNext(null);
             tail = node.getPrev();

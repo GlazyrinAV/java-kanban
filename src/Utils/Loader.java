@@ -3,16 +3,12 @@ package Utils;
 import Manager.HistoryManager;
 import Model.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Loader {
 
     /**
      * Воссоздает задачи на основании данных из файла-хранилища
-     *
      * @param list  - данные из файла-хранилища
      * @param tasks - хранилище задач в оперативной памяти
      */
@@ -34,20 +30,20 @@ public class Loader {
 
     /**
      * Воссоздает историю просмотров на основании данных из файла-хранилища
-     *
      * @param list           - данные из файла-хранилища
      * @param historyManager - экземпляр класса менеджера историй
      */
     public void loadHistoryFromStorage(List<String[]> list, HistoryManager historyManager) {
-        String[] historyFromStorage = list.get(list.size() - 1);
-        for (String taskId : historyFromStorage) {
-            historyManager.addHistory(Integer.parseInt(taskId));
+        if (!list.isEmpty()) {
+            String[] historyFromStorage = list.get(list.size() - 1);
+            for (String taskId : historyFromStorage) {
+                historyManager.addHistory(Integer.parseInt(taskId));
+            }
         }
     }
 
     /**
      * Выделяет блок информации о задачах и разделяет строчные данные на элементы массива
-     *
      * @param list - выгруженные данные из файла-хранилища
      * @return - возвращает лист с массивами данных. Каждая строка содержит массив с информацией об одной задаче
      */
@@ -68,15 +64,20 @@ public class Loader {
      * @param list - выгруженные данные из файла-хранилища
      * @return - возращает массив, элементы которого являются ID просмотренных задач
      */
-    public List<String[]> getHistoryFromDataFile(List<String> list) {
+    public List<String[]> getHistoryFromDataFile(List<String> list) throws NoHistoryDataInStorageException {
         List<String[]> dataSeparated = new ArrayList<>();
-        dataSeparated.add(list.get(list.size() - 1).split(","));
-        return dataSeparated;
+        boolean isErrorInDataFile = !list.get(list.size() - 2).isBlank();
+        try {
+            if (isErrorInDataFile) throw new NoHistoryDataInStorageException();
+            dataSeparated.add(list.get(list.size() - 1).split(","));
+            return dataSeparated;
+        } catch (NoHistoryDataInStorageException e) {
+            return Collections.emptyList();
+        }
     }
 
     /**
      * Преобразует данные из строчного массива в объект класса Task
-     *
      * @param line  - строчный массив с данными по одной задаче
      * @param tasks - хранилище задач в оперативной памяти
      */
@@ -98,4 +99,10 @@ public class Loader {
     }
 
     Comparator<String[]> comparator = Comparator.comparingInt(o -> Integer.parseInt(o[0]));
+
+    static public class NoHistoryDataInStorageException extends RuntimeException {
+        public NoHistoryDataInStorageException() {
+            System.out.println("Информация об истории просмотров не найдена. Данные не загружены.");
+        }
+    }
 }

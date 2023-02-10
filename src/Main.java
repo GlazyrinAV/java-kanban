@@ -4,6 +4,10 @@ import Model.TaskStatus;
 public class Main {
     public static void main(String[] args) {
         var managers = Managers.getWithAutosave();
+        System.out.println("-- История запросов");
+        for (Integer taskId : managers.getHistory()) {
+            System.out.println(taskId);
+        }
         System.out.println("-- Получение списка всех задач");
         System.out.println(managers.getAllTasks().values());
         System.out.println();
@@ -21,7 +25,7 @@ public class Main {
         System.out.println();
 
         System.out.println("-- Поиск задачи номер 3 и номер 9");
-        if (managers.getTaskById(3) != null)
+        if (managers.getTaskIdByName("Task 1") != null)
             System.out.println("Задача найдена");
         else System.out.println("null");
         if (managers.getTaskById(9) != null)

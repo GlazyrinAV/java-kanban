@@ -14,7 +14,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void addHistory(int id) {
-        if (historyBuffer.isPresentInHistory(id) && historyBuffer.getHistoryListFromBuffer().size() != 1) {
+        if (historyBuffer.isPresentInHistory(id)) {
             removeHistory(id);
             historyBuffer.addLinkToLastNode(id);
         } else {

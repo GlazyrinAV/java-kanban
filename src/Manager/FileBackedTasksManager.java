@@ -89,7 +89,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      *
      * @throws ManagerLoadException - ошибка при загрузке данных
      */
-    private void read() throws ManagerLoadException {
+    private void read() throws ManagerLoadException, Loader.NoHistoryDataInStorageException {
         List<String> dataFromStorage;
         try {
             dataFromStorage = new Reader().readDataFromFile();
