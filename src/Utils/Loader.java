@@ -1,5 +1,6 @@
 package Utils;
 
+import Exceptions.UtilsExceptions;
 import Manager.HistoryManager;
 import Model.*;
 
@@ -13,7 +14,8 @@ public class Loader {
      * @param list  - данные из файла-хранилища
      * @param tasks - хранилище задач в оперативной памяти
      */
-    public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks) throws NoEpicForSubTaskException {
+    public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks)
+            throws UtilsExceptions.NoEpicForSubTaskException {
         String taskType;
         for (String[] strings : list) {
             boolean isEndOfTasks = strings[0].equals(" ");
@@ -23,20 +25,21 @@ public class Loader {
             try {
                 if (taskType.equals("SUBTASK") && (tasks.get(Integer.parseInt(strings[5])) == null)) {
                     int epicId = Integer.parseInt(strings[5]);
-                    throw new NoEpicForSubTaskException(epicId);
+                    throw new UtilsExceptions.NoEpicForSubTaskException(epicId);
                 }
                 if (tasks.get(taskId) == null) createTaskFromDataFile(strings, tasks);
-            } catch (NoEpicForSubTaskException e) {
-                System.out.println("Для подзадачи " + taskId + " не найден эпик " + e.epicId +
+            } catch (UtilsExceptions.NoEpicForSubTaskException e) {
+                int epicId = UtilsExceptions.NoEpicForSubTaskException.getEpicId();
+                System.out.println("Для подзадачи " + taskId + " не найден эпик " + epicId +
                         ". Предпринимается попытка найти данный эпик.");
                 for (String[] epic : list) {
-                    if (Integer.parseInt(epic[0]) == e.epicId) {
+                    if (Integer.parseInt(epic[0]) == epicId) {
                         createTaskFromDataFile(epic, tasks);
-                        System.out.println("Эпик " + e.epicId + " был найден и добавлен.");
+                        System.out.println("Эпик " + epicId + " был найден и добавлен.");
                         return;
                     }
                 }
-                System.out.println("Не удалось найти эпик " + e.epicId + ". Подзадача " + taskId + " не добавлена.");
+                System.out.println("Не удалось найти эпик " + epicId + ". Подзадача " + taskId + " не добавлена.");
             }
         }
     }
@@ -78,14 +81,15 @@ public class Loader {
      * @param list - выгруженные данные из файла-хранилища
      * @return - возращает массив, элементы которого являются ID просмотренных задач
      */
-    public List<String[]> getHistoryFromDataFile(List<String> list) throws NoHistoryDataInStorageException {
+    public List<String[]> getHistoryFromDataFile(List<String> list)
+            throws UtilsExceptions.NoHistoryDataInStorageException {
         List<String[]> dataSeparated = new ArrayList<>();
         boolean isErrorInDataFile = !list.get(list.size() - 2).isBlank();
         try {
-            if (isErrorInDataFile) throw new NoHistoryDataInStorageException();
+            if (isErrorInDataFile) throw new UtilsExceptions.NoHistoryDataInStorageException();
             dataSeparated.add(list.get(list.size() - 1).split(","));
             return dataSeparated;
-        } catch (NoHistoryDataInStorageException e) {
+        } catch (UtilsExceptions.NoHistoryDataInStorageException e) {
             return Collections.emptyList();
         }
     }
@@ -114,18 +118,4 @@ public class Loader {
     }
 
     Comparator<String[]> comparator = Comparator.comparingInt(o -> Integer.parseInt(o[0]));
-
-    static public class NoHistoryDataInStorageException extends RuntimeException {
-        public NoHistoryDataInStorageException() {
-            System.out.println("Информация об истории просмотров не найдена. Данные не загружены.");
-        }
-    }
-
-    private static class NoEpicForSubTaskException extends RuntimeException {
-        int epicId;
-
-        public NoEpicForSubTaskException(int epicId) {
-            this.epicId = epicId;
-        }
-    }
 }

@@ -1,5 +1,7 @@
 package Utils;
 
+import Exceptions.UtilsExceptions;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +14,6 @@ public class Writer {
 
     /**
      * Записывает данные в файл-хранилище
-     *
      * @param list - свод данных для записи в файл-хранилище
      * @throws IOException - ошибка при записи данных
      */
@@ -20,37 +21,26 @@ public class Writer {
         fileChecker();
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {
             bufferedWriter.write("id,type,name,status,description,epic\n");
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при записи данных в файл.");
         }
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile(), true))) {
             for (String line : list) {
                 bufferedWriter.write(line);
             }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при записи данных в файл.");
         }
     }
 
     /**
      * Проверяет наличие предыдущего файла и его удаление при наличии
      *
-     * @throws ManagerSaveException - ошибка при удалении файла
+     * @throws UtilsExceptions.ManagerFileDeleteException - ошибка при удалении файла
      */
-    public void fileChecker() throws ManagerSaveException {
+    public void fileChecker() throws UtilsExceptions.ManagerFileDeleteException {
         if (Files.exists(dataFile)) {
             try {
                 Files.delete(dataFile);
             } catch (IOException e) {
-                throw new ManagerSaveException("Ошибка при удалении предыдущего файла с данными.");
+                throw new UtilsExceptions.ManagerFileDeleteException("Ошибка при удалении предыдущего файла с данными.");
             }
         }
     }
-
-    static class ManagerSaveException extends IOException {
-        public ManagerSaveException(final String message) {
-            super(message);
-        }
-    }
 }
-

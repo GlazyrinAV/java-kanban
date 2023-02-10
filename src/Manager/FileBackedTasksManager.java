@@ -1,5 +1,7 @@
 package Manager;
 
+import Exceptions.ManagerExceptions;
+import Exceptions.UtilsExceptions;
 import Model.Task;
 import Model.TaskStatus;
 import Utils.Loader;
@@ -64,9 +66,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Сохраняет задачи и историю просмотров в файл-хранилище
      *
-     * @throws ManagerSaveException - ошибка при сохранении данных
+     * @throws ManagerExceptions.ManagerSaveException - ошибка при сохранении данных
      */
-    private void save() throws ManagerSaveException {
+    private void save() throws ManagerExceptions.ManagerSaveException {
         List<String> dataToBeSaved = new ArrayList<>();
         for (Task task : getAllTasks().values()) {
             dataToBeSaved.add(new SupportFunctions().taskToString(task));
@@ -79,41 +81,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         dataToBeSaved.add(history.toString());
         try {
             new Writer().writeDataToFile(dataToBeSaved);
-        } catch (RuntimeException | IOException e) {
-            throw new ManagerSaveException("Ошибка при записи данных в файл.");
+        } catch (IOException e) {
+            throw new ManagerExceptions.ManagerSaveException("Ошибка при записи данных в файл.");
         }
     }
 
     /**
      * Загружает задачи и историю просмотров из файла-хранилища
      *
-     * @throws ManagerLoadException - ошибка при загрузке данных
+     * @throws ManagerExceptions.ManagerLoadException - ошибка при загрузке данных
      */
-    private void read() throws ManagerLoadException, Loader.NoHistoryDataInStorageException {
+    private void read() throws ManagerExceptions.ManagerLoadException, UtilsExceptions.NoHistoryDataInStorageException {
         List<String> dataFromStorage;
         try {
             dataFromStorage = new Reader().readDataFromFile();
         } catch (IOException e) {
-            throw new ManagerLoadException("Ошибка при сохранении данных в файл.");
+            throw new ManagerExceptions.ManagerLoadException("Ошибка при сохранении данных в файл.");
         }
         if (!dataFromStorage.isEmpty()) {
             Loader loader = new Loader();
             loader.loadTaskFromStorage(loader.getTasksFromDataFile(dataFromStorage), tasks);
             loader.loadHistoryFromStorage(loader.getHistoryFromDataFile(dataFromStorage), historyManager);
-        }
-    }
-
-    static class ManagerSaveException extends RuntimeException {
-
-        public ManagerSaveException(final String message) {
-            super(message);
-        }
-    }
-
-    static class ManagerLoadException extends RuntimeException {
-
-        public ManagerLoadException(final String message) {
-            super(message);
         }
     }
 }
