@@ -1,7 +1,5 @@
 package Utils;
 
-import Exceptions.UtilsExceptions;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +12,7 @@ public class Writer {
 
     /**
      * Записывает данные в файл-хранилище
+     *
      * @param list - свод данных для записи в файл-хранилище
      * @throws IOException - ошибка при записи данных
      */
@@ -31,16 +30,10 @@ public class Writer {
 
     /**
      * Проверяет наличие предыдущего файла и его удаление при наличии
-     *
-     * @throws UtilsExceptions.ManagerFileDeleteException - ошибка при удалении файла
      */
-    public void fileChecker() throws UtilsExceptions.ManagerFileDeleteException {
+    public void fileChecker() throws IOException {
         if (Files.exists(dataFile)) {
-            try {
-                Files.delete(dataFile);
-            } catch (IOException e) {
-                throw new UtilsExceptions.ManagerFileDeleteException("Ошибка при удалении предыдущего файла с данными.");
-            }
+            Files.delete(dataFile);
         }
     }
 }

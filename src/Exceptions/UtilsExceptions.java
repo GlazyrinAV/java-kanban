@@ -1,15 +1,6 @@
 package Exceptions;
 
-import java.io.IOException;
-
 public class UtilsExceptions extends Exception {
-
-    public static class ManagerFileDeleteException extends IOException {
-        public ManagerFileDeleteException(final String message) {
-            super(message);
-        }
-    }
-
 
     static public class NoHistoryDataInStorageException extends RuntimeException {
         public NoHistoryDataInStorageException() {
