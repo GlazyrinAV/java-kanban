@@ -9,22 +9,47 @@ public class Loader {
 
     /**
      * Воссоздает задачи на основании данных из файла-хранилища
+     *
      * @param list  - данные из файла-хранилища
      * @param tasks - хранилище задач в оперативной памяти
      */
-    public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks) {
+    public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks) throws NoEpicForSubTaskException {
         String taskType;
+//        for (String[] strings : list) {
+//            boolean isEndOfTasks = strings[0].equals(" ");
+//            if (isEndOfTasks) break;
+//            taskType = strings[1];
+//            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
+//        }
+//        for (String[] strings : list) {
+//            boolean isEndOfTasks = strings[0].equals(" ");
+//            if (isEndOfTasks) break;
+//            taskType = strings[1];
+//            if (taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
+//        }
         for (String[] strings : list) {
             boolean isEndOfTasks = strings[0].equals(" ");
             if (isEndOfTasks) break;
+            int taskId = Integer.parseInt(strings[0]);
             taskType = strings[1];
-            if (!taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
-        }
-        for (String[] strings : list) {
-            boolean isEndOfTasks = strings[0].equals(" ");
-            if (isEndOfTasks) break;
-            taskType = strings[1];
-            if (taskType.equals("SUBTASK")) createTaskFromDataFile(strings, tasks);
+            try {
+                if (taskType.equals("SUBTASK") && (tasks.get(Integer.parseInt(strings[5])) == null)) {
+                    int epicId = Integer.parseInt(strings[5]);
+                    throw new NoEpicForSubTaskException(epicId);
+                }
+                if (tasks.get(taskId) == null) createTaskFromDataFile(strings, tasks);
+            } catch (NoEpicForSubTaskException e) {
+                System.out.println("Для подзадачи " + taskId + " не найден эпик " + e.epicId +
+                        ". Предпринимается попытка найти данный эпик.");
+                for (String[] epic : list) {
+                    if (Integer.parseInt(epic[0]) == e.epicId) {
+                        createTaskFromDataFile(epic, tasks);
+                        System.out.println("Эпик " + e.epicId + " был найден и добавлен.");
+                        return;
+                    }
+                }
+                System.out.println("Не удалось найти эпик " + e.epicId + ". Подзадача " + taskId + " не добавлена.");
+            }
         }
     }
 
@@ -60,7 +85,6 @@ public class Loader {
 
     /**
      * Выделяет блок информации об истории просмотров и разделяет данные на элементы массива
-     *
      * @param list - выгруженные данные из файла-хранилища
      * @return - возращает массив, элементы которого являются ID просмотренных задач
      */
@@ -103,6 +127,14 @@ public class Loader {
     static public class NoHistoryDataInStorageException extends RuntimeException {
         public NoHistoryDataInStorageException() {
             System.out.println("Информация об истории просмотров не найдена. Данные не загружены.");
+        }
+    }
+
+    private static class NoEpicForSubTaskException extends RuntimeException {
+        int epicId;
+
+        public NoEpicForSubTaskException(int epicId) {
+            this.epicId = epicId;
         }
     }
 }
