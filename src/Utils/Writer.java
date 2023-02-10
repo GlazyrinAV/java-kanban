@@ -30,6 +30,8 @@ public class Writer {
 
     /**
      * Проверяет наличие предыдущего файла и его удаление при наличии
+     *
+     * @throws IOException - ошибка при записи данных
      */
     public void fileChecker() throws IOException {
         if (Files.exists(dataFile)) {
