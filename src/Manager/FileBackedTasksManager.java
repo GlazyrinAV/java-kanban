@@ -1,7 +1,6 @@
 package Manager;
 
 import Exceptions.ManagerExceptions;
-import Exceptions.UtilsExceptions;
 import Model.Task;
 import Model.TaskStatus;
 import Utils.Loader;
@@ -91,12 +90,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      *
      * @throws ManagerExceptions.ManagerLoadException - ошибка при загрузке данных
      */
-    private void load() throws ManagerExceptions.ManagerLoadException, UtilsExceptions.NoHistoryDataInStorageException {
+    private void load() throws ManagerExceptions.ManagerLoadException {
         List<String> dataFromStorage;
         try {
             dataFromStorage = new Reader().readDataFromFile();
         } catch (IOException e) {
-            throw new ManagerExceptions.ManagerLoadException("Ошибка при сохранении данных в файл.");
+            throw new ManagerExceptions.ManagerLoadException("Ошибка при чтении данных из файла.");
         }
         if (!dataFromStorage.isEmpty()) {
             Loader loader = new Loader();

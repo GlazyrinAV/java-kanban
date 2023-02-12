@@ -15,5 +15,4 @@ public class ManagerExceptions extends Exception {
             super(message);
         }
     }
-
 }
