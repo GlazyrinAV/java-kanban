@@ -6,7 +6,7 @@ public class Main {
         var managers = Managers.getWithAutosave();
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
-            System.out.println(taskId);
+            System.out.print(taskId + ", ");
         }
         System.out.println("-- Получение списка всех задач");
         System.out.println(managers.getAllTasks().values());
@@ -32,9 +32,8 @@ public class Main {
             System.out.println(managers.getTaskById(9).toString());
         else System.out.println("null");
 
-        System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
-            System.out.println(taskId);
+            System.out.print(taskId + ", ");
         }
         System.out.println("-- Замена простой задачи и 2-х подзадач в эпике.");
         managers.updateTask(managers.getTaskIdByName("Task 1"), TaskStatus.DONE);
@@ -76,7 +75,7 @@ public class Main {
         managers.getTaskById(11);
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
-            System.out.println(taskId);
+            System.out.print(taskId + ", ");
         }
 
         System.out.println("-- Замена эпика без сохранения подзадач.");
@@ -89,14 +88,14 @@ public class Main {
         System.out.println("--Перезапуск системы");
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
-            System.out.println(taskId);
+            System.out.print(taskId + ", ");
         }
         managers2.newSimpleTask("newSimple", "JustSimple");
         System.out.println(managers2.getAllTasks().values());
         managers2.getTaskById(managers2.getTaskIdByName("newSimple"));
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
-            System.out.println(taskId);
+            System.out.print(taskId + ", ");
         }
 
         System.out.println("-- Очистка всех задач");
@@ -109,7 +108,7 @@ public class Main {
         System.out.println(managers2.getAllTasks().values());
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
-            System.out.println(taskId);
+            System.out.print(taskId + ", ");
         }
     }
 }
