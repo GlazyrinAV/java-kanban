@@ -18,7 +18,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public FileBackedTasksManager(InMemoryHistoryManager history) {
         super(history);
-        read();
+        load();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      *
      * @throws ManagerExceptions.ManagerLoadException - ошибка при загрузке данных
      */
-    private void read() throws ManagerExceptions.ManagerLoadException, UtilsExceptions.NoHistoryDataInStorageException {
+    private void load() throws ManagerExceptions.ManagerLoadException, UtilsExceptions.NoHistoryDataInStorageException {
         List<String> dataFromStorage;
         try {
             dataFromStorage = new Reader().readDataFromFile();
