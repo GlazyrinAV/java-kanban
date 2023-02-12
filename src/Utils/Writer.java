@@ -17,7 +17,7 @@ public class Writer {
      * @throws IOException - ошибка при записи данных
      */
     public void writeDataToFile(List<String> list) throws IOException {
-        fileChecker();
+        fileExistingChecker();
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {
             bufferedWriter.write("id,type,name,status,description,epic\n");
         }
@@ -33,7 +33,7 @@ public class Writer {
      *
      * @throws IOException - ошибка при записи данных
      */
-    public void fileChecker() throws IOException {
+    public void fileExistingChecker() throws IOException {
         if (Files.exists(dataFile)) {
             Files.delete(dataFile);
         }
