@@ -6,11 +6,10 @@ public class SimpleTask extends Task{
      * Конструктор для новой простой задачи.
      * Присваивается новый порядковый номер
      * Для новых задач статус NEW
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
+     * @param task - объект класса NewTask для создания новых задач
      */
-    public SimpleTask(String taskTitle, String taskDescription) {
-        super(taskTitle, taskDescription);
+    public SimpleTask(NewTask task) {
+        super(task);
     }
 
     /**

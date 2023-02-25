@@ -6,13 +6,12 @@ public class EpicTask extends Task {
     private final HashMap<Integer, TaskStatus> subTasks = new HashMap<>();
 
     /**
-     * Конструктор для создания новых эпиков
+     * Конструктор для создания новых эпиков.
      * Присваивается новый порядковый номер
-     * @param taskTitle       - название эпика
-     * @param taskDescription - описание эпика
+     * @param task - объект класса NewTask для создания новых задач
      */
-    public EpicTask(String taskTitle, String taskDescription) {
-        super(taskTitle, taskDescription);
+    public EpicTask(NewTask task) {
+        super(task);
         updateStatus();
     }
 
@@ -40,8 +39,8 @@ public class EpicTask extends Task {
     }
 
     /**
-     * Возвращает лист с сабтасками входящими в эпик
-     * @return - копия листа с сабтасками
+     * Возвращает лист с подзадачами входящими в эпик
+     * @return - копия листа с подзадачами
      */
     public List<Integer> getSubTasksIds() {
         return new ArrayList<>(subTasks.keySet());
@@ -56,7 +55,7 @@ public class EpicTask extends Task {
     }
 
     /**
-     * определяет статус эпика через проверку статусов сабтасков, хранящихся в таскмэнеджере
+     * определяет статус эпика через проверку статусов подзадач, хранящихся в TaskManager
      */
     private void updateStatus() {
         if (getSubTasksIds().isEmpty()) {

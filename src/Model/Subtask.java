@@ -4,14 +4,14 @@ public class Subtask extends Task {
     private final int epicId;
 
     /**
-     * Конструктор для создания новых подзадач
+     * Конструктор для создания новых подзадач.
      * Присваивается новый порядковый номер
      * Статус для новых задач NEW
-     * @param taskTitle       - название подзадачи
-     * @param taskDescription - описание подзадачи
+     * @param task - объект класса NewTask для создания новых задач
+     * @param epicId - номер эпика, в который входит подзадача
      */
-    public Subtask(String taskTitle, String taskDescription, int epicId) {
-        super(taskTitle, taskDescription);
+    public Subtask(NewTask task, int epicId) {
+        super(task);
         this.epicId = epicId;
         setTaskStatus(TaskStatus.NEW);
     }

@@ -11,8 +11,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final InMemoryHistoryManager historyManager;
 
     /**
-     * Конструктор менеджера тасков, в который необходимо передавать объект менеджер историй просмотра
-     * @param history - объект классса менеджер историй просмотра
+     * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
+     * @param history - объект класса менеджер историй просмотра
      */
     public InMemoryTaskManager(InMemoryHistoryManager history) {
         historyManager = history;
@@ -20,20 +20,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void newSimpleTask(String taskTitle, String taskDescription) {
-        SimpleTask newTask = new SimpleTask(taskTitle, taskDescription);
+        SimpleTask newTask = new SimpleTask(new NewTask(taskTitle, taskDescription));
         tasks.put(newTask.getTaskIdNumber(), newTask);
     }
 
     @Override
     public void newEpic(String taskTitle, String taskDescription) {
-        EpicTask newEpic = new EpicTask(taskTitle, taskDescription);
+        EpicTask newEpic = new EpicTask(new NewTask(taskTitle, taskDescription));
         tasks.put(newEpic.getTaskIdNumber(), newEpic);
     }
 
     @Override
     public void newSubtask(String taskTitle, String taskDescription, int epicId) {
         if (tasks.containsKey(epicId) && isEpic(epicId)) {
-            Subtask newSubtask = new Subtask(taskTitle, taskDescription, epicId);
+            Subtask newSubtask = new Subtask(new NewTask(taskTitle, taskDescription), epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
             getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus());
         }

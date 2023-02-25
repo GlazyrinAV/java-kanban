@@ -11,12 +11,11 @@ public abstract class Task {
      * Конструктор для новой задачи.
      * Присваивается новый порядковый номер
      * Для новых задач статус NEW
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
+     * @param task - объект класса NewTask для создания новых задач
      */
-    public Task(String taskTitle, String taskDescription) {
-        this.taskTitle = taskTitle;
-        this.taskDescription = taskDescription;
+    public Task(NewTask task) {
+        this.taskTitle = task.getTaskTitle();
+        this.taskDescription = task.getTaskDescription();
         this.taskIdNumber = idSequence++;
         setTaskStatus(TaskStatus.NEW);
     }
