@@ -64,6 +64,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
+    @Override
+    public Task getTaskById(int taskId) {
+        Task task = super.getTaskById(taskId);
+        save();
+        return task;
+    }
+
     /**
      * Сохраняет задачи и историю просмотров в файл-хранилище
      *

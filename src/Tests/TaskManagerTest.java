@@ -19,6 +19,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         this.testManager = t;
     }
 
+    public T getTestManager() {
+        return testManager;
+    }
+
     // SimpleTask
     // 1. Статус при создании
     @Test

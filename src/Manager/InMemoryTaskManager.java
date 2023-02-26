@@ -125,7 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!tasks.isEmpty()) {
             for (int taskID : tasks.keySet()) {
                 if (tasks.get(taskID).getTaskTitle().equals(name)) {
-                    historyManager.addHistory(taskID);
+//                    historyManager.addHistory(taskID);
                     return taskID;
                 }
             }

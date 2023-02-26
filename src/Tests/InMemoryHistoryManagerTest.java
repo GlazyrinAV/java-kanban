@@ -30,7 +30,7 @@ public class InMemoryHistoryManagerTest {
                 "Ошибка при получении истории с задачами.");
     }
 
-    // 3. Перезапись существующей записи 
+    // 3. Перезапись существующей записи
     @Test
     public void reWritingExcitingHistory() {
         createHistoryData();
