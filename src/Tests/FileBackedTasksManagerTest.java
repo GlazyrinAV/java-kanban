@@ -135,8 +135,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         final File file1 = path1.toFile();
         final File file2 = path2.toFile();
         try (BufferedReader reader1 = new BufferedReader(new FileReader(file1)); BufferedReader reader2 = new BufferedReader(new FileReader(file2))) {
-            while (reader1.ready() || reader2.ready()) {
-                if (reader1.read() != reader2.read()) return false;
+            while (reader1.ready() && reader2.ready()) {
+                String line1 = reader1.readLine();
+                String line2 = reader2.readLine();
+                if (!line1.equals(line2)) return false;
             }
         }
         return true;
