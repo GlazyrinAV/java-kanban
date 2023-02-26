@@ -124,7 +124,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     // 4. Подзадача добавляется к несуществующему эпику
     @Test
-    public void subTaskHaveNoEpic() {
+    public void subTaskHaveNoEpicException() {
         final ManagerExceptions.NoSuchEpicException exception =
                 Assertions.assertThrows(ManagerExceptions.NoSuchEpicException.class, () -> {
                     testManager.newEpic(new NewTask("1", "1"));
@@ -136,7 +136,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     // 5. Подзадача добавляется к задаче, которая не является эпиком
     @Test
-    public void TaskIsNotEpicWhileAddingSubTask() {
+    public void TaskIsNotEpicWhileAddingSubTaskException() {
         final ManagerExceptions.TaskIsNotEpicException exception =
                 Assertions.assertThrows(ManagerExceptions.TaskIsNotEpicException.class, () -> {
                     testManager.newSimpleTask(new NewTask("1", "1"));
@@ -158,7 +158,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     // 2. Обновление задач с несуществующим номером задачи
     @Test
-    public void updateTaskWithNoTasks() {
+    public void updateTaskWithNoTasksException() {
         final ManagerExceptions.NoSuchTasksException exception =
                 Assertions.assertThrows(ManagerExceptions.NoSuchTasksException.class, () -> {
                     testManager.newSimpleTask(new NewTask("1", "1"));
@@ -170,7 +170,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     // 3. Обновление задач с неверным номером задачи
     @Test
-    public void updateTasksWithWrongId() {
+    public void updateTasksWithWrongIdException() {
         final ManagerExceptions.NoSuchTasksException exception =
                 Assertions.assertThrows(ManagerExceptions.NoSuchTasksException.class, () -> {
                     testManager.newEpic(new NewTask("1", "1"));
