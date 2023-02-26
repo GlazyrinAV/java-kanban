@@ -38,14 +38,16 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         testFile = Path.of("./ResourcesForTest/Test1.csv");
         getTestManager().newSimpleTask(new NewTask("1", "1"));
         getTestManager().getTaskById(1);
-        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile),
+                "Ошибка при запаси в файл задачи и истории.");
     }
 
     // 2. Запись при пустом списке
     @Test
     public void dataWriteWithNoTasks() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test2.csv");
-        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile),
+                "Ошибка записи в файл при отсутствии данных.");
     }
 
     // 3. Запись эпика без подзадач
@@ -53,7 +55,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void dataWriteWithEpicWithNoSubTasks() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test3.csv");
         getTestManager().newEpic(new NewTask("1", "1"));
-        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile),
+                "Ошибка записи данных в файл для эпика без подзадач.");
     }
 
     // 4. Запись без истории
@@ -61,7 +64,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void dataWriteWithNoHistory() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test4.csv");
         getTestManager().newSimpleTask(new NewTask("1", "1"));
-        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile),
+                "Ошибка записи данных в файл без истории");
     }
 
     // Чтение
@@ -70,7 +74,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void dataReadFromFileWithNoData() {
         boolean isTasksEmpty = getTestManager().getAllTasks().isEmpty();
         boolean isHistoryEmpty = getTestManager().getHistory().isEmpty();
-        Assertions.assertTrue(isTasksEmpty && isHistoryEmpty);
+        Assertions.assertTrue(isTasksEmpty && isHistoryEmpty,
+                "Ошибка чтении данных из пустого файла.");
     }
 
     // 2. Чтение файла с данными и историей
@@ -84,8 +89,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>(List.of(1)));
         boolean isTaskIsPresent =
                 checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.IN_PROGRESS) &&
-                checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW);
-        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent);
+                        checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW);
+        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent,
+                "Ошибка чтении данных из файла с задачами и историей.");
     }
 
     // 3. Чтение данных без истории
@@ -97,8 +103,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
         boolean isTaskIsPresent =
                 checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.NEW) &&
-                checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW);
-        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent);
+                        checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW);
+        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent,
+                "Ошибка чтении данных из файла с данными без истории.");
     }
 
     // 4. Чтение файла с эпиком без подзадач
@@ -109,15 +116,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
         boolean isTaskIsPresent =
                 checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.NEW);
-        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent);
+        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent,
+                "Ошибка чтении данных из файла об эпике без подзадач.");
     }
-
-    // 5. Отсутствие эпика для подзадачи
-    @Test
-    public void dataReadFromFileWithNoEpicForSubTaskException() {
-
-    }
-
 
     private void resetIdCounter() {
         Task.resetCounterForTest();
