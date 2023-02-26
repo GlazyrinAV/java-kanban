@@ -83,6 +83,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         dataToBeSaved.add("\n");
         StringJoiner history = new StringJoiner(",");
+        if (historyManager.getHistory().isEmpty())
+            history.add(" ");
         for (Integer taskId : historyManager.getHistory()) {
             history.add(String.valueOf(taskId));
         }

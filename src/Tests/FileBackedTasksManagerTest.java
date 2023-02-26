@@ -5,6 +5,7 @@ import Manager.InMemoryHistoryManager;
 import Manager.TaskManager;
 import Model.NewTask;
 import Model.Task;
+import Model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
 
-    private final Path testFile1 = Path.of("./ResourcesForTest/Test1.csv");
     private final Path dataFile = Path.of("./Resources/Data.csv");
+    private Path testFile;
 
     @BeforeEach
     public void createTaskManager() throws IOException {
@@ -32,43 +35,89 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     // 1. Запись обычная с историей
     @Test
     public void dataWriteBase() throws IOException {
+        testFile = Path.of("./ResourcesForTest/Test1.csv");
         getTestManager().newSimpleTask(new NewTask("1", "1"));
         getTestManager().getTaskById(1);
-        Assertions.assertTrue(twoFilesAreEqual(dataFile, testFile1));
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
     }
 
     // 2. Запись при пустом списке
     @Test
-    public void dataWriteWithNoTasks() {
+    public void dataWriteWithNoTasks() throws IOException {
+        testFile = Path.of("./ResourcesForTest/Test2.csv");
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
     }
 
     // 3. Запись эпика без подзадач
     @Test
-    public void dataWriteWithEpicWithNoSubTasks() {
+    public void dataWriteWithEpicWithNoSubTasks() throws IOException {
+        testFile = Path.of("./ResourcesForTest/Test3.csv");
+        getTestManager().newEpic(new NewTask("1", "1"));
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
     }
 
     // 4. Запись без истории
+    @Test
+    public void dataWriteWithNoHistory() throws IOException {
+        testFile = Path.of("./ResourcesForTest/Test4.csv");
+        getTestManager().newSimpleTask(new NewTask("1", "1"));
+        Assertions.assertTrue(isTwoFilesAreEqual(dataFile, testFile));
+    }
 
     // Чтение
     // 1. Чтение пустого файла
     @Test
     public void dataReadFromFileWithNoData() {
+        boolean isTasksEmpty = getTestManager().getAllTasks().isEmpty();
+        boolean isHistoryEmpty = getTestManager().getHistory().isEmpty();
+        Assertions.assertTrue(isTasksEmpty && isHistoryEmpty);
     }
 
-    // 2. Чтение файла с данными
+    // 2. Чтение файла с данными и историей
     @Test
-    public void dataReadFromFileWithData() {
+    public void dataReadFromFileWithDataAndHistory() {
+        getTestManager().newSimpleTask(new NewTask("1", "1"));
+        getTestManager().newSimpleTask(new NewTask("2", "2"));
+        getTestManager().updateTask(1, TaskStatus.IN_PROGRESS);
+        getTestManager().getTaskById(1);
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>(List.of(1)));
+        boolean isTaskIsPresent =
+                checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.IN_PROGRESS) &&
+                checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW);
+        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent);
     }
 
-    // 3. Чтение файла с эпиком без подзадач
+    // 3. Чтение данных без истории
+    @Test
+    public void dataReadFromFileWithDataAndNoHistory() {
+        getTestManager().newSimpleTask(new NewTask("1", "1"));
+        getTestManager().newSimpleTask(new NewTask("2", "2"));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
+        boolean isTaskIsPresent =
+                checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.NEW) &&
+                checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW);
+        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent);
+    }
+
+    // 4. Чтение файла с эпиком без подзадач
     @Test
     public void dataReadFromFileWithEpicWithNoSubTasks() {
+        getTestManager().newEpic(new NewTask("1", "1"));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
+        boolean isTaskIsPresent =
+                checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.NEW);
+        Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent);
     }
 
-    // 4. Отсутствие эпика для подзадачи
+    // 5. Отсутствие эпика для подзадачи
     @Test
     public void dataReadFromFileWithNoEpicForSubTaskException() {
+
     }
+
 
     private void resetIdCounter() {
         Task.resetCounterForTest();
@@ -81,7 +130,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         }
     }
 
-    private boolean twoFilesAreEqual(Path path1, Path path2) throws IOException {
+    private boolean isTwoFilesAreEqual(Path path1, Path path2) throws IOException {
         final File file1 = path1.toFile();
         final File file2 = path2.toFile();
         try (BufferedReader reader1 = new BufferedReader(new FileReader(file1)); BufferedReader reader2 = new BufferedReader(new FileReader(file2))) {
@@ -90,5 +139,12 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
             }
         }
         return true;
+    }
+
+    private boolean checkTask(Task task, String title, String description, int id, TaskStatus status) {
+        return (task.getTaskTitle().equals(title)) &&
+                (task.getTaskDescription().equals(description)) &&
+                (task.getTaskIdNumber() == id) &&
+                (task.getTaskStatus().equals(status));
     }
 }

@@ -85,8 +85,10 @@ public class Loader {
             throws UtilsExceptions.NoHistoryDataInStorageException {
         List<String[]> dataSeparated = new ArrayList<>();
         boolean isErrorInDataFile = !list.get(list.size() - 2).isBlank();
+        boolean isHistoryEmpty = list.get(list.size() - 1).isBlank();
         try {
             if (isErrorInDataFile) throw new UtilsExceptions.NoHistoryDataInStorageException();
+            if (isHistoryEmpty) return Collections.emptyList();
             dataSeparated.add(list.get(list.size() - 1).split(","));
             return dataSeparated;
         } catch (UtilsExceptions.NoHistoryDataInStorageException e) {
