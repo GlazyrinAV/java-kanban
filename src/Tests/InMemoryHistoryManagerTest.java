@@ -22,7 +22,7 @@ public class InMemoryHistoryManagerTest {
                 "Ошибка при получении пустой истории.");
     }
 
-    // 2. Получение истории
+    // 2. Получение истории с записями
     @Test
     public void getHistoryWithTasks() {
         createHistoryData();
@@ -30,7 +30,7 @@ public class InMemoryHistoryManagerTest {
                 "Ошибка при получении истории с задачами.");
     }
 
-    // 3. Запись существующей в истории задачи
+    // 3. Перезапись существующей записи 
     @Test
     public void reWritingExcitingHistory() {
         createHistoryData();
