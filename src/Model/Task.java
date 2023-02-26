@@ -76,6 +76,10 @@ public abstract class Task {
         return taskStatus;
     }
 
+    public static void resetCounterForTest() {
+        idSequence = 1;
+    }
+
     protected void setTaskStatus(TaskStatus newStatus) {
         taskStatus = newStatus;
     }

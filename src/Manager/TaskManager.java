@@ -1,5 +1,6 @@
 package Manager;
 
+import Model.NewTask;
 import Model.Task;
 import Model.TaskStatus;
 
@@ -11,28 +12,19 @@ public interface TaskManager {
 
     /**
      * Создание новой простой задачи
-     *
-     * @param taskTitle       - название задачи
-     * @param taskDescription - описание задачи
      */
-    void newSimpleTask(String taskTitle, String taskDescription);
+    void newSimpleTask(NewTask task);
 
     /**
      * Создание нового эпика
-     *
-     * @param taskTitle       - название эпика
-     * @param taskDescription - описание эпика
      */
-    void newEpic(String taskTitle, String taskDescription);
+    void newEpic(NewTask task);
 
     /**
      * Создание подзадачи для эпика
-     *
-     * @param epicId          - номер Эпика
-     * @param taskTitle       - название подзадачи
-     * @param taskDescription - описание подзадачи
+     * @param epicId - номер Эпика
      */
-    void newSubtask(String taskTitle, String taskDescription, int epicId);
+    void newSubtask(NewTask task, int epicId);
 
     /**
      * Обновление простой задачи и подзадачи эпика по объявленному номеру с возможностью установить новый статус
@@ -72,7 +64,7 @@ public interface TaskManager {
      * Метод проверяет все задачи и подзадачи и удаляет задачу с объявленным номером
      * @param taskId - номер задачи, которую необходимо удалить
      */
-    void removeTaskById(int taskId);
+    Task removeTaskById(int taskId);
 
     /**
      * Получение списка всех подзадач определённого эпика по номеру данного эпика.

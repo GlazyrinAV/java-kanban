@@ -1,8 +1,16 @@
 import Manager.Managers;
+import Model.NewTask;
 import Model.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {
+
+        var manager3 = Managers.getDefault();
+        manager3.newSimpleTask(new NewTask("1", "2"));
+        manager3.newEpic(new NewTask("2", "2"));
+        manager3.newSubtask(new NewTask("3", "3"), 2);
+        System.out.println(manager3.getAllTasks().values());
+
         var managers = Managers.getWithAutosave();
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
@@ -12,13 +20,13 @@ public class Main {
         System.out.println(managers.getAllTasks().values());
         System.out.println();
         System.out.println("-- Создание 1 простой задачи, 2 эпика с 2 подзадачами.");
-        managers.newSimpleTask("Task 1", "Description of Task 1");
-        managers.newEpic("Epic 1", "Description of Epic 1");
-        managers.newSubtask("Sub 1", "Description Sub 1", managers.getTaskIdByName("Epic 1"));
-        managers.newSubtask("Sub 2", "Description Sub 2", managers.getTaskIdByName("Epic 1"));
-        managers.newEpic("Epic 2", "Description of Epic 2");
-        managers.newSubtask("Sub 1", "Description Sub 1", managers.getTaskIdByName("Epic 2"));
-        managers.newSubtask("Sub 2", "Description Sub 2", managers.getTaskIdByName("Epic 2"));
+        managers.newSimpleTask(new NewTask("Task 1", "Description of Task 1"));
+        managers.newEpic(new NewTask("Epic 1", "Description of Epic 1"));
+        managers.newSubtask(new NewTask("Sub 1", "Description Sub 1"), managers.getTaskIdByName("Epic 1"));
+        managers.newSubtask(new NewTask("Sub 2", "Description Sub 2"), managers.getTaskIdByName("Epic 1"));
+        managers.newEpic(new NewTask("Epic 2", "Description of Epic 2"));
+        managers.newSubtask(new NewTask("Sub 1", "Description Sub 1"), managers.getTaskIdByName("Epic 2"));
+        managers.newSubtask(new NewTask("Sub 2", "Description Sub 2"), managers.getTaskIdByName("Epic 2"));
 
         System.out.println("-- Получение списка всех задач");
         System.out.println(managers.getAllTasks().values());
@@ -90,7 +98,7 @@ public class Main {
         for (Integer taskId : managers.getHistory()) {
             System.out.print(taskId + ", ");
         }
-        managers2.newSimpleTask("newSimple", "JustSimple");
+        managers2.newSimpleTask(new NewTask("newSimple", "JustSimple"));
         System.out.println(managers2.getAllTasks().values());
         managers2.getTaskById(managers2.getTaskIdByName("newSimple"));
         System.out.println("-- История запросов");
@@ -102,8 +110,8 @@ public class Main {
         managers2.clearAllTasks();
         System.out.println("-- Печать всех задач");
         System.out.println(managers2.getAllTasks().values());
-        managers2.newEpic("NewEpic", "NewEpicDescr");
-        managers2.newSubtask("NewSub","SubDes", managers2.getTaskIdByName("NewEpic"));
+        managers2.newEpic(new NewTask("NewEpic", "NewEpicDescr"));
+        managers2.newSubtask(new NewTask("NewSub","SubDes"), managers2.getTaskIdByName("NewEpic"));
         System.out.println("-- Печать всех задач");
         System.out.println(managers2.getAllTasks().values());
         System.out.println("-- История запросов");

@@ -15,4 +15,22 @@ public class ManagerExceptions extends Exception {
             super(message);
         }
     }
+
+    public static class NoSuchEpicException extends RuntimeException {
+        public  NoSuchEpicException(final String message) {
+            super(message);
+        }
+    }
+
+    public static class TaskIsNotEpicException extends RuntimeException {
+        public  TaskIsNotEpicException(final String message) {
+            super(message);
+        }
+    }
+
+    public static class NoSuchTasksException extends RuntimeException {
+        public  NoSuchTasksException(final String message) {
+            super(message);
+        }
+    }
 }

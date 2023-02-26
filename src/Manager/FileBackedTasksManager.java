@@ -1,6 +1,7 @@
 package Manager;
 
 import Exceptions.ManagerExceptions;
+import Model.NewTask;
 import Model.Task;
 import Model.TaskStatus;
 import Utils.Loader;
@@ -21,20 +22,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void newSimpleTask(String taskTitle, String taskDescription) {
-        super.newSimpleTask(taskTitle, taskDescription);
+    public void newSimpleTask(NewTask task) {
+        super.newSimpleTask(task);
         save();
     }
 
     @Override
-    public void newEpic(String taskTitle, String taskDescription) {
-        super.newEpic(taskTitle, taskDescription);
+    public void newEpic(NewTask task) {
+        super.newEpic(task);
         save();
     }
 
     @Override
-    public void newSubtask(String taskTitle, String taskDescription, int epicId) {
-        super.newSubtask(taskTitle, taskDescription, epicId);
+    public void newSubtask(NewTask task, int epicId) {
+        super.newSubtask(task, epicId);
         save();
     }
 
@@ -51,9 +52,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeTaskById(int taskId) {
-        super.removeTaskById(taskId);
+    public Task removeTaskById(int taskId) {
+        Task task = super.removeTaskById(taskId);
         save();
+        return task;
     }
 
     @Override

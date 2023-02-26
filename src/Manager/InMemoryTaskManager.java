@@ -1,5 +1,6 @@
 package Manager;
 
+import Exceptions.ManagerExceptions;
 import Model.*;
 
 import java.util.Collection;
@@ -19,33 +20,44 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void newSimpleTask(String taskTitle, String taskDescription) {
-        SimpleTask newTask = new SimpleTask(new NewTask(taskTitle, taskDescription));
+    public void newSimpleTask(NewTask task) {
+        SimpleTask newTask = new SimpleTask(new NewTask(task.getTaskTitle(), task.getTaskDescription()));
         tasks.put(newTask.getTaskIdNumber(), newTask);
     }
 
     @Override
-    public void newEpic(String taskTitle, String taskDescription) {
-        EpicTask newEpic = new EpicTask(new NewTask(taskTitle, taskDescription));
+    public void newEpic(NewTask task) {
+        EpicTask newEpic = new EpicTask(new NewTask(task.getTaskTitle(), task.getTaskDescription()));
         tasks.put(newEpic.getTaskIdNumber(), newEpic);
     }
 
     @Override
-    public void newSubtask(String taskTitle, String taskDescription, int epicId) {
+    public void newSubtask(NewTask task, int epicId)
+            throws ManagerExceptions.NoSuchEpicException, ManagerExceptions.TaskIsNotEpicException {
         if (tasks.containsKey(epicId) && isEpic(epicId)) {
-            Subtask newSubtask = new Subtask(new NewTask(taskTitle, taskDescription), epicId);
+            Subtask newSubtask = new Subtask(new NewTask(task.getTaskTitle(), task.getTaskDescription()), epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
             getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus());
+        } else if (!tasks.containsKey(epicId)) {
+            throw new ManagerExceptions.NoSuchEpicException("Эпика с номером " + epicId + " не существует.");
+        } else if (!isEpic(epicId)) {
+            throw new ManagerExceptions.TaskIsNotEpicException("Задача " + epicId + " не является эпиком.");
         }
     }
 
     @Override
-    public void updateTask(int taskId, TaskStatus taskStatus) {
+    public void updateTask(int taskId, TaskStatus taskStatus) throws ManagerExceptions.NoSuchTasksException {
         if (tasks.containsKey(taskId) && isSimpleTask(taskId)) {
             tasks.put(taskId, new SimpleTask(tasks.get(taskId), taskStatus));
         } else if (tasks.containsKey(taskId) && isSubTask(taskId)) {
             tasks.put(taskId, new Subtask(tasks.get(taskId), taskStatus));
             getEpicBySubtaskId(taskId).addSubTask(taskId, taskStatus);
+        } else if (!tasks.containsKey(taskId)) {
+            throw new ManagerExceptions.NoSuchTasksException
+                    ("При обновлении задача с номером " + taskId + " не найдена.");
+        } else if (isEpic(taskId)) {
+            throw new ManagerExceptions.NoSuchTasksException("Невозможно обновить статус задачи " + taskId +
+                    ", т.к. данная задача является эпиком.");
         }
     }
 
@@ -87,17 +99,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeTaskById(int taskId) {
+    public Task removeTaskById(int taskId) {
         if (isSubTask(taskId)) {
             getEpicBySubtaskId(taskId).removeSubTask(taskId);
-            tasks.remove(taskId);
+            return tasks.remove(taskId);
         } else if (isEpic(taskId)) {
             for (int subTaskId : getEpicByEpicId(taskId).getSubTasksIds()) {
                 tasks.remove(subTaskId);
             }
-            tasks.remove(taskId);
+            return tasks.remove(taskId);
         } else {
-            tasks.remove(taskId);
+            return tasks.remove(taskId);
         }
     }
 
