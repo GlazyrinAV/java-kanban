@@ -1,6 +1,7 @@
-package Manager;
+package Tests;
 
 import Exceptions.ManagerExceptions;
+import Manager.TaskManager;
 import Model.NewTask;
 import Model.Subtask;
 import Model.Task;

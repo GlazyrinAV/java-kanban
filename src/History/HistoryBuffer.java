@@ -50,7 +50,7 @@ public class HistoryBuffer {
     /**
      * удаление просмотренной задачи из связанного списка
      *
-     * @param id - неомер задачи для удаления
+     * @param id - номер задачи для удаления
      */
     public void removeLinksToNode(int id) {
         Node<Integer> node = bufferHistoryMap.get(id);

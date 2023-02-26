@@ -11,7 +11,7 @@ public class Main {
         manager3.newSubtask(new NewTask("3", "3"), 2);
         System.out.println(manager3.getAllTasks().values());
 
-        var managers = Managers.getWithAutosave();
+        var managers = Managers.getWithAutoSave();
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
             System.out.print(taskId + ", ");
@@ -92,7 +92,7 @@ public class Main {
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getAllTasks().values());
 
-        var managers2 = Managers.getWithAutosave();
+        var managers2 = Managers.getWithAutoSave();
         System.out.println("--Перезапуск системы");
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {

@@ -79,7 +79,7 @@ public class Loader {
      * Выделяет блок информации об истории просмотров и разделяет данные на элементы массива
      *
      * @param list - выгруженные данные из файла-хранилища
-     * @return - возращает массив, элементы которого являются ID просмотренных задач
+     * @return - возвращает массив, элементы которого являются ID просмотренных задач
      */
     public List<String[]> getHistoryFromDataFile(List<String> list)
             throws UtilsExceptions.NoHistoryDataInStorageException {
@@ -117,5 +117,5 @@ public class Loader {
         }
     }
 
-    Comparator<String[]> comparator = Comparator.comparingInt(o -> Integer.parseInt(o[0]));
+    final Comparator<String[]> comparator = Comparator.comparingInt(o -> Integer.parseInt(o[0]));
 }

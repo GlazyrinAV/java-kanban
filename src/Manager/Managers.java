@@ -12,7 +12,7 @@ public final class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static FileBackedTasksManager getWithAutosave() {
+    public static FileBackedTasksManager getWithAutoSave() {
         return new FileBackedTasksManager(getDefaultHistory());
     }
 }
