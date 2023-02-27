@@ -23,13 +23,19 @@ public class ManagerExceptions extends Exception {
     }
 
     public static class TaskIsNotEpicException extends RuntimeException {
-        public  TaskIsNotEpicException(final String message) {
+        public TaskIsNotEpicException(final String message) {
             super(message);
         }
     }
 
     public static class NoSuchTasksException extends RuntimeException {
-        public  NoSuchTasksException(final String message) {
+        public NoSuchTasksException(final String message) {
+            super(message);
+        }
+    }
+
+    public static class TaskTimeOverlayException extends RuntimeException {
+        public TaskTimeOverlayException(final String message) {
             super(message);
         }
     }

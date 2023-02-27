@@ -3,16 +3,18 @@ package Manager;
 import Exceptions.ManagerExceptions;
 import Model.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final InMemoryHistoryManager historyManager;
 
+    protected final TreeMap<LocalDateTime, Integer> prioritizedTasks = new TreeMap<>(Comparator.nullsLast(Comparator.naturalOrder()));
+
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
+     *
      * @param history - объект класса менеджер историй просмотра
      */
     public InMemoryTaskManager(InMemoryHistoryManager history) {
@@ -23,12 +25,14 @@ public class InMemoryTaskManager implements TaskManager {
     public void newSimpleTask(NewTask task) {
         SimpleTask newTask = new SimpleTask(new NewTask(task.getTaskTitle(), task.getTaskDescription(), task.getStartTime(), task.getDuration()));
         tasks.put(newTask.getTaskIdNumber(), newTask);
+        prioritizedTasks.put(newTask.getStartTime(), newTask.getTaskIdNumber());
     }
 
     @Override
     public void newEpic(NewTask task) {
         EpicTask newEpic = new EpicTask(new NewTask(task.getTaskTitle(), task.getTaskDescription()));
         tasks.put(newEpic.getTaskIdNumber(), newEpic);
+        prioritizedTasks.put(newEpic.getStartTime(), newEpic.getTaskIdNumber());
     }
 
     @Override
@@ -37,6 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(epicId) && isEpic(epicId)) {
             Subtask newSubtask = new Subtask(new NewTask(task.getTaskTitle(), task.getTaskDescription(), task.getStartTime(), task.getDuration()), epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
+            prioritizedTasks.put(newSubtask.getStartTime(), newSubtask.getTaskIdNumber());
             getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus(), newSubtask.getStartTime(), newSubtask.getDuration());
         } else if (!tasks.containsKey(epicId)) {
             throw new ManagerExceptions.NoSuchEpicException("Эпика с номером " + epicId + " не существует.");
@@ -114,13 +119,16 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public Map<LocalDateTime, Integer> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
+
     public List<Integer> getSubTasksOfEpicById(int epicId) {
         if (isEpic(epicId)) {
             return getEpicByEpicId(epicId).getSubTasksIds();
         } else return null; // maybe null
     }
 
-    @Override
     public Integer getTaskIdByName(String name) {
         if (!tasks.isEmpty()) {
             for (int taskID : tasks.keySet()) {
