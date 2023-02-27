@@ -14,7 +14,7 @@ public class Loader {
      * @param list  - данные из файла-хранилища
      * @param tasks - хранилище задач в оперативной памяти
      */
-    public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks)
+    public void loadTaskFromStorage(List<String[]> list, HashMap<Integer, Task> tasks, TreeSet<Integer> prioritizedTasks)
             throws UtilsExceptions.NoEpicForSubTaskException {
         String taskType;
         for (String[] strings : list) {
@@ -27,14 +27,14 @@ public class Loader {
                     int epicId = Integer.parseInt(strings[5]);
                     throw new UtilsExceptions.NoEpicForSubTaskException(epicId);
                 }
-                if (tasks.get(taskId) == null) createTaskFromDataFile(strings, tasks);
+                if (tasks.get(taskId) == null) createTaskFromDataFile(strings, tasks, prioritizedTasks);
             } catch (UtilsExceptions.NoEpicForSubTaskException e) {
                 int epicId = UtilsExceptions.NoEpicForSubTaskException.getEpicId();
                 System.out.println("Для подзадачи " + taskId + " не найден эпик " + epicId +
                         ". Предпринимается попытка найти данный эпик.");
                 for (String[] epic : list) {
                     if (Integer.parseInt(epic[0]) == epicId) {
-                        createTaskFromDataFile(epic, tasks);
+                        createTaskFromDataFile(epic, tasks, prioritizedTasks);
                         System.out.println("Эпик " + epicId + " был найден и добавлен.");
                         return;
                     }
@@ -101,7 +101,7 @@ public class Loader {
      * @param line  - строчный массив с данными по одной задаче
      * @param tasks - хранилище задач в оперативной памяти
      */
-    private void createTaskFromDataFile(String[] line, HashMap<Integer, Task> tasks) {
+    private void createTaskFromDataFile(String[] line, HashMap<Integer, Task> tasks, TreeSet<Integer> prioritizedTasks) {
         String taskTitle = line[2];
         TaskStatus taskStatus = TaskStatus.valueOf(line[3]);
         String taskDescription = line[4];
@@ -113,14 +113,17 @@ public class Loader {
         boolean isTask = line[1].equals("TASK");
         boolean isEpic = line[1].equals("EPIC");
         boolean isSubTask = line[1].equals("SUBTASK");
-        if (isTask)
+        if (isTask) {
             tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
+            prioritizedTasks.add(taskId);
+        }
         else if (isEpic)
             tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
         else if (isSubTask) {
             int subtaskEpicId = Integer.parseInt(line[5]);
             tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId, startTime, duration));
             ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus, startTime, duration);
+            prioritizedTasks.add(taskId);
         }
     }
 

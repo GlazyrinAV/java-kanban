@@ -12,6 +12,12 @@ public class InMemoryTaskManager implements TaskManager {
     protected final InMemoryHistoryManager historyManager;
 
     protected final TreeSet<Integer> prioritizedTasks;
+    Comparator<Integer> timeComparator = (o1, o2) -> {
+        if (tasks.get(o1).getStartTime() == null) return 1;
+        if (tasks.get(o2).getStartTime() == null) return -1;
+        return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
+    };
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
@@ -107,19 +113,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task removeTaskById(int taskId) {
-        if (isSubTask(taskId)) {
-            prioritizedTasks.remove(taskId);
-            getEpicBySubtaskId(taskId).removeSubTask(taskId);
-            return tasks.remove(taskId);
-        } else if (isEpic(taskId)) {
-            for (int subTaskId : getEpicByEpicId(taskId).getSubTasksIds()) {
-                tasks.remove(subTaskId);
+        if (tasks.containsKey(taskId)) {
+            if (isSubTask(taskId)) {
+                prioritizedTasks.remove(taskId);
+                getEpicBySubtaskId(taskId).removeSubTask(taskId);
+                return tasks.remove(taskId);
+            } else if (isEpic(taskId)) {
+                for (int subTaskId : getEpicByEpicId(taskId).getSubTasksIds()) {
+                    tasks.remove(subTaskId);
+                }
+                return tasks.remove(taskId);
+            } else {
+                prioritizedTasks.remove(taskId);
+                return tasks.remove(taskId);
             }
-            return tasks.remove(taskId);
-        } else {
-            prioritizedTasks.remove(taskId);
-            return tasks.remove(taskId);
         }
+        return null;
     }
 
     @Override
@@ -188,12 +197,4 @@ public class InMemoryTaskManager implements TaskManager {
     private EpicTask getEpicByEpicId(int epicTaskId) {
         return (EpicTask) tasks.get(epicTaskId);
     }
-
-    Comparator<Integer> timeComparator = (o1, o2) -> {
-        if (tasks.get(o1).getStartTime() == null) return 1;
-        if (tasks.get(o2).getStartTime() == null) return -1;
-        return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
-    };
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 }

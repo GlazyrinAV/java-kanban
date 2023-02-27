@@ -110,7 +110,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         if (!dataFromStorage.isEmpty()) {
             Loader loader = new Loader();
-            loader.loadTaskFromStorage(loader.getTasksFromDataFile(dataFromStorage), tasks);
+            loader.loadTaskFromStorage(loader.getTasksFromDataFile(dataFromStorage), tasks, prioritizedTasks);
             loader.loadHistoryFromStorage(loader.getHistoryFromDataFile(dataFromStorage), historyManager);
         }
     }
