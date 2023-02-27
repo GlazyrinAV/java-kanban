@@ -106,8 +106,10 @@ public class Loader {
         TaskStatus taskStatus = TaskStatus.valueOf(line[3]);
         String taskDescription = line[4];
         int taskId = Integer.parseInt(line[0]);
-        LocalDateTime startTime = LocalDateTime.parse(line[7]);
-        int duration = Integer.parseInt(line[8]);
+        LocalDateTime startTime;
+        if (line[6].equals("null")) startTime = null;
+        else startTime = LocalDateTime.parse(line[6]);
+        int duration = Integer.parseInt(line[7]);
         boolean isTask = line[1].equals("TASK");
         boolean isEpic = line[1].equals("EPIC");
         boolean isSubTask = line[1].equals("SUBTASK");

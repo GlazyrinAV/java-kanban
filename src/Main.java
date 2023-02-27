@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class Main {
     public static void main(String[] args) {
 
-        var manager3 = Managers.getDefault();
+        var manager3 = Managers.getWithAutoSave();
         manager3.newSimpleTask(new NewTask("1", "2", LocalDateTime.now(), 30));
         manager3.newEpic(new NewTask("2", "2"));
         manager3.newSubtask(new NewTask("3", "3", LocalDateTime.now(), 40), 2);
