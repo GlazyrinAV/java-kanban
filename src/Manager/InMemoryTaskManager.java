@@ -4,7 +4,6 @@ import Exceptions.ManagerExceptions;
 import Model.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -12,12 +11,11 @@ public class InMemoryTaskManager implements TaskManager {
     protected final InMemoryHistoryManager historyManager;
 
     protected final TreeSet<Integer> prioritizedTasks;
-    Comparator<Integer> timeComparator = (o1, o2) -> {
+    final Comparator<Integer> timeComparator = (o1, o2) -> {
         if (tasks.get(o1).getStartTime() == null) return 1;
         if (tasks.get(o2).getStartTime() == null) return -1;
         return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
     };
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра

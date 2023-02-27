@@ -6,7 +6,6 @@ import java.util.*;
 
 public class EpicTask extends Task {
 
-    private LocalDateTime endTime;
     private final HashMap<Integer, TaskStatus> subTasks = new HashMap<>();
     private final TreeMap<LocalDateTime, Integer> subTasksStartTime = new TreeMap<>(Comparator.naturalOrder());
     private final HashMap<Integer, Long> subTasksDuration = new HashMap<>();
@@ -21,7 +20,6 @@ public class EpicTask extends Task {
         super(task);
         this.startTime = null;
         this.duration = 0;
-        this.endTime = null;
         updateStatus();
     }
 
@@ -91,20 +89,20 @@ public class EpicTask extends Task {
     private void setEpicTimeAndDuration() {
         startTime = calculateStarTime();
         duration = calculateDuration();
-        endTime = calculateEndTime();
     }
 
     @Override
     protected LocalDateTime calculateEndTime() {
-        if (subTasksDuration.isEmpty() && subTasksDuration != null) return null;
+        if (subTasksDuration.isEmpty()) return null;
         return subTasksStartTime.lastKey().plusMinutes(subTasksDuration.get(subTasksStartTime.get(subTasksStartTime.lastKey())));
     }
 
     private LocalDateTime calculateStarTime() {
-        if (subTasksStartTime.isEmpty() && subTasksStartTime != null) return null;
+        if (subTasksStartTime.isEmpty()) return null;
         return subTasksStartTime.firstKey();
     }
 
+    @SuppressWarnings("DataFlowIssue")
     private long calculateDuration() {
         if (calculateStarTime() == null || calculateEndTime() == null) return 0;
         return Duration.between(calculateStarTime(), calculateEndTime()).toMinutes();
