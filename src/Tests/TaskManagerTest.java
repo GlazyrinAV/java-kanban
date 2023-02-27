@@ -280,14 +280,57 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     // Время выполнения задач
     // 1. Создание задачи со временем
+    @Test
+    public void createTaskWithTimeData() {
+    }
+
     // 2. Создание задачи без времени
+    @Test
+    public void createTaskWithNoTimeData() {
+    }
+
     // 3. Создание задачи с пересечением по времени с началом другой задачи
+    @Test
+    public void createTaskWithCrossingTimeDataInBeginning() {
+    }
+
     // 4. Создание задачи с пересечением по времени с концом другой задачи
+    @Test
+    public void createTaskWithCrossingTimeDataInEnd() {
+    }
+
     // 5. Создание задачи с пересечением по времени полностью входит в другую задачу
+    @Test
+    public void createTaskWithCrossingTimeDataInMiddle() {
+    }
+
     // 6. Определение времени эпика без подзадач
+    @Test
+    public void getEpicTimeDataWithOutSubTasks() {
+    }
+
     // 7. Определение времени эпика с подзадачами
+    @Test
+    public void getEpicTimeDataWithSubTasks() {
+    }
+
     // 8. Определение времени эпика после удаления подзадачи
+    @Test
+    public void getEpicTimeDataAfterRemovingSubTask() {
+    }
+
     // 9. Получение приоритетов с задачами
+    @Test
+    public void getPriorityWithTasks() {
+    }
+
     // 10. Получение приоритетов без задач
+    @Test
+    public void getPriorityWithNoTasks() {
+    }
+
     // 11. Получение приоритетов с задачами без времени
+    @Test
+    public void getPriorityWithTasksWithNoTimeData() {
+    }
 }

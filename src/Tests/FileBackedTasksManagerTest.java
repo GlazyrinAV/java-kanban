@@ -152,7 +152,22 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     }
 
     // 1. Запись в файл задач со временем
+    @Test
+    public void dataWriteWithTimeData() {
+    }
+
     // 2. Запись в файл задач без времени
+    @Test
+    public void dataWriteWithNoTimeData() {
+    }
+
     // 3. Чтение из файла задач со временем
+    @Test
+    public void dataReadWithTimeData() {
+    }
+
     // 4. Чтение из файла задач без времени
+    @Test
+    public void dataReadWithNoTimeData() {
+    }
 }
