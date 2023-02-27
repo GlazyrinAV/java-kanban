@@ -191,7 +191,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void getAllTasksBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
         Assertions.assertEquals(testManager.getAllTasks().values().toString(),
-                "[№1. Задача. Название задачи - 1. Описание задачи: 1. Статус задачи: NEW]",
+                "[№1. Задача. Название задачи - 1. Описание задачи: 1. Статус задачи: NEW. Время начала: null. Продолжительность: 0. Время окончания: null]",
                 "Ошибка при получении списка всех задач");
     }
 
