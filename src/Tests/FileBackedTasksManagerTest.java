@@ -150,4 +150,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 (task.getTaskIdNumber() == id) &&
                 (task.getTaskStatus().equals(status));
     }
+
+    // 1. Запись в файл задач со временем
+    // 2. Запись в файл задач без времени
+    // 3. Чтение из файла задач со временем
+    // 4. Чтение из файла задач без времени
 }
