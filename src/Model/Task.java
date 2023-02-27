@@ -112,6 +112,7 @@ public abstract class Task {
     }
 
     protected LocalDateTime calculateEndTime() {
+        if (startTime == null) return null;
         return startTime.plusMinutes(duration);
     }
 

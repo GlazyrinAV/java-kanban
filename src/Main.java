@@ -9,7 +9,7 @@ public class Main {
         var manager3 = Managers.getWithAutoSave();
         manager3.newSimpleTask(new NewTask("1", "2", LocalDateTime.now(), 30));
         manager3.newEpic(new NewTask("2", "2"));
-        manager3.newSubtask(new NewTask("3", "3", LocalDateTime.now(), 40), 2);
+        manager3.newSubtask(new NewTask("3", "3"), 2);
         manager3.newSubtask(new NewTask("3", "3", LocalDateTime.now().minusDays(1), 60), 2);
         System.out.println(manager3.getAllTasks().values());
 

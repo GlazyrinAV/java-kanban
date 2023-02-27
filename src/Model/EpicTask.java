@@ -8,7 +8,7 @@ public class EpicTask extends Task {
 
     private LocalDateTime endTime;
     private final HashMap<Integer, TaskStatus> subTasks = new HashMap<>();
-    private final TreeMap<LocalDateTime, Integer> subTasksStartTime = new TreeMap<>((Comparator.naturalOrder()));
+    private final TreeMap<LocalDateTime, Integer> subTasksStartTime = new TreeMap<>(Comparator.naturalOrder());
     private final HashMap<Integer, Long> subTasksDuration = new HashMap<>();
 
     /**
@@ -41,8 +41,8 @@ public class EpicTask extends Task {
 
     public void addSubTask(int subTaskId, TaskStatus status, LocalDateTime startTime, long duration) {
         subTasks.put(subTaskId, status);
-        subTasksStartTime.put(startTime, subTaskId);
-        subTasksDuration.put(subTaskId, duration);
+        if (startTime != null) subTasksStartTime.put(startTime, subTaskId);
+        if (startTime != null) subTasksDuration.put(subTaskId, duration);
         updateStatus();
         setEpicTimeAndDuration();
     }
@@ -96,12 +96,12 @@ public class EpicTask extends Task {
 
     @Override
     protected LocalDateTime calculateEndTime() {
-        if (subTasksDuration != null && subTasksDuration.isEmpty()) return null;
+        if (subTasksDuration.isEmpty() && subTasksDuration != null) return null;
         return subTasksStartTime.lastKey().plusMinutes(subTasksDuration.get(subTasksStartTime.get(subTasksStartTime.lastKey())));
     }
 
     private LocalDateTime calculateStarTime() {
-        if (subTasksStartTime != null && subTasksStartTime.isEmpty()) return null;
+        if (subTasksStartTime.isEmpty() && subTasksStartTime != null) return null;
         return subTasksStartTime.firstKey();
     }
 
