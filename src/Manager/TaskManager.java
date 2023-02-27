@@ -4,10 +4,9 @@ import Model.NewTask;
 import Model.Task;
 import Model.TaskStatus;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -67,7 +66,7 @@ public interface TaskManager {
      */
     Task removeTaskById(int taskId);
 
-    Map<LocalDateTime, Integer> getPrioritizedTasks();
+    Set<Integer> getPrioritizedTasks();
 
     /**
      * Получение истории вызовов задач

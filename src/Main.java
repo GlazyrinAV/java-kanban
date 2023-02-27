@@ -2,16 +2,20 @@ import Manager.Managers;
 import Model.NewTask;
 
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
 
-        var manager3 = Managers.getWithAutoSave();
-        manager3.newSimpleTask(new NewTask("1", "2", LocalDateTime.now(), 30));
-        manager3.newEpic(new NewTask("2", "2"));
-        manager3.newSubtask(new NewTask("3", "3"), 2);
-        manager3.newSubtask(new NewTask("3", "3", LocalDateTime.now().minusDays(1), 60), 2);
+        var manager3 = Managers.getDefault();
+        manager3.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.FEBRUARY, 27, 21, 53), 30));
+        manager3.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.FEBRUARY, 28, 21, 53), 30));
+        manager3.newEpic(new NewTask("3", "3"));
+        manager3.newSubtask(new NewTask("4", "4"), 3);
+        manager3.newSubtask(new NewTask("5", "5", LocalDateTime.now().minusDays(1), 60), 3);
         System.out.println(manager3.getAllTasks().values());
+        System.out.println(Arrays.toString(manager3.getPrioritizedTasks().toArray()));
 
 //        var managers = Managers.getWithAutoSave();
 //        System.out.println("-- История запросов");

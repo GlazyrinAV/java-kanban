@@ -4,13 +4,14 @@ import Exceptions.ManagerExceptions;
 import Model.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final InMemoryHistoryManager historyManager;
 
-    protected final TreeMap<LocalDateTime, Integer> prioritizedTasks = new TreeMap<>(Comparator.nullsLast(Comparator.naturalOrder()));
+    protected final TreeSet<Integer> prioritizedTasks;
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
@@ -19,12 +20,14 @@ public class InMemoryTaskManager implements TaskManager {
      */
     public InMemoryTaskManager(InMemoryHistoryManager history) {
         historyManager = history;
+        prioritizedTasks = new TreeSet<>(timeComparator);
     }
 
     @Override
     public void newSimpleTask(NewTask task) {
         SimpleTask newTask = new SimpleTask(new NewTask(task.getTaskTitle(), task.getTaskDescription(), task.getStartTime(), task.getDuration()));
         tasks.put(newTask.getTaskIdNumber(), newTask);
+        addTaskToPrioritizedTasks(newTask);
     }
 
     @Override
@@ -39,6 +42,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(epicId) && isEpic(epicId)) {
             Subtask newSubtask = new Subtask(new NewTask(task.getTaskTitle(), task.getTaskDescription(), task.getStartTime(), task.getDuration()), epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
+            addTaskToPrioritizedTasks(newSubtask);
             getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus(), newSubtask.getStartTime(), newSubtask.getDuration());
         } else if (!tasks.containsKey(epicId)) {
             throw new ManagerExceptions.NoSuchEpicException("Эпика с номером " + epicId + " не существует.");
@@ -88,6 +92,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearAllTasks() {
+        prioritizedTasks.clear();
         tasks.clear();
     }
 
@@ -103,6 +108,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task removeTaskById(int taskId) {
         if (isSubTask(taskId)) {
+            prioritizedTasks.remove(taskId);
             getEpicBySubtaskId(taskId).removeSubTask(taskId);
             return tasks.remove(taskId);
         } else if (isEpic(taskId)) {
@@ -111,28 +117,33 @@ public class InMemoryTaskManager implements TaskManager {
             }
             return tasks.remove(taskId);
         } else {
+            prioritizedTasks.remove(taskId);
             return tasks.remove(taskId);
         }
     }
 
     @Override
-    public Map<LocalDateTime, Integer> getPrioritizedTasks() {
+    public Set<Integer> getPrioritizedTasks() {
         return prioritizedTasks;
     }
 
     private void addTaskToPrioritizedTasks(Task task) throws ManagerExceptions.TaskTimeOverlayException {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
-        boolean isNotCrossed;
-        for (LocalDateTime time : prioritizedTasks.keySet()) {
-            LocalDateTime end2 = tasks.get(prioritizedTasks.get(time)).getEndTime();
-            if ((start.isBefore(time) || start.isAfter(end2)) && (end.isBefore(time) || end.isAfter(end2)))
-                isNotCrossed = true;
-            else throw new ManagerExceptions.TaskTimeOverlayException(
-                    "Время выполнения задачи " + task.getTaskIdNumber() +
-                            " пересекается со сроками задачи " + tasks.get(prioritizedTasks.get(time)) + ".");
-            if (isNotCrossed) prioritizedTasks.put(time, task.getTaskIdNumber());
-        }
+        if (start == null || end == null) prioritizedTasks.add(task.getTaskIdNumber());
+        else if (!prioritizedTasks.isEmpty()) {
+            TreeSet<Integer> testingSet = new TreeSet<>(prioritizedTasks);
+            for (int taskId : testingSet) {
+                LocalDateTime start2 = tasks.get(taskId).getStartTime();
+                LocalDateTime end2 = tasks.get(taskId).getEndTime();
+                if (start2 == null || end2 == null) continue;
+                if ((start.isBefore(start2) || start.isAfter(end2)) && (end.isBefore(start2) || end.isAfter(end2)))
+                    prioritizedTasks.add(task.getTaskIdNumber());
+                else throw new ManagerExceptions.TaskTimeOverlayException(
+                        "Время выполнения задачи " + task.getTaskIdNumber() +
+                                " пересекается со сроками задачи " + taskId + ".");
+            }
+        } else prioritizedTasks.add(task.getTaskIdNumber());
     }
 
     public List<Integer> getSubTasksOfEpicById(int epicId) {
@@ -177,4 +188,12 @@ public class InMemoryTaskManager implements TaskManager {
     private EpicTask getEpicByEpicId(int epicTaskId) {
         return (EpicTask) tasks.get(epicTaskId);
     }
+
+    Comparator<Integer> timeComparator = (o1, o2) -> {
+        if (tasks.get(o1).getStartTime() == null) return 1;
+        if (tasks.get(o2).getStartTime() == null) return -1;
+        return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
+    };
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 }
