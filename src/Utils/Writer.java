@@ -19,7 +19,7 @@ public class Writer {
     public void writeDataToFile(List<String> list) throws IOException {
         fileExistingChecker();
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile()))) {
-            bufferedWriter.write("id,type,name,status,description,epic\n");
+            bufferedWriter.write("id,type,name,status,description,epic,start,duration\n");
         }
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile.toFile(), true))) {
             for (String line : list) {

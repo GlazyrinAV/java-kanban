@@ -1,11 +1,14 @@
 package Model;
 
-public class SimpleTask extends Task{
+import java.time.LocalDateTime;
+
+public class SimpleTask extends Task {
 
     /**
      * Конструктор для новой простой задачи.
      * Присваивается новый порядковый номер
      * Для новых задач статус NEW
+     *
      * @param task - объект класса NewTask для создания новых задач
      */
     public SimpleTask(NewTask task) {
@@ -23,7 +26,7 @@ public class SimpleTask extends Task{
         super(simpleTask, taskStatus);
     }
 
-    public SimpleTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber) {
-        super(taskTitle, taskDescription, taskStatus, taskIdNumber);
+    public SimpleTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber, LocalDateTime startTime, long duration) {
+        super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration);
     }
 }

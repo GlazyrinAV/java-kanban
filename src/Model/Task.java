@@ -1,5 +1,7 @@
 package Model;
 
+import java.time.LocalDateTime;
+
 public abstract class Task {
     private final String taskTitle;
     private final String taskDescription;
@@ -7,10 +9,15 @@ public abstract class Task {
     private static int idSequence = 1;
     private TaskStatus taskStatus;
 
+    protected LocalDateTime startTime;
+
+    protected long duration;
+
     /**
      * Конструктор для новой задачи.
      * Присваивается новый порядковый номер
      * Для новых задач статус NEW
+     *
      * @param task - объект класса NewTask для создания новых задач
      */
     public Task(NewTask task) {
@@ -18,6 +25,8 @@ public abstract class Task {
         this.taskDescription = task.getTaskDescription();
         this.taskIdNumber = idSequence++;
         setTaskStatus(TaskStatus.NEW);
+        this.startTime = task.getStartTime();
+        this.duration = task.getDuration();
     }
 
     /**
@@ -29,6 +38,8 @@ public abstract class Task {
         this.taskDescription = epicTask.taskDescription;
         this.taskIdNumber = epicTask.taskIdNumber;
         this.taskStatus = epicTask.taskStatus;
+        this.startTime = epicTask.getStartTime();
+        this.duration = epicTask.getDuration();
     }
 
     /**
@@ -42,6 +53,8 @@ public abstract class Task {
         this.taskDescription = task.taskDescription;
         this.taskIdNumber = task.getTaskIdNumber();
         setTaskStatus(taskStatus);
+        this.startTime = task.getStartTime();
+        this.duration = task.getDuration();
     }
 
     /**
@@ -52,12 +65,14 @@ public abstract class Task {
      * @param taskStatus      - статус задачи
      * @param taskIdNumber    - номер задачи
      */
-    public Task(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber) {
+    public Task(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber, LocalDateTime startTime, long duration) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
         this.taskStatus = taskStatus;
         idSequence = taskIdNumber + 1;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public String getTaskTitle() {
@@ -84,11 +99,30 @@ public abstract class Task {
         taskStatus = newStatus;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return calculateEndTime();
+    }
+
+    protected LocalDateTime calculateEndTime() {
+        return startTime.plusMinutes(duration);
+    }
+
     @Override
     public String toString() {
         return "№" + taskIdNumber + ". Задача" +
                 ". Название задачи - " + taskTitle +
                 ". Описание задачи: " + taskDescription +
-                ". Статус задачи: " + taskStatus;
+                ". Статус задачи: " + taskStatus +
+                ". Время начала: " + startTime +
+                ". Продолжительность: " + duration +
+                ". Время окончания: " + calculateEndTime();
     }
 }

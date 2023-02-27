@@ -4,13 +4,13 @@ import Exceptions.UtilsExceptions;
 import Manager.HistoryManager;
 import Model.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class Loader {
 
     /**
      * Воссоздает задачи на основании данных из файла-хранилища
-     *
      * @param list  - данные из файла-хранилища
      * @param tasks - хранилище задач в оперативной памяти
      */
@@ -60,7 +60,6 @@ public class Loader {
 
     /**
      * Выделяет блок информации о задачах и разделяет строчные данные на элементы массива
-     *
      * @param list - выгруженные данные из файла-хранилища
      * @return - возвращает лист с массивами данных. Каждая строка содержит массив с информацией об одной задаче
      */
@@ -107,15 +106,19 @@ public class Loader {
         TaskStatus taskStatus = TaskStatus.valueOf(line[3]);
         String taskDescription = line[4];
         int taskId = Integer.parseInt(line[0]);
+        LocalDateTime startTime = LocalDateTime.parse(line[7]);
+        int duration = Integer.parseInt(line[8]);
         boolean isTask = line[1].equals("TASK");
         boolean isEpic = line[1].equals("EPIC");
         boolean isSubTask = line[1].equals("SUBTASK");
-        if (isTask) tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId));
-        else if (isEpic) tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId));
+        if (isTask)
+            tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
+        else if (isEpic)
+            tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
         else if (isSubTask) {
             int subtaskEpicId = Integer.parseInt(line[5]);
-            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId));
-            ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus);
+            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId, startTime, duration));
+            ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus, startTime, duration);
         }
     }
 

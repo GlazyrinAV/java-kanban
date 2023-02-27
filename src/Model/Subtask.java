@@ -1,4 +1,7 @@
-package  Model;
+package Model;
+
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
 
     private final int epicId;
@@ -27,8 +30,8 @@ public class Subtask extends Task {
         this.epicId = ((Subtask) subTask).getEpicId();
     }
 
-    public Subtask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber, int epicId) {
-        super(taskTitle, taskDescription, taskStatus, taskIdNumber);
+    public Subtask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber, int epicId, LocalDateTime startTime, long duration) {
+        super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration);
         this.epicId = epicId;
     }
 
@@ -41,6 +44,9 @@ public class Subtask extends Task {
         return "\n №" + getTaskIdNumber() + ". Название подзадачи: " + getTaskTitle() +
                 ". Описание подзадачи: " + getTaskDescription() +
                 ". эпик задачи " + getEpicId() +
-                ". Статус подзадачи: " + getTaskStatus() + "\n";
+                ". Статус подзадачи: " + getTaskStatus() +
+                ". Время начала: " + getStartTime() +
+                ". Продолжительность: " + getDuration() +
+                ". Время окончания: " + calculateEndTime() + "\n";
     }
 }

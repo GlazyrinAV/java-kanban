@@ -22,6 +22,8 @@ public class SupportFunctions {
         taskInString.add(String.valueOf(task.getTaskStatus()));
         taskInString.add(task.getTaskDescription());
         taskInString.add(getEpicIdOfSubtask(task));
+        taskInString.add(String.valueOf(task.getStartTime()));
+        taskInString.add(String.valueOf(task.getDuration()));
         return taskInString + "\n";
     }
 
