@@ -12,9 +12,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     protected final TreeSet<Integer> prioritizedTasks;
     final Comparator<Integer> timeComparator = (o1, o2) -> {
-        if (tasks.get(o1).getStartTime() == null) return 1;
-        if (tasks.get(o2).getStartTime() == null) return -1;
-        else return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
+        if (tasks.get(o1).getStartTime() == null) {
+            return 1;
+        }
+        if (tasks.get(o2).getStartTime() == null) {
+            return -1;
+        }
+        else {
+            return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
+        }
     };
 
     /**
@@ -165,13 +171,17 @@ public class InMemoryTaskManager implements TaskManager {
                                     " пересекается со сроками задачи " + taskId + ".");
             }
             prioritizedTasks.add(task.getTaskIdNumber());
-        } else prioritizedTasks.add(task.getTaskIdNumber());
+        } else {
+            prioritizedTasks.add(task.getTaskIdNumber());
+        }
     }
 
     public List<Integer> getSubTasksOfEpicById(int epicId) {
         if (isEpic(epicId)) {
             return getEpicByEpicId(epicId).getSubTasksIds();
-        } else return null; // maybe null
+        } else {
+            return null; // maybe null
+        }
     }
 
     public Integer getTaskIdByName(String name) {

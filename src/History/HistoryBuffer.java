@@ -42,8 +42,12 @@ public class HistoryBuffer {
         final Node<Integer> oldTail = tail;
         final Node<Integer> newNode = new Node<>(oldTail, id, null);
         tail = newNode;
-        if (oldTail == null) head = newNode;
-        else oldTail.setNext(newNode);
+        if (oldTail == null) {
+            head = newNode;
+        }
+        else {
+            oldTail.setNext(newNode);
+        }
         bufferHistoryMap.put(id, newNode);
     }
 

@@ -107,8 +107,12 @@ public class Loader {
         String taskDescription = line[4];
         int taskId = Integer.parseInt(line[0]);
         LocalDateTime startTime;
-        if (line[6].equals("null")) startTime = null;
-        else startTime = LocalDateTime.parse(line[6]);
+        if (line[6].equals("null")) {
+            startTime = null;
+        }
+        else {
+            startTime = LocalDateTime.parse(line[6]);
+        }
         int duration = Integer.parseInt(line[7]);
         boolean isTask = line[1].equals("TASK");
         boolean isEpic = line[1].equals("EPIC");
@@ -117,8 +121,9 @@ public class Loader {
             tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
             prioritizedTasks.add(taskId);
         }
-        else if (isEpic)
+        else if (isEpic) {
             tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
+        }
         else if (isSubTask) {
             int subtaskEpicId = Integer.parseInt(line[5]);
             tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId, startTime, duration));
