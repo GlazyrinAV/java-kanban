@@ -189,7 +189,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void getAllTasksBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
         Assertions.assertEquals(testManager.getAllTasks().values().toString(),
-                "[№1. Задача. Название задачи - 1. Описание задачи: 1. Статус задачи: NEW. Время начала: null. Продолжительность: 0. Время окончания: null]",
+                "[№1. Задача. Название задачи - 1. Описание задачи: 1. Статус задачи: NEW. " +
+                        "Время начала: null. Продолжительность: 0. Время окончания: null]",
                 "Ошибка при получении списка всех задач");
     }
 
@@ -276,9 +277,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @DisplayName("Время выполнения задач. Создание задачи со временем")
     @Test
     public void createTaskWithTimeData() {
-        testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
-        Assertions.assertTrue(testManager.getTaskById(1).getStartTime().equals(LocalDateTime.of(2023, Month.APRIL, 28, 0, 0)) &&
-                testManager.getTaskById(1).getDuration() == 30, "Ошибка при создании файла с данными о времени выполнения");
+        testManager.newSimpleTask(new NewTask("1", "1",
+                LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
+        Assertions.assertTrue(testManager.getTaskById(1).getStartTime().equals
+                (LocalDateTime.of(2023, Month.APRIL, 28, 0, 0)) &&
+                testManager.getTaskById(1).getDuration() == 30,
+                "Ошибка при создании файла с данными о времени выполнения");
     }
 
     @DisplayName("Время выполнения задач. Создание задачи без времени")
@@ -286,15 +290,19 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void createTaskWithNoTimeData() {
         testManager.newSimpleTask(new NewTask("1", "1", null, 0));
         Assertions.assertTrue(testManager.getTaskById(1).getStartTime() == null &&
-                testManager.getTaskById(1).getDuration() == 0, "Ошибка при создании файла без данных о времени выполнения");
+                testManager.getTaskById(1).getDuration() == 0,
+                "Ошибка при создании файла без данных о времени выполнения");
     }
 
     @DisplayName("Время выполнения задач. Создание задачи с пересечением по времени с началом другой задачи")
     @Test
     public void createTaskWithCrossingTimeDataInBeginning() {
-        ManagerExceptions.TaskTimeOverlayException exception = Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
-            testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
-            testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 60));
+        ManagerExceptions.TaskTimeOverlayException exception =
+                Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
+            testManager.newSimpleTask(new NewTask("1", "1",
+                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
+            testManager.newSimpleTask(new NewTask("2", "2",
+                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 60));
         });
         Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками задачи 1.",
                 "Ошибка при проверке наличия пересечений задач по времени в начале их выполнения.");
@@ -303,9 +311,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @DisplayName("Время выполнения задач. Создание задачи с пересечением по времени с концом другой задачи")
     @Test
     public void createTaskWithCrossingTimeDataInEnd() {
-        ManagerExceptions.TaskTimeOverlayException exception = Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
-            testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
-            testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 28, 0, 30), 60));
+        ManagerExceptions.TaskTimeOverlayException exception =
+                Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
+            testManager.newSimpleTask(new NewTask("1", "1",
+                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
+            testManager.newSimpleTask(new NewTask("2", "2",
+                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 30), 60));
         });
         Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками задачи 1.",
                 "Ошибка при проверке наличия пересечений задач по времени в конце их выполнения.");
@@ -314,9 +325,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @DisplayName("Время выполнения задач. Создание задачи с пересечением по времени полностью входит в другую задачу")
     @Test
     public void createTaskWithCrossingTimeDataInMiddle() {
-        ManagerExceptions.TaskTimeOverlayException exception = Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
-            testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
-            testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 28, 0, 10), 10));
+        ManagerExceptions.TaskTimeOverlayException exception =
+                Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
+            testManager.newSimpleTask(new NewTask("1", "1",
+                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
+            testManager.newSimpleTask(new NewTask("2", "2",
+                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 10), 10));
         });
         Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками задачи 1.",
                 "Ошибка при проверке наличия пересечений задач по времени в середине их выполнения.");
@@ -326,7 +340,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void getEpicTimeDataWithOutSubTasks() {
         testManager.newEpic(new NewTask("1", "1"));
-        Assertions.assertTrue(testManager.getTaskById(1).getStartTime() == null && testManager.getTaskById(1).getDuration() == 0,
+        Assertions.assertTrue(testManager.getTaskById(1).getStartTime() == null &&
+                        testManager.getTaskById(1).getDuration() == 0,
                 "Ошибка во информации о времени для эпика без подзадач.");
     }
 
@@ -334,10 +349,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void getEpicTimeDataWithSubTasks() {
         testManager.newEpic(new NewTask("1", "1"));
-        testManager.newSubtask(new NewTask("2", "2", LocalDateTime.of(2022, Month.APRIL, 1, 0, 0), 10), 1);
+        testManager.newSubtask(new NewTask("2", "2",
+                LocalDateTime.of(2022, Month.APRIL, 1, 0, 0), 10), 1);
         testManager.newSubtask(new NewTask("3", "3", null, 10), 1);
-        testManager.newSubtask(new NewTask("4", "4", LocalDateTime.of(2022, Month.APRIL, 1, 0, 11), 10), 1);
-        Assertions.assertTrue((testManager.getTaskById(1).getStartTime().equals(LocalDateTime.of(2022, Month.APRIL, 1, 0, 0))) &&
+        testManager.newSubtask(new NewTask("4", "4",
+                LocalDateTime.of(2022, Month.APRIL, 1, 0, 11), 10), 1);
+        Assertions.assertTrue((testManager.getTaskById(1).getStartTime().equals
+                        (LocalDateTime.of(2022, Month.APRIL, 1, 0, 0))) &&
                         (testManager.getTaskById(1).getDuration() == 21),
                 "Ошибка в информации о времени для эпика c подзадачами.");
     }
@@ -346,11 +364,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void getEpicTimeDataAfterRemovingSubTask() {
         testManager.newEpic(new NewTask("1", "1"));
-        testManager.newSubtask(new NewTask("2", "2", LocalDateTime.of(2022, Month.APRIL, 1, 0, 0), 10), 1);
+        testManager.newSubtask(new NewTask("2", "2",
+                LocalDateTime.of(2022, Month.APRIL, 1, 0, 0), 10), 1);
         testManager.newSubtask(new NewTask("3", "3", null, 10), 1);
-        testManager.newSubtask(new NewTask("4", "4", LocalDateTime.of(2022, Month.APRIL, 1, 0, 11), 10), 1);
+        testManager.newSubtask(new NewTask("4", "4",
+                LocalDateTime.of(2022, Month.APRIL, 1, 0, 11), 10), 1);
         testManager.removeTaskById(4);
-        Assertions.assertTrue((testManager.getTaskById(1).getStartTime().equals(LocalDateTime.of(2022, Month.APRIL, 1, 0, 0))) &&
+        Assertions.assertTrue((testManager.getTaskById(1).getStartTime().equals
+                        (LocalDateTime.of(2022, Month.APRIL, 1, 0, 0))) &&
                         (testManager.getTaskById(1).getDuration() == 10),
                 "Ошибка в информации о времени для эпика c подзадачами после удаления подзадачи.");
     }
@@ -358,10 +379,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @DisplayName("Время выполнения задач. Получение приоритетов с задачами")
     @Test
     public void getPriorityWithTasks() {
-        testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 1, 0, 0), 30));
-        testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 10));
-        testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 2, 0, 0), 30));
-        testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 10, 0, 10), 10));
+        testManager.newSimpleTask(new NewTask("1", "1",
+                LocalDateTime.of(2023, Month.APRIL, 1, 0, 0), 30));
+        testManager.newSimpleTask(new NewTask("2", "2",
+                LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 10));
+        testManager.newSimpleTask(new NewTask("1", "1",
+                LocalDateTime.of(2023, Month.APRIL, 2, 0, 0), 30));
+        testManager.newSimpleTask(new NewTask("2", "2",
+                LocalDateTime.of(2023, Month.APRIL, 10, 0, 10), 10));
         Assertions.assertEquals(testManager.getPrioritizedTasks().toString(), ("[1, 3, 2, 4]"),
                 "Ошибка при получении приоритетов с задачами.");
     }
@@ -378,9 +403,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void getPriorityWithTasksWithNoTimeData() {
 
         testManager.newSimpleTask(new NewTask("1", "1", null, 30));
-        testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 10));
+        testManager.newSimpleTask(new NewTask("2", "2",
+                LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 10));
         testManager.newSimpleTask(new NewTask("3", "4", null, 30));
-        testManager.newSimpleTask(new NewTask("4", "4", LocalDateTime.of(2023, Month.APRIL, 10, 0, 10), 10));
+        testManager.newSimpleTask(new NewTask("4", "4",
+                LocalDateTime.of(2023, Month.APRIL, 10, 0, 10), 10));
         Assertions.assertEquals(testManager.getPrioritizedTasks().toString(), ("[2, 4, 1, 3]"),
                 "Ошибка при получении приоритетов с задачами при отсутствии времени в них");
     }
@@ -398,8 +425,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     // 13. Расчет время окончания при наличии время выполнения
     @Test
     public void getEndTimeWithTimeInTask() {
-        testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 10));
-        Assertions.assertEquals(testManager.getTaskById(1).getEndTime(), LocalDateTime.of(2023, Month.APRIL, 3, 0, 20),
+        testManager.newSimpleTask(new NewTask("2", "2",
+                LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 10));
+        Assertions.assertEquals(testManager.getTaskById(1).getEndTime(),
+                LocalDateTime.of(2023, Month.APRIL, 3, 0, 20),
                 "Ошибка при расчете времени окончания при наличия времени в задаче.");
     }
 
@@ -407,8 +436,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     // 14. Расчет время окончания при наличии время выполнения равной 0
     @Test
     public void getEndTimeWithZeroTimeInTask() {
-        testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 0));
-        Assertions.assertEquals(testManager.getTaskById(1).getEndTime(), LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), "" +
+        testManager.newSimpleTask(new NewTask("2", "2",
+                LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 0));
+        Assertions.assertEquals(testManager.getTaskById(1).getEndTime(),
+                LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), "" +
                 "Ошибка при расчете времени окончания при 0 длительности.");
     }
 }

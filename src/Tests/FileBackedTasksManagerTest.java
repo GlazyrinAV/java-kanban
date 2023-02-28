@@ -89,8 +89,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>(List.of(1)));
         boolean isTaskIsPresent =
-                checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.IN_PROGRESS, null, 0) &&
-                        checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW, null, 0);
+                checkTask(getTestManager().getTaskById(1), "1", "1", 1,
+                        TaskStatus.IN_PROGRESS, null, 0) &&
+                        checkTask(getTestManager().getTaskById(2), "2", "2", 2,
+                                TaskStatus.NEW, null, 0);
         Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent,
                 "Ошибка чтении данных из файла с задачами и историей.");
     }
@@ -103,8 +105,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
         boolean isTaskIsPresent =
-                checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.NEW, null, 0) &&
-                        checkTask(getTestManager().getTaskById(2), "2", "2", 2, TaskStatus.NEW, null, 0);
+                checkTask(getTestManager().getTaskById(1), "1", "1", 1,
+                        TaskStatus.NEW, null, 0) &&
+                        checkTask(getTestManager().getTaskById(2), "2", "2", 2,
+                                TaskStatus.NEW, null, 0);
         Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent,
                 "Ошибка чтении данных из файла с данными без истории.");
     }
@@ -116,7 +120,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
         boolean isTaskIsPresent =
-                checkTask(getTestManager().getTaskById(1), "1", "1", 1, TaskStatus.NEW, null, 0);
+                checkTask(getTestManager().getTaskById(1), "1", "1", 1,
+                        TaskStatus.NEW, null, 0);
         Assertions.assertTrue(isHistoryIsPresent && isTaskIsPresent,
                 "Ошибка чтении данных из файла об эпике без подзадач.");
     }
@@ -125,9 +130,12 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void dataWriteWithTimeData() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test5.csv");
-        getTestManager().newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30));
-        getTestManager().newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 50));
-        Assertions.assertTrue(isTwoFilesAreEqual(testFile, dataFile), "Ошибка при записи файл с данными о времени.");
+        getTestManager().newSimpleTask(new NewTask("1", "1",
+                LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30));
+        getTestManager().newSimpleTask(new NewTask("1", "1",
+                LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 50));
+        Assertions.assertTrue(isTwoFilesAreEqual(testFile, dataFile),
+                "Ошибка при записи файл с данными о времени.");
     }
 
     @DisplayName("Время выполнения задач Запись в файл задач без времени")
@@ -135,18 +143,22 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void dataWriteWithNoTimeData() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test6.csv");
         getTestManager().newSimpleTask(new NewTask("1", "1"));
-        getTestManager().newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 50));
+        getTestManager().newSimpleTask(new NewTask("2", "2",
+                LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 50));
         getTestManager().newSimpleTask(new NewTask("1", "1"));
-        Assertions.assertTrue(isTwoFilesAreEqual(testFile, dataFile), "Ошибка при записи файл с данными без времени.");
+        Assertions.assertTrue(isTwoFilesAreEqual(testFile, dataFile),
+                "Ошибка при записи файл с данными без времени.");
     }
 
     @DisplayName("Время выполнения задач Чтение из файла задач со временем")
     @Test
     public void dataReadWithTimeData() {
-        getTestManager().newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30));
+        getTestManager().newSimpleTask(new NewTask("1", "1",
+                LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30));
         setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
         Task task = getTestManager().getTaskById(1);
-        Assertions.assertTrue(checkTask(task, "1", "1", 1, TaskStatus.NEW, LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30),
+        Assertions.assertTrue(checkTask(task, "1", "1", 1,
+                        TaskStatus.NEW, LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30),
                 "Ошибка при чтении данных из файла о задаче содержащей время выполнения.");
     }
 
@@ -174,7 +186,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     private boolean isTwoFilesAreEqual(Path path1, Path path2) throws IOException {
         final File file1 = path1.toFile();
         final File file2 = path2.toFile();
-        try (BufferedReader reader1 = new BufferedReader(new FileReader(file1)); BufferedReader reader2 = new BufferedReader(new FileReader(file2))) {
+        try (BufferedReader reader1 = new BufferedReader(new FileReader(file1));
+             BufferedReader reader2 = new BufferedReader(new FileReader(file2))) {
             while (reader1.ready() && reader2.ready()) {
                 String line1 = reader1.readLine();
                 String line2 = reader2.readLine();
@@ -184,7 +197,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         return true;
     }
 
-    private boolean checkTask(Task task, String title, String description, int id, TaskStatus status, LocalDateTime starTime, int duration) {
+    private boolean checkTask(Task task, String title, String description, int id, TaskStatus status,
+                              LocalDateTime starTime, int duration) {
         return (task.getTaskTitle().equals(title)) &&
                 (task.getTaskDescription().equals(description)) &&
                 (task.getTaskIdNumber() == id) &&
