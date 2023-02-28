@@ -158,17 +158,23 @@ public class InMemoryTaskManager implements TaskManager {
     private void addTaskToPrioritizedTasks(Task task) throws ManagerExceptions.TaskTimeOverlayException {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
-        if (start == null || end == null) prioritizedTasks.add(task.getTaskIdNumber());
+        if (start == null || end == null) {
+            prioritizedTasks.add(task.getTaskIdNumber());
+        }
         else if (!prioritizedTasks.isEmpty()) {
             TreeSet<Integer> testingSet = new TreeSet<>(prioritizedTasks);
             for (int taskId : testingSet) {
                 LocalDateTime start2 = tasks.get(taskId).getStartTime();
                 LocalDateTime end2 = tasks.get(taskId).getEndTime();
-                if (start2 == null || end2 == null) continue;
+                if (start2 == null || end2 == null) {
+                    continue;
+                }
                 if (!(start.isBefore(start2) || start.isAfter(end2)) || !(end.isBefore(start2) || end.isAfter(end2)))
+                {
                     throw new ManagerExceptions.TaskTimeOverlayException(
                             "Время выполнения задачи " + task.getTaskIdNumber() +
                                     " пересекается со сроками задачи " + taskId + ".");
+                }
             }
             prioritizedTasks.add(task.getTaskIdNumber());
         } else {

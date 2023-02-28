@@ -19,7 +19,9 @@ public class Loader {
         String taskType;
         for (String[] strings : list) {
             boolean isEndOfTasks = strings[0].equals(" ");
-            if (isEndOfTasks) break;
+            if (isEndOfTasks) {
+                break;
+            }
             int taskId = Integer.parseInt(strings[0]);
             taskType = strings[1];
             try {
@@ -27,7 +29,9 @@ public class Loader {
                     int epicId = Integer.parseInt(strings[5]);
                     throw new UtilsExceptions.NoEpicForSubTaskException(epicId);
                 }
-                if (tasks.get(taskId) == null) createTaskFromDataFile(strings, tasks, prioritizedTasks);
+                if (tasks.get(taskId) == null) {
+                    createTaskFromDataFile(strings, tasks, prioritizedTasks);
+                }
             } catch (UtilsExceptions.NoEpicForSubTaskException e) {
                 int epicId = UtilsExceptions.NoEpicForSubTaskException.getEpicId();
                 System.out.println("Для подзадачи " + taskId + " не найден эпик " + epicId +
@@ -67,7 +71,9 @@ public class Loader {
         List<String[]> dataSeparated = new ArrayList<>();
         for (int i = 1; i < list.size(); i++) {
             boolean isEndOfTasks = list.get(i).isBlank();
-            if (isEndOfTasks) break;
+            if (isEndOfTasks) {
+                break;
+            }
             dataSeparated.add(list.get(i).split(","));
         }
         dataSeparated.sort(comparator);
@@ -86,8 +92,12 @@ public class Loader {
         boolean isErrorInDataFile = !list.get(list.size() - 2).isBlank();
         boolean isHistoryEmpty = list.get(list.size() - 1).isBlank();
         try {
-            if (isErrorInDataFile) throw new UtilsExceptions.NoHistoryDataInStorageException();
-            if (isHistoryEmpty) return Collections.emptyList();
+            if (isErrorInDataFile) {
+                throw new UtilsExceptions.NoHistoryDataInStorageException();
+            }
+            if (isHistoryEmpty) {
+                return Collections.emptyList();
+            }
             dataSeparated.add(list.get(list.size() - 1).split(","));
             return dataSeparated;
         } catch (UtilsExceptions.NoHistoryDataInStorageException e) {

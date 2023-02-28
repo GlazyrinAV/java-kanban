@@ -40,8 +40,12 @@ public class EpicTask extends Task {
 
     public void addSubTask(int subTaskId, TaskStatus status, LocalDateTime startTime, long duration) {
         subTasks.put(subTaskId, status);
-        if (startTime != null) subTasksStartTime.put(startTime, subTaskId);
-        if (startTime != null) subTasksDuration.put(subTaskId, duration);
+        if (startTime != null) {
+            subTasksStartTime.put(startTime, subTaskId);
+        }
+        if (startTime != null) {
+            subTasksDuration.put(subTaskId, duration);
+        }
         updateStatus();
         setEpicTimeAndDuration();
     }
@@ -51,7 +55,9 @@ public class EpicTask extends Task {
         subTasksDuration.remove(subTaskId);
         for (LocalDateTime time : subTasksStartTime.keySet()) {
             if (subTasksStartTime.get(time) == subTaskId)
+            {
                 subTasksStartTime.remove(time);
+            }
         }
         updateStatus();
         setEpicTimeAndDuration();
@@ -94,19 +100,25 @@ public class EpicTask extends Task {
 
     @Override
     protected LocalDateTime calculateEndTime() {
-        if (subTasksDuration.isEmpty()) return null;
+        if (subTasksDuration.isEmpty()) {
+            return null;
+        }
         long duration = subTasksDuration.get(subTasksStartTime.get(subTasksStartTime.lastKey()));
         return subTasksStartTime.lastKey().plusMinutes(duration);
     }
 
     private LocalDateTime calculateStarTime() {
-        if (subTasksStartTime.isEmpty()) return null;
+        if (subTasksStartTime.isEmpty()) {
+            return null;
+        }
         return subTasksStartTime.firstKey();
     }
 
     @SuppressWarnings("DataFlowIssue")
     private long calculateDuration() {
-        if (calculateStarTime() == null || calculateEndTime() == null) return 0;
+        if (calculateStarTime() == null || calculateEndTime() == null) {
+            return 0;
+        }
         return Duration.between(calculateStarTime(), calculateEndTime()).toMinutes();
     }
 
