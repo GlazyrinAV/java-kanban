@@ -7,6 +7,7 @@ import Model.Subtask;
 import Model.Task;
 import Model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -25,8 +26,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         return testManager;
     }
 
-    // SimpleTask
-    // 1. Статус при создании
+    @DisplayName("SimpleTask Статус при создании")
     @Test
     public void simpleTaskStatusOnCreationIsNew() {
         testManager.newSimpleTask(new NewTask("1", "2"));
@@ -34,7 +34,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус простой задачи установлен неверно.");
     }
 
-    // 2. Статус при обновлении
+    @DisplayName("SimpleTask Статус при обновлении")
     @Test
     public void simpleTaskStatusOnUpdateIsChanged() {
         testManager.newSimpleTask(new NewTask("1", "2"));
@@ -43,8 +43,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус простой задачи при обновлении задан неверно.");
     }
 
-    // EpicTask
-    // 1. Статус при отсутствии подзадач
+    @DisplayName("EpicTask Статус при отсутствии подзадач")
     @Test
     public void epicTaskStatusWithNoSubTasks() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -52,7 +51,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус пустого эпика при создании задан неверно.");
     }
 
-    // 2. Статус при новых подзадачах
+    @DisplayName("EpicTask Статус при новых подзадачах")
     @Test
     public void epicTaskStatusWhenSubTasksIsNew() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -62,7 +61,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус эпика при добавлении подзадач со статусом NEW задан неверно.");
     }
 
-    // 3. Статус при выполненных подзадачах
+    @DisplayName("EpicTask Статус при выполненных подзадачах")
     @Test
     public void epicTaskStatusWhenSubTasksIsDone() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -74,7 +73,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус эпика при добавлении подзадач со статусом DONE задан неверно.");
     }
 
-    // 4. Статус при смешенном статусе подзадач
+    @DisplayName("EpicTask Статус при смешенном статусе подзадач")
     @Test
     public void epicTaskStatusWhenSubTasksIsMixed() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -86,7 +85,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус эпика при добавлении подзадач со смешанным статусом задан неверно.");
     }
 
-    // 5. Статус при выполняемых подзадачах
+    @DisplayName("EpicTask Статус при выполняемых подзадачах")
     @Test
     public void epicTaskStatusWhenSubTasksIsInProgress() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -98,8 +97,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус эпика при добавлении подзадач со статусом IN_PROGRESS задан неверно.");
     }
 
-    // SubTask
-    // 1. Статус при создании
+    @DisplayName("SubTask Статус при создании")
     @Test
     public void subTasksStatusOnCreation() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -108,7 +106,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус подзадачи при создании задан неверно.");
     }
 
-    // 2. Статус при обновлении
+    @DisplayName("SubTask Статус при обновлении")
     @Test
     public void subTasksStatusOnUpdate() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -118,7 +116,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Статус подзадачи при обновлении задан неверно.");
     }
 
-    // 3. Наличие эпика
+    @DisplayName("SubTask Наличие эпика")
     @Test
     public void subTaskHaveEpic() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -128,7 +126,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при добавлении подзадачи к существующему эпику.");
     }
 
-    // 4. Подзадача добавляется к несуществующему эпику
+    @DisplayName("SubTask Подзадача добавляется к несуществующему эпику")
     @Test
     public void subTaskHaveNoEpicException() {
         final ManagerExceptions.NoSuchEpicException exception =
@@ -140,7 +138,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при указании для подзадачи номера несуществующего эпика.");
     }
 
-    // 5. Подзадача добавляется к задаче, которая не является эпиком
+    @DisplayName("SubTask Подзадача добавляется к задаче, которая не является эпиком")
     @Test
     public void TaskIsNotEpicWhileAddingSubTaskException() {
         final ManagerExceptions.TaskIsNotEpicException exception =
@@ -152,8 +150,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при указании для подзадачи номера задачи, которая не является эпиком.");
     }
 
-    // updateTask
-    // 1. Обычное обновление задач
+    @DisplayName("updateTask Обычное обновление задач")
     @Test
     public void updateTaskBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
@@ -162,7 +159,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Неверно обновлен статус простой задачи.");
     }
 
-    // 2. Обновление задач с несуществующим номером задачи
+    @DisplayName("updateTask Обновление задач с несуществующим номером задачи")
     @Test
     public void updateTaskWithNoTasksException() {
         final ManagerExceptions.NoSuchTasksException exception =
@@ -174,7 +171,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка обновлении задачи по несуществующему номеру.");
     }
 
-    // 3. Обновление задач с неверным номером задачи
+    @DisplayName("updateTask Обновление задач с неверным номером задачи")
     @Test
     public void updateTasksWithWrongIdException() {
         final ManagerExceptions.NoSuchTasksException exception =
@@ -187,8 +184,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при попытке прямого обновлении статуса эпика.");
     }
 
-    // getAllTasks
-    // 1. Обычное поведение
+    @DisplayName("getAllTasks Обычное поведение")
     @Test
     public void getAllTasksBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
@@ -197,15 +193,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при получении списка всех задач");
     }
 
-    // 2. При пустом списке задач
+    @DisplayName("getAllTasks При пустом списке задач")
     @Test
     public void getAllTasksWithNoTasks() {
         Assertions.assertEquals(testManager.getAllTasks(), new HashMap<>(),
                 "Ошибка при получении списка всех задач при отсутствии задач.");
     }
 
-    // clearAllTasks
-    // 1. Обычное поведение
+    @DisplayName("clearAllTasks Обычное поведение")
     @Test
     public void clearAllTasksBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
@@ -214,7 +209,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при очистке списка существующих задач.");
     }
 
-    // 2. При пустом списке задач
+    @DisplayName("clearAllTasks При пустом списке задач")
     @Test
     public void clearAllTasksWithNoTasks() {
         testManager.clearAllTasks();
@@ -222,8 +217,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при очистке пустого списка.");
     }
 
-    // getTaskById
-    // 1. Обычное поведение
+    @DisplayName("getTaskById Обычное поведение")
     @Test
     public void getTaskByIdBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
@@ -233,15 +227,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertTrue(isEqual, "Ошибка при получении существующей задачи по номеру задачи.");
     }
 
-    // 2. Поиск задач с неверным номером задачи
+    @DisplayName("getTaskById Поиск задач с неверным номером задачи")
     @Test
     public void getTaskByIdWithWrongId() {
         testManager.newSimpleTask(new NewTask("1", "1"));
         Assertions.assertNull(testManager.getTaskById(2), "Ошибка при получении несуществующей задачи.");
     }
 
-    // removeTaskById
-    // 1. Обычное поведение
+    @DisplayName("removeTaskById Обычное поведение")
     @Test
     public void removeTaskByIdBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
@@ -252,14 +245,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertTrue(isEqual, "Ошибка при удалении задачи по номеру.");
     }
 
-    // 2. При пустом списке задач
+    @DisplayName("removeTaskById При пустом списке задач")
     @Test
     public void removeTaskByIdWithNoTasks() {
         Assertions.assertNull(testManager.removeTaskById(1),
                 "Ошибка при удалении задачи при пустом списке.");
     }
 
-    // 3. Удаление задач с неверным номером задачи
+    @DisplayName("removeTaskById Удаление задач с неверным номером задачи")
     @Test
     public void removeTaskByIdWithWrongId() {
         testManager.newSimpleTask(new NewTask("1", "1"));
@@ -267,7 +260,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при удалении несуществующей задачи.");
     }
 
-    // 4. Удаление эпика и его подзадач по нормальному сценарию
+    @DisplayName("removeTaskById Удаление эпика и его подзадач по нормальному сценарию")
     @Test
     public void removeEpicByIdBase() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -280,8 +273,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertTrue(isRemoved, "Ошибка при удалении эпика и подзадач эпика.");
     }
 
-    // Время выполнения задач
-    // 1. Создание задачи со временем
+    @DisplayName("Время выполнения задач. Создание задачи со временем")
     @Test
     public void createTaskWithTimeData() {
         testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
@@ -289,7 +281,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 testManager.getTaskById(1).getDuration() == 30, "Ошибка при создании файла с данными о времени выполнения");
     }
 
-    // 2. Создание задачи без времени
+    @DisplayName("Время выполнения задач. Создание задачи без времени")
     @Test
     public void createTaskWithNoTimeData() {
         testManager.newSimpleTask(new NewTask("1", "1", null, 0));
@@ -297,7 +289,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 testManager.getTaskById(1).getDuration() == 0, "Ошибка при создании файла без данных о времени выполнения");
     }
 
-    // 3. Создание задачи с пересечением по времени с началом другой задачи
+    @DisplayName("Время выполнения задач. Создание задачи с пересечением по времени с началом другой задачи")
     @Test
     public void createTaskWithCrossingTimeDataInBeginning() {
         ManagerExceptions.TaskTimeOverlayException exception = Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
@@ -308,7 +300,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при проверке наличия пересечений задач по времени в начале их выполнения.");
     }
 
-    // 4. Создание задачи с пересечением по времени с концом другой задачи
+    @DisplayName("Время выполнения задач. Создание задачи с пересечением по времени с концом другой задачи")
     @Test
     public void createTaskWithCrossingTimeDataInEnd() {
         ManagerExceptions.TaskTimeOverlayException exception = Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
@@ -319,7 +311,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при проверке наличия пересечений задач по времени в конце их выполнения.");
     }
 
-    // 5. Создание задачи с пересечением по времени полностью входит в другую задачу
+    @DisplayName("Время выполнения задач. Создание задачи с пересечением по времени полностью входит в другую задачу")
     @Test
     public void createTaskWithCrossingTimeDataInMiddle() {
         ManagerExceptions.TaskTimeOverlayException exception = Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
@@ -330,7 +322,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при проверке наличия пересечений задач по времени в середине их выполнения.");
     }
 
-    // 6. Определение времени эпика без подзадач
+    @DisplayName("Время выполнения задач. Определение времени эпика без подзадач")
     @Test
     public void getEpicTimeDataWithOutSubTasks() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -338,7 +330,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка во информации о времени для эпика без подзадач.");
     }
 
-    // 7. Определение времени эпика с подзадачами
+    @DisplayName("Время выполнения задач. Определение времени эпика с подзадачами")
     @Test
     public void getEpicTimeDataWithSubTasks() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -350,7 +342,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка в информации о времени для эпика c подзадачами.");
     }
 
-    // 8. Определение времени эпика после удаления подзадачи
+    @DisplayName("Время выполнения задач. Определение времени эпика после удаления подзадачи")
     @Test
     public void getEpicTimeDataAfterRemovingSubTask() {
         testManager.newEpic(new NewTask("1", "1"));
@@ -363,7 +355,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка в информации о времени для эпика c подзадачами после удаления подзадачи.");
     }
 
-    // 9. Получение приоритетов с задачами
+    @DisplayName("Время выполнения задач. Получение приоритетов с задачами")
     @Test
     public void getPriorityWithTasks() {
         testManager.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.APRIL, 1, 0, 0), 30));
@@ -374,14 +366,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при получении приоритетов с задачами.");
     }
 
-    // 10. Получение приоритетов без задач
+    @DisplayName("Время выполнения задач. Получение приоритетов без задач")
     @Test
     public void getPriorityWithNoTasks() {
         Assertions.assertEquals(testManager.getPrioritizedTasks().toString(), ("[]"),
                 "Ошибка при получении приоритетов при отсутствии задач.");
     }
 
-    // 11. Получение приоритетов с задачами без времени
+    @DisplayName("Время выполнения задач. Получение приоритетов с задачами без времени")
     @Test
     public void getPriorityWithTasksWithNoTimeData() {
 
@@ -393,6 +385,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при получении приоритетов с задачами при отсутствии времени в них");
     }
 
+    @DisplayName("Запись обычная с историей")
     // 12. Расчет время окончания при отсутствии время выполнения
     @Test
     public void getEndTimeWithNoTimeInTask() {
@@ -401,6 +394,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при расчете времени окончания при отсутствии времени в задаче.");
     }
 
+    @DisplayName("Запись обычная с историей")
     // 13. Расчет время окончания при наличии время выполнения
     @Test
     public void getEndTimeWithTimeInTask() {
@@ -409,6 +403,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Ошибка при расчете времени окончания при наличия времени в задаче.");
     }
 
+    @DisplayName("Запись обычная с историей")
     // 14. Расчет время окончания при наличии время выполнения равной 0
     @Test
     public void getEndTimeWithZeroTimeInTask() {

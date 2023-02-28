@@ -3,6 +3,7 @@ package Tests;
 import Manager.InMemoryHistoryManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,14 +16,14 @@ public class InMemoryHistoryManagerTest {
         testHistoryManager = new InMemoryHistoryManager();
     }
 
-    // 1. Получение пустой истории
+    @DisplayName("Получение пустой истории")
     @Test
     public void getHistoryWithNoTasks() {
         Assertions.assertEquals(testHistoryManager.getHistory(), new ArrayList<>(),
                 "Ошибка при получении пустой истории.");
     }
 
-    // 2. Получение истории с записями
+    @DisplayName("Получение истории с записями")
     @Test
     public void getHistoryWithTasks() {
         createHistoryData();
@@ -30,7 +31,7 @@ public class InMemoryHistoryManagerTest {
                 "Ошибка при получении истории с задачами.");
     }
 
-    // 3. Перезапись существующей записи
+    @DisplayName("Перезапись существующей записи истории")
     @Test
     public void reWritingExcitingHistory() {
         createHistoryData();
@@ -39,7 +40,7 @@ public class InMemoryHistoryManagerTest {
                 "Ошибка при перезаписи существующей записи.");
     }
 
-    // 4. Удаление первой записи
+    @DisplayName("Удаление первой истории")
     @Test
     public void deletingHistoryFromBeginning() {
         createHistoryData();
@@ -48,7 +49,7 @@ public class InMemoryHistoryManagerTest {
                 "Ошибка при удалении первой записи.");
     }
 
-    // 5. Удаление записи из середины
+    @DisplayName("Удаление истории из середины")
     @Test
     public void deletingHistoryFromMiddle() {
         createHistoryData();
@@ -57,7 +58,7 @@ public class InMemoryHistoryManagerTest {
                 "Ошибка при удалении записи из середины.");
     }
 
-    // 6. Удаление последней записи
+    @DisplayName("Удаление последней истории")
     @Test
     public void deletingHistoryFromEnd() {
         createHistoryData();

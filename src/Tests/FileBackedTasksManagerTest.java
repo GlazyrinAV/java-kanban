@@ -8,6 +8,7 @@ import Model.Task;
 import Model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -33,8 +34,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
     }
 
-    // Запись
-    // 1. Запись обычная с историей
+    @DisplayName("Запись обычная с историей")
     @Test
     public void dataWriteBase() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test1.csv");
@@ -44,7 +44,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка при запаси в файл задачи и истории.");
     }
 
-    // 2. Запись при пустом списке
+    @DisplayName("Запись при пустом списке")
     @Test
     public void dataWriteWithNoTasks() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test2.csv");
@@ -52,7 +52,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка записи в файл при отсутствии данных.");
     }
 
-    // 3. Запись эпика без подзадач
+    @DisplayName("Запись эпика без подзадач")
     @Test
     public void dataWriteWithEpicWithNoSubTasks() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test3.csv");
@@ -61,7 +61,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка записи данных в файл для эпика без подзадач.");
     }
 
-    // 4. Запись без истории
+    @DisplayName("Запись без истории")
     @Test
     public void dataWriteWithNoHistory() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test4.csv");
@@ -70,8 +70,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка записи данных в файл без истории");
     }
 
-    // Чтение
-    // 1. Чтение пустого файла
+    @DisplayName("Чтение пустого файла")
     @Test
     public void dataReadFromFileWithNoData() {
         boolean isTasksEmpty = getTestManager().getAllTasks().isEmpty();
@@ -80,7 +79,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка чтении данных из пустого файла.");
     }
 
-    // 2. Чтение файла с данными и историей
+    @DisplayName("Чтение файла с данными и историей")
     @Test
     public void dataReadFromFileWithDataAndHistory() {
         getTestManager().newSimpleTask(new NewTask("1", "1"));
@@ -96,7 +95,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка чтении данных из файла с задачами и историей.");
     }
 
-    // 3. Чтение данных без истории
+    @DisplayName("Чтение данных без истории")
     @Test
     public void dataReadFromFileWithDataAndNoHistory() {
         getTestManager().newSimpleTask(new NewTask("1", "1"));
@@ -110,7 +109,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка чтении данных из файла с данными без истории.");
     }
 
-    // 4. Чтение файла с эпиком без подзадач
+    @DisplayName("Чтение файла с эпиком без подзадач")
     @Test
     public void dataReadFromFileWithEpicWithNoSubTasks() {
         getTestManager().newEpic(new NewTask("1", "1"));
@@ -122,8 +121,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка чтении данных из файла об эпике без подзадач.");
     }
 
-    // Время выполнения задач
-    // 1. Запись в файл задач со временем
+    @DisplayName("Время выполнения задач Запись в файл задач со временем")
     @Test
     public void dataWriteWithTimeData() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test5.csv");
@@ -132,7 +130,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         Assertions.assertTrue(isTwoFilesAreEqual(testFile, dataFile), "Ошибка при записи файл с данными о времени.");
     }
 
-    // 2. Запись в файл задач без времени
+    @DisplayName("Время выполнения задач Запись в файл задач без времени")
     @Test
     public void dataWriteWithNoTimeData() throws IOException {
         testFile = Path.of("./ResourcesForTest/Test6.csv");
@@ -142,7 +140,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         Assertions.assertTrue(isTwoFilesAreEqual(testFile, dataFile), "Ошибка при записи файл с данными без времени.");
     }
 
-    // 3. Чтение из файла задач со временем
+    @DisplayName("Время выполнения задач Чтение из файла задач со временем")
     @Test
     public void dataReadWithTimeData() {
         getTestManager().newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30));
@@ -152,7 +150,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка при чтении данных из файла о задаче содержащей время выполнения.");
     }
 
-    // 4. Чтение из файла задач без времени
+    @DisplayName("Время выполнения задач Чтение из файла задач без времени")
     @Test
     public void dataReadWithNoTimeData() {
         getTestManager().newSimpleTask(new NewTask("1", "1"));
