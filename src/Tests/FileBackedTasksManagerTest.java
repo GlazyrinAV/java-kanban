@@ -126,6 +126,17 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка чтении данных из файла об эпике без подзадач.");
     }
 
+    @DisplayName("Чтение файла с эпиком без подзадач")
+    @Test
+    public void newTaskIdAfterReadingDataFromFile() {
+        getTestManager().newSimpleTask(new NewTask("1", "1"));
+        getTestManager().newSimpleTask(new NewTask("2", "2"));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        getTestManager().newSimpleTask(new NewTask("Test", "Test"));
+        boolean isTaskIdCorrect = getTestManager().getTaskById(3).getTaskTitle().equals("Test");
+        Assertions.assertTrue(isTaskIdCorrect, "Ошибка в нумерации новых задач после чтения данных.");
+    }
+
     @DisplayName("Время выполнения задач Запись в файл задач со временем")
     @Test
     public void dataWriteWithTimeData() throws IOException {
