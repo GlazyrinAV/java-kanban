@@ -14,7 +14,7 @@ public class InMemoryTaskManager implements TaskManager {
     final Comparator<Integer> timeComparator = (o1, o2) -> {
         if (tasks.get(o1).getStartTime() == null) return 1;
         if (tasks.get(o2).getStartTime() == null) return -1;
-        return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
+        else return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
     };
 
     /**
@@ -144,13 +144,13 @@ public class InMemoryTaskManager implements TaskManager {
                 LocalDateTime start2 = tasks.get(taskId).getStartTime();
                 LocalDateTime end2 = tasks.get(taskId).getEndTime();
                 if (start2 == null || end2 == null) continue;
-                if ((start.isBefore(start2) || start.isAfter(end2)) && (end.isBefore(start2) || end.isAfter(end2)))
-                    prioritizedTasks.add(task.getTaskIdNumber());
-                else throw new ManagerExceptions.TaskTimeOverlayException(
-                        "Время выполнения задачи " + task.getTaskIdNumber() +
-                                " пересекается со сроками задачи " + taskId + ".");
+                if (!(start.isBefore(start2) || start.isAfter(end2)) && !(end.isBefore(start2) || end.isAfter(end2)))
+                    throw new ManagerExceptions.TaskTimeOverlayException(
+                            "Время выполнения задачи " + task.getTaskIdNumber() +
+                                    " пересекается со сроками задачи " + taskId + ".");
             }
-        } else prioritizedTasks.add(task.getTaskIdNumber());
+            prioritizedTasks.add(task.getTaskIdNumber());
+        }
     }
 
     public List<Integer> getSubTasksOfEpicById(int epicId) {
