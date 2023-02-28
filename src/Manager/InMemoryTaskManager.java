@@ -144,13 +144,13 @@ public class InMemoryTaskManager implements TaskManager {
                 LocalDateTime start2 = tasks.get(taskId).getStartTime();
                 LocalDateTime end2 = tasks.get(taskId).getEndTime();
                 if (start2 == null || end2 == null) continue;
-                if (!(start.isBefore(start2) || start.isAfter(end2)) && !(end.isBefore(start2) || end.isAfter(end2)))
+                if (!(start.isBefore(start2) || start.isAfter(end2)) || !(end.isBefore(start2) || end.isAfter(end2)))
                     throw new ManagerExceptions.TaskTimeOverlayException(
                             "Время выполнения задачи " + task.getTaskIdNumber() +
                                     " пересекается со сроками задачи " + taskId + ".");
             }
             prioritizedTasks.add(task.getTaskIdNumber());
-        }
+        } else prioritizedTasks.add(task.getTaskIdNumber());
     }
 
     public List<Integer> getSubTasksOfEpicById(int epicId) {
