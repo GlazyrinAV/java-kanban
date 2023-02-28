@@ -33,7 +33,8 @@ public class EpicTask extends Task {
         setEpicTimeAndDuration();
     }
 
-    public EpicTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber, LocalDateTime startTime, long duration) {
+    public EpicTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber,
+                    LocalDateTime startTime, long duration) {
         super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration);
     }
 
@@ -94,7 +95,8 @@ public class EpicTask extends Task {
     @Override
     protected LocalDateTime calculateEndTime() {
         if (subTasksDuration.isEmpty()) return null;
-        return subTasksStartTime.lastKey().plusMinutes(subTasksDuration.get(subTasksStartTime.get(subTasksStartTime.lastKey())));
+        long duration = subTasksDuration.get(subTasksStartTime.get(subTasksStartTime.lastKey()));
+        return subTasksStartTime.lastKey().plusMinutes(duration);
     }
 
     private LocalDateTime calculateStarTime() {

@@ -26,7 +26,8 @@ public class SimpleTask extends Task {
         super(simpleTask, taskStatus);
     }
 
-    public SimpleTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber, LocalDateTime startTime, long duration) {
+    public SimpleTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber,
+                      LocalDateTime startTime, long duration) {
         super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration);
     }
 }

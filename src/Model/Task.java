@@ -63,7 +63,8 @@ public abstract class Task {
      * @param taskStatus      - статус задачи
      * @param taskIdNumber    - номер задачи
      */
-    public Task(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber, LocalDateTime startTime, long duration) {
+    public Task(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber,
+                LocalDateTime startTime, long duration) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
