@@ -17,7 +17,6 @@ public abstract class Task {
      * Конструктор для новой задачи.
      * Присваивается новый порядковый номер
      * Для новых задач статус NEW
-     *
      * @param task - объект класса NewTask для создания новых задач
      */
     public Task(NewTask task) {
@@ -59,7 +58,6 @@ public abstract class Task {
 
     /**
      * Конструктор для загрузки задач из файла данных
-     *
      * @param taskTitle       - название задачи
      * @param taskDescription - описание задачи
      * @param taskStatus      - статус задачи

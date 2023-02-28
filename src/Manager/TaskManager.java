@@ -58,18 +58,25 @@ public interface TaskManager {
      * @param taskId - номер задачи
      * @return       - искомый объект или null, если он не найден
      */
-    Task getTaskById (int taskId);
+    Task getTaskById(int taskId);
 
     /**
      * Метод проверяет все задачи и подзадачи и удаляет задачу с объявленным номером
+     *
      * @param taskId - номер задачи, которую необходимо удалить
      */
     Task removeTaskById(int taskId);
 
+    /**
+     * Метод возвращает список задач в приоритетном характере
+     *
+     * @return - упорядоченный список задач
+     */
     Set<Integer> getPrioritizedTasks();
 
     /**
      * Получение истории вызовов задач
+     *
      * @return - список вызванных задач
      */
     Collection<Integer> getHistory();

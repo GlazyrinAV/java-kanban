@@ -19,7 +19,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
-     *
      * @param history - объект класса менеджер историй просмотра
      */
     public InMemoryTaskManager(InMemoryHistoryManager history) {
@@ -134,6 +133,12 @@ public class InMemoryTaskManager implements TaskManager {
         return prioritizedTasks;
     }
 
+    /**
+     * Добавление задачи в отсортированный список задач
+     *
+     * @param task - добавляемая задача
+     * @throws ManagerExceptions.TaskTimeOverlayException - исключение при наличии пересечений добавляемой задачи
+     */
     private void addTaskToPrioritizedTasks(Task task) throws ManagerExceptions.TaskTimeOverlayException {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
