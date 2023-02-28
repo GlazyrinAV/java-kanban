@@ -392,4 +392,28 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(testManager.getPrioritizedTasks().toString(), ("[2, 4, 1, 3]"),
                 "Ошибка при получении приоритетов с задачами при отсутствии времени в них");
     }
+
+    // 12. Расчет время окончания при отсутствии время выполнения
+    @Test
+    public void getEndTimeWithNoTimeInTask() {
+        testManager.newSimpleTask(new NewTask("2", "2"));
+        Assertions.assertNull(testManager.getTaskById(1).getEndTime(),
+                "Ошибка при расчете времени окончания при отсутствии времени в задаче.");
+    }
+
+    // 13. Расчет время окончания при наличии время выполнения
+    @Test
+    public void getEndTimeWithTimeInTask() {
+        testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 3, 00, 10), 10));
+        Assertions.assertEquals(testManager.getTaskById(1).getEndTime(), LocalDateTime.of(2023, Month.APRIL, 3, 00, 20),
+                "Ошибка при расчете времени окончания при наличия времени в задаче.");
+    }
+
+    // 14. Расчет время окончания при наличии время выполнения равной 0
+    @Test
+    public void getEndTimeWithZeroTimeInTask() {
+        testManager.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.APRIL, 3, 00, 10), 0));
+        Assertions.assertEquals(testManager.getTaskById(1).getEndTime(), LocalDateTime.of(2023, Month.APRIL, 3, 00, 10), "" +
+                "Ошибка при расчете времени окончания при 0 длительности.");
+    }
 }
