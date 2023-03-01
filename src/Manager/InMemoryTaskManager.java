@@ -17,19 +17,21 @@ public class InMemoryTaskManager implements TaskManager {
         }
         if (tasks.get(o2).getStartTime() == null) {
             return -1;
-        }
-        else {
+        } else {
             return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
         }
     };
+    private final TreeMap<LocalDateTime, Task> taskTimeLine;
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
+     *
      * @param history - объект класса менеджер историй просмотра
      */
     public InMemoryTaskManager(InMemoryHistoryManager history) {
         historyManager = history;
         prioritizedTasks = new TreeSet<>(timeComparator);
+        taskTimeLine = new TreeMap<>(Comparator.nullsLast(Comparator.naturalOrder()));
     }
 
     @Override
@@ -158,28 +160,20 @@ public class InMemoryTaskManager implements TaskManager {
     private void addTaskToPrioritizedTasks(Task task) throws ManagerExceptions.TaskTimeOverlayException {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
-        if (start == null || end == null) {
+        if (start == null || end == null || prioritizedTasks.isEmpty()) {
             prioritizedTasks.add(task.getTaskIdNumber());
-        }
-        else if (!prioritizedTasks.isEmpty()) {
-            TreeSet<Integer> testingSet = new TreeSet<>(prioritizedTasks);
-            for (int taskId : testingSet) {
-                LocalDateTime start2 = tasks.get(taskId).getStartTime();
-                LocalDateTime end2 = tasks.get(taskId).getEndTime();
-                if (start2 == null || end2 == null) {
-                    continue;
-                }
-                if (!(start.isBefore(start2) || start.isAfter(end2)) || !(end.isBefore(start2) || end.isAfter(end2)))
-                {
-                    throw new ManagerExceptions.TaskTimeOverlayException(
-                            "Время выполнения задачи " + task.getTaskIdNumber() +
-                                    " пересекается со сроками задачи " + taskId + ".");
-                }
-            }
+            taskTimeLine.put(task.getStartTime(), task);
+            taskTimeLine.put(task.getEndTime(), task);
+        } else if (checkTimeOverlay(task)) {
             prioritizedTasks.add(task.getTaskIdNumber());
+            taskTimeLine.put(task.getStartTime(), task);
+            taskTimeLine.put(task.getEndTime(), task);
         } else {
-            prioritizedTasks.add(task.getTaskIdNumber());
+            throw new ManagerExceptions.TaskTimeOverlayException(
+                    "Время выполнения задачи " + task.getTaskIdNumber() +
+                            " пересекается со сроками других задач.");
         }
+
     }
 
     public List<Integer> getSubTasksOfEpicById(int epicId) {
@@ -200,6 +194,32 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return null; // maybe null
+    }
+
+    private boolean checkTimeOverlay(Task task) {
+        LocalDateTime start = task.getStartTime();
+        LocalDateTime end = task.getEndTime();
+        boolean start2;
+        if (start == null || end == null) {
+            return true;
+        }
+        if (taskTimeLine.lowerKey(start) != null) {
+            Task taskBefore = taskTimeLine.get(taskTimeLine.lowerKey(start));
+            start2 = taskBefore.getStartTime().equals(taskTimeLine.lowerKey(start));
+        } else if (taskTimeLine.lowerKey(start) == null) {
+            start2 = false;
+        } else {
+            start2 = !taskTimeLine.lowerKey(start).equals(start);
+        }
+        boolean end2;
+        if (taskTimeLine.higherKey(start) != null) {
+            end2 = end.isBefore(taskTimeLine.higherKey(start));
+        } else if (taskTimeLine.higherKey(start) == null) {
+            end2 = true;
+        } else {
+            end2 = !taskTimeLine.higherKey(start).equals(end);
+        }
+        return !start2 && end2;
     }
 
     @Override

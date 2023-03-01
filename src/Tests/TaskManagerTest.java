@@ -304,7 +304,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
             testManager.newSimpleTask(new NewTask("2", "2",
                     LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 60));
         });
-        Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками задачи 1.",
+        Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками других задач.",
                 "Ошибка при проверке наличия пересечений задач по времени в начале их выполнения.");
     }
 
@@ -313,12 +313,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void createTaskWithCrossingTimeDataInEnd() {
         ManagerExceptions.TaskTimeOverlayException exception =
                 Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
-            testManager.newSimpleTask(new NewTask("1", "1",
-                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
-            testManager.newSimpleTask(new NewTask("2", "2",
-                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 30), 60));
+                    testManager.newSimpleTask(new NewTask("1", "1",
+                            LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
+                    testManager.newSimpleTask(new NewTask("2", "2",
+                            LocalDateTime.of(2023, Month.APRIL, 28, 0, 29), 60));
         });
-        Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками задачи 1.",
+        Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками других задач.",
                 "Ошибка при проверке наличия пересечений задач по времени в конце их выполнения.");
     }
 
@@ -327,12 +327,26 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void createTaskWithCrossingTimeDataInMiddle() {
         ManagerExceptions.TaskTimeOverlayException exception =
                 Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
-            testManager.newSimpleTask(new NewTask("1", "1",
-                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
-            testManager.newSimpleTask(new NewTask("2", "2",
-                    LocalDateTime.of(2023, Month.APRIL, 28, 0, 10), 10));
-        });
-        Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками задачи 1.",
+                    testManager.newSimpleTask(new NewTask("1", "1",
+                            LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
+                    testManager.newSimpleTask(new NewTask("2", "2",
+                            LocalDateTime.of(2023, Month.APRIL, 28, 0, 10), 10));
+                });
+        Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками других задач.",
+                "Ошибка при проверке наличия пересечений задач по времени в середине их выполнения.");
+    }
+
+    @DisplayName("Время выполнения задач. Создание задачи с пересечением по времени полностью выходит за другую задачу")
+    @Test
+    public void createTaskWithCrossingTimeDataInMiddle2() {
+        ManagerExceptions.TaskTimeOverlayException exception =
+                Assertions.assertThrows(ManagerExceptions.TaskTimeOverlayException.class, () -> {
+                    testManager.newSimpleTask(new NewTask("1", "1",
+                            LocalDateTime.of(2023, Month.APRIL, 28, 1, 0), 30));
+                    testManager.newSimpleTask(new NewTask("2", "2",
+                            LocalDateTime.of(2023, Month.APRIL, 28, 0, 10), 360));
+                });
+        Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками других задач.",
                 "Ошибка при проверке наличия пересечений задач по времени в середине их выполнения.");
     }
 
@@ -368,7 +382,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2022, Month.APRIL, 1, 0, 0), 10), 1);
         testManager.newSubtask(new NewTask("3", "3", null, 10), 1);
         testManager.newSubtask(new NewTask("4", "4",
-                LocalDateTime.of(2022, Month.APRIL, 1, 0, 11), 10), 1);
+                LocalDateTime.of(2022, Month.APRIL, 1, 0, 20), 10), 1);
         testManager.removeTaskById(4);
         Assertions.assertTrue((testManager.getTaskById(1).getStartTime().equals
                         (LocalDateTime.of(2022, Month.APRIL, 1, 0, 0))) &&
