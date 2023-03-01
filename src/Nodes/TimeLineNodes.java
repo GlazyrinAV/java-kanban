@@ -9,17 +9,16 @@ public class TimeLineNodes<T extends LocalDateTime> {
     private final Task data;
     private TimeLineNodes<T> nextNode;
     private TimeLineNodes<T> prevNode;
-    private TimeLineNodes<T> nextStart;
-    private TimeLineNodes<T> prevEnd;
+    private LocalDateTime nextStart;
+    private LocalDateTime prevEnd;
     private LocalDateTime start;
 
-    public TimeLineNodes(Task data, TimeLineNodes<T> nextNode, TimeLineNodes<T> prevNode,
-                         TimeLineNodes<T> nextStart, TimeLineNodes<T> prevEnd) {
+    public TimeLineNodes(Task data, TimeLineNodes<T> nextNode, TimeLineNodes<T> prevNode) {
         this.data = data;
         this.nextNode = nextNode;
         this.prevNode = prevNode;
-        this.nextStart = nextStart;
-        this.prevEnd = prevEnd;
+        this.nextStart = null;
+        this.prevEnd = null;
         this.start = null;
     }
 
@@ -43,19 +42,19 @@ public class TimeLineNodes<T extends LocalDateTime> {
         this.prevNode = prevNode;
     }
 
-    public TimeLineNodes<T> getNextStart() {
+    public LocalDateTime getNextStart() {
         return nextStart;
     }
 
-    public void setNextStart(TimeLineNodes<T> nextStart) {
+    public void setNextStart(LocalDateTime nextStart) {
         this.nextStart = nextStart;
     }
 
-    public TimeLineNodes<T> getPrevEnd() {
+    public LocalDateTime getPrevEnd() {
         return prevEnd;
     }
 
-    public void setPrevEnd(TimeLineNodes<T> prevEnd) {
+    public void setPrevEnd(LocalDateTime prevEnd) {
         this.prevEnd = prevEnd;
     }
 

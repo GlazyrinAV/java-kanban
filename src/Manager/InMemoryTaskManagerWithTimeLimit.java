@@ -10,7 +10,6 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
 
     HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> freeTime;
     HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> busyTime;
-
     int timeLimitInMinutes = 5;
     private TimeLineNodes<LocalDateTime> head;
     private TimeLineNodes<LocalDateTime> tail;
@@ -21,35 +20,43 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
         busyTime = new HashMap<>();
         head = null;
         tail = null;
-        this.timeLimitInMinutes = timeLimit;
+        if (timeLimit > 0) {
+            this.timeLimitInMinutes = timeLimit;
+        }
     }
-    @Override
-    public void addTaskToPrioritizedTasks(Task task) {
+
+    private void addTaskToBeginning(Task task) {
         final TimeLineNodes<LocalDateTime> oldHead = head;
-        final TimeLineNodes<LocalDateTime> newNode = new TimeLineNodes<>(task, null, oldHead, null, null);
+        final TimeLineNodes<LocalDateTime> newNode = new TimeLineNodes<>(task, null, oldHead);
         head = newNode;
         if (oldHead == null) {
             tail = newNode;
         } else {
             oldHead.setNextNode(newNode);
         }
-        busyTime.put(getStartOfPeriod(task.getStartTime()), newNode);
-    }
-
-    private void addTaskToBeginning(LocalDateTime time) {
-
+        long duration = getNumberOfPeriodsInTask(task.getDuration());
+        LocalDateTime currentPeriod = getStartOfPeriod(task.getStartTime());
+        for (long i = 1; i <= duration; i++) {
+            busyTime.put(currentPeriod, newNode);
+            currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
+        }
     }
 
     private void addTaskToEnd(Task task) {
         final TimeLineNodes<LocalDateTime> oldTail = tail;
-        final TimeLineNodes<LocalDateTime> newNode = new TimeLineNodes<>(task, oldTail, null, null, null);
+        final TimeLineNodes<LocalDateTime> newNode = new TimeLineNodes<>(task, oldTail, null);
         tail = newNode;
         if (oldTail == null) {
             head = newNode;
         } else {
             oldTail.setNextNode(newNode);
         }
-        busyTime.put(getStartOfPeriod(task.getStartTime()), newNode);
+        long duration = getNumberOfPeriodsInTask(task.getDuration());
+        LocalDateTime currentPeriod = getStartOfPeriod(task.getStartTime());
+        for (long i = 1; i <= duration; i++) {
+            busyTime.put(currentPeriod, newNode);
+            currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
+        }
     }
 
     private void addTaskToMiddle(Task task) {
@@ -76,12 +83,19 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
     }
 
     private LocalDateTime getStartOfPeriod(LocalDateTime time) {
-        int minutes;
-        if ((time.getMinute()%timeLimitInMinutes)<(timeLimitInMinutes/2)) {
-            minutes = time.getMinute()/timeLimitInMinutes;
+        if (time.getMinute() == 0) {
+            return time.withSecond(0).withMinute(0);
         } else {
-            minutes = time.getMinute()*(1 - 1%timeLimitInMinutes) + timeLimitInMinutes;
+            int minutes = (time.getMinute() / timeLimitInMinutes) * timeLimitInMinutes;
+            return time.withSecond(0).withMinute(minutes);
         }
-        return time.withSecond(0).withMinute(minutes);
+    }
+
+    private long getNumberOfPeriodsInTask(long duration) {
+        if (duration % timeLimitInMinutes == 0){
+            return duration / timeLimitInMinutes;
+        } else {
+            return duration / timeLimitInMinutes + 1;
+        }
     }
 }
