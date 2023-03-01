@@ -11,7 +11,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
     HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> freeTime;
     HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> busyTime;
 
-    int timeLimit = 5;
+    int timeLimitInMinutes = 5;
     private TimeLineNodes<LocalDateTime> head;
     private TimeLineNodes<LocalDateTime> tail;
 
@@ -33,7 +33,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
         busyTime = new HashMap<>();
         head = null;
         tail = null;
-        this.timeLimit = timeLimit;
+        this.timeLimitInMinutes = timeLimit;
     }
     @Override
     public void addTaskToPrioritizedTasks(Task task) {
@@ -45,7 +45,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
         } else {
             oldHead.setNextNode(newNode);
         }
-//
+        busyTime.put(getStartOfPeriod(task.getStartTime()), newNode);
     }
 
     private void addTaskToBeginning(LocalDateTime time) {
@@ -61,7 +61,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
         } else {
             oldTail.setNextNode(newNode);
         }
-//
+        busyTime.put(getStartOfPeriod(task.getStartTime()), newNode);
     }
 
     private void addTaskToMiddle(Task task) {
@@ -85,5 +85,15 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
             node.getNextNode().setPrevNode(node.getPrevNode());
             node.getPrevNode().setNextNode(node.getNextNode());
         }
+    }
+
+    private LocalDateTime getStartOfPeriod(LocalDateTime time) {
+        int minutes;
+        if ((time.getMinute()%timeLimitInMinutes)<(timeLimitInMinutes/2)) {
+            minutes = time.getMinute()/timeLimitInMinutes;
+        } else {
+            minutes = time.getMinute()*(1 - 1%timeLimitInMinutes) + timeLimitInMinutes;
+        }
+        return time.withSecond(0).withMinute(minutes);
     }
 }
