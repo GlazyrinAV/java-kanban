@@ -161,19 +161,20 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
         if (start == null || end == null || prioritizedTasks.isEmpty()) {
-            prioritizedTasks.add(task.getTaskIdNumber());
-            taskTimeLine.put(task.getStartTime(), task);
-            taskTimeLine.put(task.getEndTime(), task);
+            taskTimeAdder(task);
         } else if (checkTimeOverlay(task)) {
-            prioritizedTasks.add(task.getTaskIdNumber());
-            taskTimeLine.put(task.getStartTime(), task);
-            taskTimeLine.put(task.getEndTime(), task);
+            taskTimeAdder(task);
         } else {
             throw new ManagerExceptions.TaskTimeOverlayException(
                     "Время выполнения задачи " + task.getTaskIdNumber() +
                             " пересекается со сроками других задач.");
         }
+    }
 
+    public void taskTimeAdder(Task task) {
+        prioritizedTasks.add(task.getTaskIdNumber());
+        taskTimeLine.put(task.getStartTime(), task);
+        taskTimeLine.put(task.getEndTime(), task);
     }
 
     public List<Integer> getSubTasksOfEpicById(int epicId) {
