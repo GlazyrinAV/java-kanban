@@ -157,7 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param task - добавляемая задача
      * @throws ManagerExceptions.TaskTimeOverlayException - исключение при наличии пересечений добавляемой задачи
      */
-    private void addTaskToPrioritizedTasks(Task task) throws ManagerExceptions.TaskTimeOverlayException {
+    protected void addTaskToPrioritizedTasks(Task task) throws ManagerExceptions.TaskTimeOverlayException {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
         if (start == null || end == null || prioritizedTasks.isEmpty()) {
