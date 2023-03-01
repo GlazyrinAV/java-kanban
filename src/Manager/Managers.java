@@ -17,6 +17,6 @@ public final class Managers {
     }
 
     public static InMemoryTaskManagerWithTimeLimit getDefaultWithTimeLimit() {
-        return new InMemoryTaskManagerWithTimeLimit(new InMemoryHistoryManager());
+        return new InMemoryTaskManagerWithTimeLimit(new InMemoryHistoryManager(), 10);
     }
 }

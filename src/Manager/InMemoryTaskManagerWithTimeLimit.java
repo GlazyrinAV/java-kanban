@@ -15,18 +15,6 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
     private TimeLineNodes<LocalDateTime> head;
     private TimeLineNodes<LocalDateTime> tail;
 
-    /**
-     * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
-     * @param history - объект класса менеджер историй просмотра
-     */
-    public InMemoryTaskManagerWithTimeLimit(InMemoryHistoryManager history) {
-        super(history);
-        freeTime = new HashMap<>();
-        busyTime = new HashMap<>();
-        head = null;
-        tail = null;
-    }
-
     public InMemoryTaskManagerWithTimeLimit(InMemoryHistoryManager history, int timeLimit) {
         super(history);
         freeTime = new HashMap<>();
@@ -54,7 +42,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
 
     private void addTaskToEnd(Task task) {
         final TimeLineNodes<LocalDateTime> oldTail = tail;
-        final TimeLineNodes<LocalDateTime> newNode = new TimeLineNodes<>(task, null, oldTail, null, null);
+        final TimeLineNodes<LocalDateTime> newNode = new TimeLineNodes<>(task, oldTail, null, null, null);
         tail = newNode;
         if (oldTail == null) {
             head = newNode;
