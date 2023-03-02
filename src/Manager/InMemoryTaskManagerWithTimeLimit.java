@@ -27,12 +27,48 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
         }
     }
 
-    public boolean checkOverlay(Task task) {
+    public boolean checkTask(Task task) {
+        LocalDateTime start = getStartOfPeriod(task.getStartTime());
+        LocalDateTime end = getStartOfPeriod(task.getEndTime());
+        if (busyTime.isEmpty() && freeTime.isEmpty()) {
+            addTimeNodeToBeginning(task);
+            return true;
+        } else if (freeTime.containsKey(start)) {
+            if (checkForOverlay(task)) {
+                addTimeNodeToMiddle(task);
+                return true;
+            } else {
+                return false;
+            }
+        } else if (busyTime.containsKey(start) && start.isBefore(busyTime.get(0).getStart())) {
+            if (checkForOverlay(task)) {
+                addTimeNodeToBeginning(task);
+                return true;
+            } else {
+                return false;
+            }
+        } else if (busyTime.containsKey(start) && end.isAfter(busyTime.get(busyTime.size() - 1).getData().getEndTime())) {
+            if (checkForOverlay(task)) {
+                addTimeNodeToEnd(task);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (checkForOverlay(task)) {
+                addTimeNodeToMiddle(task);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private boolean checkForOverlay(Task task) {
         LocalDateTime start = getStartOfPeriod(task.getStartTime());
         LocalDateTime end = getStartOfPeriod(task.getEndTime());
         boolean noTaskInTimeLine = (!(busyTime.containsKey(start) && busyTime.containsKey(end)) ||
-                !(freeTime.containsKey(start) && freeTime.containsKey(end)) ||
-                (busyTime.isEmpty() && freeTime.isEmpty()));
+                !(freeTime.containsKey(start) && freeTime.containsKey(end)));
         if (busyTime.containsKey(start) || busyTime.containsKey(end)) {
             return false;
         }
@@ -98,7 +134,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
         }
     }
 
-    private void addTaskToMiddle(Task task) {
+    private void addTimeNodeToMiddle(Task task) {
         long busyDuration = getNumberOfPeriodsInTask(task.getDuration());
         LocalDateTime currentPeriod = getStartOfPeriod(task.getStartTime());
         long freeDurationBefore = getNumberOfFreePeriods(freeTime.get(currentPeriod).getPrevEnd(), task.getStartTime());
@@ -117,13 +153,11 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
         }
-
         for (long i = 1; i <= busyDuration; i++) {
             addTimeNode(TimeNodePlace.MIDDLE, task, currentPeriod, busyTime);
             busyTime.put(currentPeriod, freeTime.remove(currentPeriod));
             currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
         }
-
     }
 
     private void addTimeNode(TimeNodePlace timeNodePlace, Task task, LocalDateTime period, HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> time) {
