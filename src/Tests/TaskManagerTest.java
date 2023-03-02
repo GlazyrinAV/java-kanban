@@ -316,7 +316,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                     testManager.newSimpleTask(new NewTask("1", "1",
                             LocalDateTime.of(2023, Month.APRIL, 28, 0, 0), 30));
                     testManager.newSimpleTask(new NewTask("2", "2",
-                            LocalDateTime.of(2023, Month.APRIL, 28, 0, 29), 60));
+                            LocalDateTime.of(2023, Month.APRIL, 28, 0, 30), 60));
         });
         Assertions.assertEquals(exception.getMessage(), "Время выполнения задачи 2 пересекается со сроками других задач.",
                 "Ошибка при проверке наличия пересечений задач по времени в конце их выполнения.");

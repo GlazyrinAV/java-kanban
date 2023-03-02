@@ -204,23 +204,19 @@ public class InMemoryTaskManager implements TaskManager {
         if (start == null || end == null) {
             return true;
         }
-        if (taskTimeLine.lowerKey(start) != null) {
-            Task taskBefore = taskTimeLine.get(taskTimeLine.lowerKey(start));
-            start2 = taskBefore.getStartTime().equals(taskTimeLine.lowerKey(start));
-        } else if (taskTimeLine.lowerKey(start) == null) {
-            start2 = false;
+        if ((taskTimeLine.lowerKey(start) == null)) {
+            start2 = true;
         } else {
-            start2 = !taskTimeLine.lowerKey(start).equals(start);
+            Task taskBefore = taskTimeLine.get(taskTimeLine.lowerKey(start));
+            start2 = !taskBefore.getStartTime().equals(taskTimeLine.lowerKey(start));
         }
         boolean end2;
-        if (taskTimeLine.higherKey(start) != null) {
-            end2 = end.isBefore(taskTimeLine.higherKey(start));
-        } else if (taskTimeLine.higherKey(start) == null) {
+        if ((taskTimeLine.higherKey(start) == null)) {
             end2 = true;
         } else {
-            end2 = !taskTimeLine.higherKey(start).equals(end);
+            end2 = end.isBefore(taskTimeLine.higherKey(start));
         }
-        return !start2 && end2;
+        return start2 && end2;
     }
 
     @Override
