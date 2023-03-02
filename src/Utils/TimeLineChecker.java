@@ -39,14 +39,14 @@ public class TimeLineChecker {
             } else {
                 return false;
             }
-        } else if (busyTime.containsKey(start) && start.isBefore(busyTime.get(0).getStart())) {
+        } else if (busyTime.containsKey(start) && start.isBefore(busyTime.get(getStartOfPeriod(head.getStart())).getStart())) {
             if (checkForOverlay(task)) {
                 addTimeNodeToBeginning(task);
                 return true;
             } else {
                 return false;
             }
-        } else if (busyTime.containsKey(start) && end.isAfter(busyTime.get(busyTime.size() - 1).getData().getEndTime())) {
+        } else if (busyTime.containsKey(start) && end.isAfter(busyTime.get(getStartOfPeriod(tail.getData().getEndTime())).getData().getEndTime())) {
             if (checkForOverlay(task)) {
                 addTimeNodeToEnd(task);
                 return true;
@@ -175,8 +175,7 @@ public class TimeLineChecker {
 
                 break;
             case MIDDLE:
-                Task currentTask = freeTime.getOrDefault(timeNodePlace, null).getData();
-                currentTask = task;
+                freeTime.get(getStartOfPeriod(task.getStartTime())).setData(task);
                 break;
             case END:
                 final TimeLineNodes<LocalDateTime> oldTail = tail;

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class TimeLineNodes<T extends LocalDateTime> {
 
-    private final Task data;
+    private Task data;
     private TimeLineNodes<T> nextNode;
     private TimeLineNodes<T> prevNode;
     private LocalDateTime nextStart;
@@ -62,7 +62,7 @@ public class TimeLineNodes<T extends LocalDateTime> {
         return start;
     }
 
-    public void setStart(LocalDateTime start) {
-        this.start = start;
+    public void setData(Task task) {
+        data = task;
     }
 }
