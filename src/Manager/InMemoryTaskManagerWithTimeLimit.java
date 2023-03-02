@@ -27,6 +27,25 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
         }
     }
 
+    public boolean checkOverlay(Task task) {
+        LocalDateTime start = getStartOfPeriod(task.getStartTime());
+        LocalDateTime end = getStartOfPeriod(task.getEndTime());
+        boolean noTaskInTimeLine = (!(busyTime.containsKey(start) && busyTime.containsKey(end)) ||
+                !(freeTime.containsKey(start) && freeTime.containsKey(end)) ||
+                (busyTime.isEmpty() && freeTime.isEmpty()));
+        if (busyTime.containsKey(start) || busyTime.containsKey(end)) {
+            return false;
+        }
+        if ((freeTime.containsKey(start) && !freeTime.containsKey(end)) ||
+                ((!freeTime.containsKey(start)) && (freeTime.containsKey(end)))) {
+            return false;
+        }
+        if (noTaskInTimeLine) {
+            return true;
+        }
+        return freeTime.get(start).getNextStart().isAfter(end);
+    }
+
     private void addTimeNodeToBeginning(Task task) {
         long busyDuration = getNumberOfPeriodsInTask(task.getDuration());
         long freeDuration = getNumberOfFreePeriods(task.getEndTime(), head.getStart());
