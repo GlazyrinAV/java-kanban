@@ -33,14 +33,14 @@ public class TimeLineChecker {
             if (busyTime.isEmpty() && freeTime.isEmpty()) {
                 addTimeNodeToBeginning(task);
                 return true;
-            } else if (!busyTime.containsKey(start) && start.isBefore(busyTime.get(getStartOfPeriod(head.getStart())).getStart())) {
+            } else if (head == null || !busyTime.containsKey(start) && start.isBefore(busyTime.get(getStartOfPeriod(head.getStart())).getStart())) {
                 if (checkForOverlay(task)) {
                     addTimeNodeToBeginning(task);
                     return true;
                 } else {
                     return false;
                 }
-            } else if (!busyTime.containsKey(start) && end.isAfter(busyTime.get(getStartOfPeriod(tail.getData().getEndTime())).getData().getEndTime())) {
+            } else if (tail == null || !busyTime.containsKey(start) && end.isAfter(busyTime.get(getStartOfPeriod(tail.getData().getEndTime())).getData().getEndTime())) {
                 if (checkForOverlay(task)) {
                     addTimeNodeToEnd(task);
                     return true;
