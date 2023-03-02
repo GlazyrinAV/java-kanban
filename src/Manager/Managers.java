@@ -15,4 +15,8 @@ public final class Managers {
     public static FileBackedTasksManager getWithAutoSave() {
         return new FileBackedTasksManager(getDefaultHistory());
     }
+
+    public static InMemoryTaskManagerVar2 getDefaultVer2() {
+        return new InMemoryTaskManagerVar2(getDefaultHistory());
+    }
 }

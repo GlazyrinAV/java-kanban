@@ -29,38 +29,41 @@ public class TimeLineChecker {
     public boolean checkTask(Task task) {
         LocalDateTime start = getStartOfPeriod(task.getStartTime());
         LocalDateTime end = getStartOfPeriod(task.getEndTime());
-        if (busyTime.isEmpty() && freeTime.isEmpty()) {
-            addTimeNodeToBeginning(task);
-            return true;
-        } else if (freeTime.containsKey(start)) {
-            if (checkForOverlay(task)) {
-                addTimeNodeToMiddle(task);
-                return true;
-            } else {
-                return false;
-            }
-        } else if (busyTime.containsKey(start) && start.isBefore(busyTime.get(getStartOfPeriod(head.getStart())).getStart())) {
-            if (checkForOverlay(task)) {
+        if (task.getStartTime() != null && task.getEndTime() != null) {
+            if (busyTime.isEmpty() && freeTime.isEmpty()) {
                 addTimeNodeToBeginning(task);
                 return true;
+            } else if (!busyTime.containsKey(start) && start.isBefore(busyTime.get(getStartOfPeriod(head.getStart())).getStart())) {
+                if (checkForOverlay(task)) {
+                    addTimeNodeToBeginning(task);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (!busyTime.containsKey(start) && end.isAfter(busyTime.get(getStartOfPeriod(tail.getData().getEndTime())).getData().getEndTime())) {
+                if (checkForOverlay(task)) {
+                    addTimeNodeToEnd(task);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (freeTime.containsKey(start)) {
+                if (checkForOverlay(task)) {
+                    addTimeNodeToMiddle(task);
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
-                return false;
-            }
-        } else if (busyTime.containsKey(start) && end.isAfter(busyTime.get(getStartOfPeriod(tail.getData().getEndTime())).getData().getEndTime())) {
-            if (checkForOverlay(task)) {
-                addTimeNodeToEnd(task);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if (checkForOverlay(task)) {
-                addTimeNodeToMiddle(task);
-                return true;
-            } else {
-                return false;
+                if (checkForOverlay(task)) {
+                    addTimeNodeToMiddle(task);
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
+        else return true;
     }
 
     private boolean checkForOverlay(Task task) {
@@ -83,7 +86,12 @@ public class TimeLineChecker {
 
     private void addTimeNodeToBeginning(Task task) {
         long busyDuration = getNumberOfPeriodsInTask(task.getDuration());
-        long freeDuration = getNumberOfFreePeriods(task.getEndTime(), head.getStart());
+        long freeDuration;
+        if (head == null) {
+            freeDuration = 0;
+        } else {
+            freeDuration = getNumberOfFreePeriods(task.getEndTime(), head.getStart());
+        }
         LocalDateTime currentPeriod = getStartOfPeriod(task.getStartTime());
         if (freeDuration <= 0) {
             for (long i = 1; i <= busyDuration; i++) {
@@ -109,7 +117,12 @@ public class TimeLineChecker {
 
     private void addTimeNodeToEnd(Task task) {
         long busyDuration = getNumberOfPeriodsInTask(task.getDuration());
-        long freeDuration = getNumberOfFreePeriods(tail.getData().getEndTime(), task.getStartTime());
+        long freeDuration;
+        if (tail == null) {
+            freeDuration = 0;
+        } else {
+            freeDuration = getNumberOfFreePeriods(tail.getData().getEndTime(), task.getStartTime());
+        }
         LocalDateTime currentPeriod = getStartOfPeriod(task.getStartTime());
         if (freeDuration <= 0) {
             for (long i = 1; i <= busyDuration; i++) {

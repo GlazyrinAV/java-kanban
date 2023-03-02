@@ -24,6 +24,7 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
         if (start == null || end == null || prioritizedTasks.isEmpty()) {
+            checker.checkTask(task);
             taskTimeAdder(task);
         } else if (checker.checkTask(task)) {
             taskTimeAdder(task);

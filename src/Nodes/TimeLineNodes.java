@@ -19,7 +19,7 @@ public class TimeLineNodes<T extends LocalDateTime> {
         this.prevNode = prevNode;
         this.nextStart = null;
         this.prevEnd = null;
-        this.start = null;
+        this.start = data.getStartTime();
     }
 
     public Task getData() {
