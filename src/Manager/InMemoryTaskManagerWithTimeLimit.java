@@ -95,7 +95,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
             currentPeriod = getStartOfPeriod(task.getEndTime());
             for (long i = 1; i <= freeDurationAfter; i++) {
                 freeTime.get(currentPeriod).setPrevEnd(getStartOfPeriod(task.getEndTime()));
-                currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes)
+                currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
         }
 
