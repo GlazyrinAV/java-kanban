@@ -1,5 +1,7 @@
-package Manager;
+package Utils;
 
+import Manager.InMemoryHistoryManager;
+import Manager.InMemoryTaskManager;
 import Model.Task;
 import Nodes.TimeLineNodes;
 import Nodes.TimeNodePlace;
@@ -8,7 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
+public class TimeLineChecker extends InMemoryTaskManager {
 
     HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> freeTime;
     HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> busyTime;
@@ -16,7 +18,7 @@ public class InMemoryTaskManagerWithTimeLimit extends InMemoryTaskManager {
     private TimeLineNodes<LocalDateTime> head;
     private TimeLineNodes<LocalDateTime> tail;
 
-    public InMemoryTaskManagerWithTimeLimit(InMemoryHistoryManager history, int timeLimit) {
+    public TimeLineChecker(InMemoryHistoryManager history, int timeLimit) {
         super(history);
         freeTime = new HashMap<>();
         busyTime = new HashMap<>();
