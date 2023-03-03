@@ -10,11 +10,11 @@ public class Main {
     public static void main(String[] args) {
 
         var manager3 = Managers.getDefaultVer2();
-        manager3.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.FEBRUARY, 28, 21, 53), 30));
-        manager3.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.FEBRUARY, 27, 21, 52), 30));
-        manager3.newEpic(new NewTask("3", "3"));
-        manager3.newSubtask(new NewTask("4", "4"), 3);
-        manager3.newSubtask(new NewTask("5", "5", LocalDateTime.now().minusDays(1), 60), 3);
+//        manager3.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.FEBRUARY, 28, 21, 53), 30));
+//        manager3.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.FEBRUARY, 27, 21, 52), 30));
+//        manager3.newEpic(new NewTask("3", "3"));
+//        manager3.newSubtask(new NewTask("4", "4"), 3);
+//        manager3.newSubtask(new NewTask("5", "5", LocalDateTime.now().minusDays(1), 60), 3);
         manager3.newSimpleTask(new NewTask("1", "1",
                 LocalDateTime.of(2023, Month.APRIL, 1, 0, 0), 30));
         manager3.newSimpleTask(new NewTask("2", "2",

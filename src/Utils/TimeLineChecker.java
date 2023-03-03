@@ -62,8 +62,7 @@ public class TimeLineChecker {
                     return false;
                 }
             }
-        }
-        else return true;
+        } else return true;
     }
 
     private boolean checkForOverlay(Task task) {
@@ -152,14 +151,14 @@ public class TimeLineChecker {
         long freeDurationBefore = getNumberOfFreePeriods(freeTime.get(currentPeriod).getPrevEnd(), task.getStartTime());
         long freeDurationAfter = getNumberOfFreePeriods(task.getEndTime(), freeTime.get(currentPeriod).getNextStart());
         if (freeDurationBefore > 0) {
-            currentPeriod = getStartOfPeriod(freeTime.get(currentPeriod).getPrevEnd());
+            currentPeriod = getStartOfPeriod(freeTime.get(currentPeriod).getPrevEnd().plusMinutes(timeLimitInMinutes));
             for (long i = 1; i <= freeDurationBefore; i++) {
                 freeTime.get(currentPeriod).setNextStart(getStartOfPeriod(task.getStartTime()));
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
         }
         if (freeDurationAfter > 0) {
-            currentPeriod = getStartOfPeriod(task.getEndTime());
+            currentPeriod = getStartOfPeriod(task.getEndTime().plusMinutes(timeLimitInMinutes));
             for (long i = 1; i <= freeDurationAfter; i++) {
                 freeTime.get(currentPeriod).setPrevEnd(getStartOfPeriod(task.getEndTime()));
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
@@ -185,7 +184,6 @@ public class TimeLineChecker {
                     oldHead.setPrevNode(newNode);
                 }
                 time.put(period, newNode);
-
                 break;
             case MIDDLE:
                 freeTime.get(getStartOfPeriod(task.getStartTime())).setData(task);
