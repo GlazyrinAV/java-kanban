@@ -15,7 +15,7 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
      */
     public InMemoryTaskManagerVar2(InMemoryHistoryManager history) {
         super(history);
-        checker = new TimeLineChecker(30);
+        checker = new TimeLineChecker(15);
     }
 
     @Override

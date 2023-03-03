@@ -33,14 +33,14 @@ public class TimeLineChecker {
             if (busyTime.isEmpty() && freeTime.isEmpty()) {
                 addTimeNodeToBeginning(task);
                 return true;
-            } else if (head == null || (!busyTime.containsKey(start) && start.isBefore(head.getStart()))) {
+            } else if (head == null || (start.isBefore(head.getStart()))) {
                 if (checkForOverlay(task)) {
                     addTimeNodeToBeginning(task);
                     return true;
                 } else {
                     return false;
                 }
-            } else if (tail == null || (!busyTime.containsKey(start) && start.isAfter(tail.getData().getEndTime()))) {
+            } else if (tail == null || (start.isAfter(tail.getData().getEndTime()))) {
                 if (checkForOverlay(task)) {
                     addTimeNodeToEnd(task);
                     return true;
@@ -68,8 +68,6 @@ public class TimeLineChecker {
     private boolean checkForOverlay(Task task) {
         LocalDateTime start = getStartOfPeriod(task.getStartTime());
         LocalDateTime end = getStartOfPeriod(task.getEndTime());
-        boolean noTaskInTimeLine = (!(busyTime.containsKey(start) && busyTime.containsKey(end)) ||
-                !(freeTime.containsKey(start) && freeTime.containsKey(end)));
         if (busyTime.containsKey(start) || busyTime.containsKey(end)) {
             return false;
         }
@@ -77,8 +75,8 @@ public class TimeLineChecker {
                 ((!freeTime.containsKey(start)) && (freeTime.containsKey(end)))) {
             return false;
         }
-        if (noTaskInTimeLine) {
-            return true;
+        if (!busyTime.isEmpty() && !(freeTime.containsKey(start) || freeTime.containsKey(end))) {
+            return start.isAfter(getStartOfPeriod(tail.getData().getEndTime())) || end.isBefore(getStartOfPeriod(head.getStart()));
         }
         return freeTime.get(start).getNextStart().isAfter(end);
     }
@@ -98,7 +96,7 @@ public class TimeLineChecker {
                 currentPeriod = currentPeriod.minusMinutes(timeLimitInMinutes);
             }
         } else {
-            currentPeriod = getStartOfPeriod(head.getStart());
+            currentPeriod = getStartOfPeriod(head.getStart().minusMinutes(timeLimitInMinutes));
             LocalDateTime nextStart = getStartOfPeriod(head.getStart());
             LocalDateTime prevEnd = getStartOfPeriod(task.getEndTime());
             for (long i = 1; i <= freeDuration; i++) {
@@ -176,7 +174,7 @@ public class TimeLineChecker {
         switch (timeNodePlace) {
             case BEGINNING:
                 final TimeLineNodes<LocalDateTime> oldHead = head;
-                newNode = new TimeLineNodes<>(task, null, oldHead);
+                newNode = new TimeLineNodes<>(task, oldHead, null);
                 head = newNode;
                 if (oldHead == null) {
                     tail = newNode;
@@ -190,7 +188,7 @@ public class TimeLineChecker {
                 break;
             case END:
                 final TimeLineNodes<LocalDateTime> oldTail = tail;
-                newNode = new TimeLineNodes<>(task, oldTail, null);
+                newNode = new TimeLineNodes<>(task, null, oldTail);
                 tail = newNode;
                 if (oldTail == null) {
                     head = newNode;
