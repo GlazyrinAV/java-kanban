@@ -11,7 +11,6 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
-     *
      * @param history - объект класса менеджер историй просмотра
      */
     public InMemoryTaskManagerVar2(InMemoryHistoryManager history) {
@@ -23,7 +22,9 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
     protected void addTaskToPrioritizedTasks(Task task) throws ManagerExceptions.TaskTimeOverlayException {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
-        if (start == null || end == null || prioritizedTasks.isEmpty()) {
+        if (start == null || end == null) {
+            taskTimeAdder(task);
+        } else if (prioritizedTasks.isEmpty()) {
             checker.checkTask(task);
             taskTimeAdder(task);
         } else if (checker.checkTask(task)) {

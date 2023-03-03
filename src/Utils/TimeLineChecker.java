@@ -33,14 +33,14 @@ public class TimeLineChecker {
             if (busyTime.isEmpty() && freeTime.isEmpty()) {
                 addTimeNodeToBeginning(task);
                 return true;
-            } else if (head == null || !busyTime.containsKey(start) && start.isBefore(busyTime.get(getStartOfPeriod(head.getStart())).getStart())) {
+            } else if (head == null || (!busyTime.containsKey(start) && start.isBefore(head.getStart()))) {
                 if (checkForOverlay(task)) {
                     addTimeNodeToBeginning(task);
                     return true;
                 } else {
                     return false;
                 }
-            } else if (tail == null || !busyTime.containsKey(start) && end.isAfter(busyTime.get(getStartOfPeriod(tail.getData().getEndTime())).getData().getEndTime())) {
+            } else if (tail == null || (!busyTime.containsKey(start) && start.isAfter(tail.getData().getEndTime()))) {
                 if (checkForOverlay(task)) {
                     addTimeNodeToEnd(task);
                     return true;
@@ -56,7 +56,7 @@ public class TimeLineChecker {
                 }
             } else {
                 if (checkForOverlay(task)) {
-                    addTimeNodeToMiddle(task);
+                    addTimeNodeToBeginning(task);
                     return true;
                 } else {
                     return false;
@@ -130,16 +130,16 @@ public class TimeLineChecker {
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
         } else {
-            currentPeriod = getStartOfPeriod(tail.getStart());
+            currentPeriod = getStartOfPeriod(tail.getData().getEndTime()).plusMinutes(timeLimitInMinutes);
             LocalDateTime nextStart = getStartOfPeriod(task.getStartTime());
             LocalDateTime prevEnd = getStartOfPeriod(tail.getData().getEndTime());
-            for (long i = 0; i <= freeDuration; i++) {
+            for (long i = 1; i <= freeDuration; i++) {
                 addTimeNode(TimeNodePlace.END, task, currentPeriod, freeTime);
                 freeTime.get(currentPeriod).setNextStart(nextStart);
                 freeTime.get(currentPeriod).setPrevEnd(prevEnd);
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
-            for (long i = 0; i <= busyDuration; i++) {
+            for (long i = 1; i <= busyDuration; i++) {
                 addTimeNode(TimeNodePlace.END, task, currentPeriod, busyTime);
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
@@ -182,7 +182,7 @@ public class TimeLineChecker {
                 if (oldHead == null) {
                     tail = newNode;
                 } else {
-                    oldHead.setNextNode(newNode);
+                    oldHead.setPrevNode(newNode);
                 }
                 time.put(period, newNode);
 
@@ -199,6 +199,7 @@ public class TimeLineChecker {
                 } else {
                     oldTail.setNextNode(newNode);
                 }
+                time.put(period, newNode);
                 break;
         }
     }
@@ -224,10 +225,10 @@ public class TimeLineChecker {
 
     private LocalDateTime getStartOfPeriod(LocalDateTime time) {
         if (time.getMinute() == 0) {
-            return time.withSecond(0).withMinute(0);
+            return time.withMinute(0).withSecond(0);
         } else {
             int minutes = (time.getMinute() / timeLimitInMinutes) * timeLimitInMinutes;
-            return time.withSecond(0).withMinute(minutes);
+            return time.withMinute(minutes).withSecond(0).withNano(0);
         }
     }
 
@@ -235,11 +236,11 @@ public class TimeLineChecker {
         if (duration % timeLimitInMinutes == 0) {
             return duration / timeLimitInMinutes;
         } else {
-            return duration / timeLimitInMinutes + 1;
+            return (duration / timeLimitInMinutes) + 1;
         }
     }
 
     private long getNumberOfFreePeriods(LocalDateTime endOfPrevious, LocalDateTime starOfNew) {
-        return getNumberOfPeriodsInTask(Duration.between(endOfPrevious, starOfNew).toMinutes());
+        return getNumberOfPeriodsInTask(Duration.between(getStartOfPeriod(endOfPrevious), getStartOfPeriod(starOfNew)).toMinutes());
     }
 }
