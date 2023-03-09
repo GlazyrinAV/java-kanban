@@ -225,8 +225,14 @@ public class TimeLineChecker {
             LocalDateTime nextTimePeriod = getStartOfPeriod(time.plusMinutes(duration).plusMinutes(timeLimitInMinutes));
             LocalDateTime previousTimePeriod = getStartOfPeriod(time.minusMinutes(timeLimitInMinutes));
             for (long i = 1; i <= duration; i++) {
-                LocalDateTime nextStart = freeTime.get(nextTimePeriod).getNextStart();
-                LocalDateTime previousEnd = freeTime.get(previousTimePeriod).getPrevEnd();
+                LocalDateTime nextStart = null;
+                LocalDateTime previousEnd = null;
+                if (freeTime.get(nextTimePeriod) != null) {
+                    nextStart = freeTime.get(nextTimePeriod).getNextStart();
+                }
+                if (freeTime.get(previousTimePeriod) != null) {
+                    previousEnd = freeTime.get(previousTimePeriod).getPrevEnd();
+                }
                 busyTime.get(currentPeriod).setPrevEnd(previousEnd);
                 busyTime.get(currentPeriod).setNextStart(nextStart);
                 freeTime.put(currentPeriod, busyTime.remove(currentPeriod));

@@ -11,7 +11,7 @@ public class TimeLineNodes<T extends LocalDateTime> {
     private TimeLineNodes<T> prevNode;
     private LocalDateTime nextStart;
     private LocalDateTime prevEnd;
-    private LocalDateTime start;
+    private final LocalDateTime start;
 
     public TimeLineNodes(Task data, TimeLineNodes<T> nextNode, TimeLineNodes<T> prevNode) {
         this.data = data;
