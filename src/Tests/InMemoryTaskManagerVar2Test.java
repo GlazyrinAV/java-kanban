@@ -70,6 +70,4 @@ public class InMemoryTaskManagerVar2Test extends TaskManagerTest<TaskManager> {
         Assertions.assertEquals(getTestManager().getPrioritizedTasks().toString(), ("[1, 3, 2, 4]"),
                 "Ошибка при получении приоритетов с задачами.");
     }
-
-
 }

@@ -454,6 +454,25 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), 0));
         Assertions.assertEquals(testManager.getTaskById(1).getEndTime(),
                 LocalDateTime.of(2023, Month.APRIL, 3, 0, 10), "" +
-                "Ошибка при расчете времени окончания при 0 длительности.");
+                        "Ошибка при расчете времени окончания при 0 длительности.");
+    }
+
+
+    @DisplayName("Проверка пересечений при удалении задач с последующей записью новой задачи.")
+    @Test
+    public void checkOverlaysAfterRemovingAndAddingNewTask() {
+        testManager.newSimpleTask(new NewTask("1", "1",
+                LocalDateTime.of(2023, Month.APRIL, 1, 0, 0), 10));
+        testManager.newSimpleTask(new NewTask("2", "2",
+                LocalDateTime.of(2023, Month.APRIL, 1, 1, 0), 10));
+        testManager.newSimpleTask(new NewTask("3", "3",
+                LocalDateTime.of(2023, Month.APRIL, 1, 2, 0), 10));
+        testManager.removeTaskById(2);
+        testManager.newSimpleTask(new NewTask("4", "4",
+                LocalDateTime.of(2023, Month.APRIL, 1, 1, 0), 20));
+        Assertions.assertTrue((testManager.getTaskById(4).getStartTime().equals
+                        (LocalDateTime.of(2023, Month.APRIL, 1, 1, 0))) &&
+                        (testManager.getTaskById(1).getDuration() == 20),
+                "Ошибка при создании задачи после удаления задачи в данном временном промежутке.");
     }
 }
