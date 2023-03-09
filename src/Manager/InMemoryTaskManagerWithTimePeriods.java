@@ -6,14 +6,15 @@ import Utils.TimeLineChecker;
 
 import java.time.LocalDateTime;
 
-public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
+public class InMemoryTaskManagerWithTimePeriods extends InMemoryTaskManager {
     TimeLineChecker checker;
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
+     *
      * @param history - объект класса менеджер историй просмотра
      */
-    public InMemoryTaskManagerVar2(InMemoryHistoryManager history) {
+    public InMemoryTaskManagerWithTimePeriods(InMemoryHistoryManager history) {
         super(history);
         checker = new TimeLineChecker(15);
     }

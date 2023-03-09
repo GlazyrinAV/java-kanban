@@ -16,7 +16,7 @@ public final class Managers {
         return new FileBackedTasksManager(getDefaultHistory());
     }
 
-    public static InMemoryTaskManagerVar2 getDefaultVer2() {
-        return new InMemoryTaskManagerVar2(getDefaultHistory());
+    public static InMemoryTaskManagerWithTimePeriods getDefaultWithTimePeriods() {
+        return new InMemoryTaskManagerWithTimePeriods(getDefaultHistory());
     }
 }

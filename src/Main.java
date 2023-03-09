@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) {
 
-        var manager3 = Managers.getDefaultVer2();
+        var manager3 = Managers.getDefaultWithTimePeriods();
 //        manager3.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.FEBRUARY, 28, 21, 53), 30));
 //        manager3.newSimpleTask(new NewTask("2", "2", LocalDateTime.of(2023, Month.FEBRUARY, 27, 21, 52), 30));
 //        manager3.newEpic(new NewTask("3", "3"));
@@ -109,7 +109,7 @@ public class Main {
         System.out.println("-- Печать всех задач");
         System.out.println(managers.getAllTasks().values());
 
-        var managers2 = Managers.getWithAutoSave();
+        var managers2 = Managers.getDefault();
         System.out.println("--Перезапуск системы");
         System.out.println("-- История запросов");
         for (Integer taskId : managers.getHistory()) {
