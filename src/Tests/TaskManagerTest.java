@@ -472,7 +472,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2023, Month.APRIL, 1, 1, 0), 20));
         Assertions.assertTrue((testManager.getTaskById(4).getStartTime().equals
                         (LocalDateTime.of(2023, Month.APRIL, 1, 1, 0))) &&
-                        (testManager.getTaskById(1).getDuration() == 20),
+                        (testManager.getTaskById(4).getDuration() == 20),
                 "Ошибка при создании задачи после удаления задачи в данном временном промежутке.");
     }
 }

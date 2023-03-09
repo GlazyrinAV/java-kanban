@@ -23,12 +23,12 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
         if (start == null || end == null) {
-            taskTimeAdder(task);
+            prioritizedTasks.add(task.getTaskIdNumber());
         } else if (prioritizedTasks.isEmpty()) {
             checker.checkTask(task);
-            taskTimeAdder(task);
+            prioritizedTasks.add(task.getTaskIdNumber());
         } else if (checker.checkTask(task)) {
-            taskTimeAdder(task);
+            prioritizedTasks.add(task.getTaskIdNumber());
         } else {
             throw new ManagerExceptions.TaskTimeOverlayException(
                     "Время выполнения задачи " + task.getTaskIdNumber() +
@@ -47,6 +47,7 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
             } else if (isEpic(taskId)) {
                 for (int subTaskId : getEpicByEpicId(taskId).getSubTasksIds()) {
                     tasks.remove(subTaskId);
+                    prioritizedTasks.remove(subTaskId);
                     checker.removeTimeNode(tasks.get(subTaskId));
                 }
                 return tasks.remove(taskId);

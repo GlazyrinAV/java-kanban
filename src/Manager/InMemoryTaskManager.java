@@ -9,8 +9,9 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final InMemoryHistoryManager historyManager;
-
     protected final TreeSet<Integer> prioritizedTasks;
+    private final TreeMap<LocalDateTime, Task> taskTimeLine;
+
     final Comparator<Integer> timeComparator = (o1, o2) -> {
         if (tasks.get(o1).getStartTime() == null) {
             return 1;
@@ -21,7 +22,6 @@ public class InMemoryTaskManager implements TaskManager {
             return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
         }
     };
-    private final TreeMap<LocalDateTime, Task> taskTimeLine;
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
@@ -130,17 +130,17 @@ public class InMemoryTaskManager implements TaskManager {
     public Task removeTaskById(int taskId) {
         if (tasks.containsKey(taskId)) {
             if (isSubTask(taskId)) {
-                prioritizedTasks.remove(taskId);
+                removeTaskTime(taskId);
                 getEpicBySubtaskId(taskId).removeSubTask(taskId);
                 return tasks.remove(taskId);
             } else if (isEpic(taskId)) {
                 for (int subTaskId : getEpicByEpicId(taskId).getSubTasksIds()) {
-                    prioritizedTasks.remove(subTaskId);
+                    removeTaskTime(taskId);
                     tasks.remove(subTaskId);
                 }
                 return tasks.remove(taskId);
             } else {
-                prioritizedTasks.remove(taskId);
+                removeTaskTime(taskId);
                 return tasks.remove(taskId);
             }
         }
@@ -162,9 +162,9 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
         if (start == null || end == null || prioritizedTasks.isEmpty()) {
-            taskTimeAdder(task);
+            addTaskTime(task);
         } else if (checkTimeOverlay(task)) {
-            taskTimeAdder(task);
+            addTaskTime(task);
         } else {
             throw new ManagerExceptions.TaskTimeOverlayException(
                     "Время выполнения задачи " + task.getTaskIdNumber() +
@@ -172,10 +172,16 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void taskTimeAdder(Task task) {
+    private void addTaskTime(Task task) {
         prioritizedTasks.add(task.getTaskIdNumber());
         taskTimeLine.put(task.getStartTime(), task);
         taskTimeLine.put(task.getEndTime(), task);
+    }
+
+    private void removeTaskTime(int taskId) {
+        prioritizedTasks.remove(taskId);
+        taskTimeLine.remove(tasks.get(taskId).getStartTime());
+        taskTimeLine.remove(tasks.get(taskId).getEndTime());
     }
 
     public List<Integer> getSubTasksOfEpicById(int epicId) {
