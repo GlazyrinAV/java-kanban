@@ -246,7 +246,6 @@ public class InMemoryTaskManager implements TaskManager {
     protected EpicTask getEpicBySubtaskId(int subTaskId) {
         return (EpicTask) tasks.get(((Subtask) tasks.get(subTaskId)).getEpicId());
     }
-
     protected EpicTask getEpicByEpicId(int epicTaskId) {
         return (EpicTask) tasks.get(epicTaskId);
     }

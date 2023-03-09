@@ -46,9 +46,9 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
                 return tasks.remove(taskId);
             } else if (isEpic(taskId)) {
                 for (int subTaskId : getEpicByEpicId(taskId).getSubTasksIds()) {
-                    tasks.remove(subTaskId);
                     prioritizedTasks.remove(subTaskId);
                     checker.removeTimeNode(tasks.get(subTaskId));
+                    tasks.remove(subTaskId);
                 }
                 return tasks.remove(taskId);
             } else {

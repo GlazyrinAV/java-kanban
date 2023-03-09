@@ -268,7 +268,6 @@ public class TimeLineChecker {
                 }
             }
         }
-
     }
 
     private LocalDateTime getStartOfPeriod(LocalDateTime time) {
