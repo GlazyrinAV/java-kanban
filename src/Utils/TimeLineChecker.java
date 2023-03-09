@@ -288,6 +288,6 @@ public class TimeLineChecker {
     }
 
     private long getNumberOfFreePeriods(LocalDateTime endOfPrevious, LocalDateTime starOfNew) {
-        return getNumberOfPeriodsInTask(Duration.between(getStartOfPeriod(endOfPrevious), getStartOfPeriod(starOfNew)).toMinutes());
+        return getNumberOfPeriodsInTask(Duration.between(getStartOfPeriod(endOfPrevious).plusMinutes(timeLimitInMinutes), getStartOfPeriod(starOfNew)).toMinutes());
     }
 }
