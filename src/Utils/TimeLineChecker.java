@@ -28,7 +28,6 @@ public class TimeLineChecker {
 
     public boolean checkTask(Task task) {
         LocalDateTime start = getStartOfPeriod(task.getStartTime());
-        LocalDateTime end = getStartOfPeriod(task.getEndTime());
         if (task.getStartTime() != null && task.getEndTime() != null) {
             if (busyTime.isEmpty() && freeTime.isEmpty()) {
                 addTimeNodeToBeginning(task);
@@ -92,7 +91,7 @@ public class TimeLineChecker {
         LocalDateTime currentPeriod = getStartOfPeriod(task.getStartTime());
         if (freeDuration <= 0) {
             for (long i = 1; i <= busyDuration; i++) {
-                addTimeNode(TimeNodePlace.BEGINNING, task, currentPeriod, busyTime);
+                addNewTimeNode(TimeNodePlace.BEGINNING, task, currentPeriod, busyTime);
                 currentPeriod = currentPeriod.minusMinutes(timeLimitInMinutes);
             }
         } else {
@@ -100,13 +99,13 @@ public class TimeLineChecker {
             LocalDateTime nextStart = getStartOfPeriod(head.getStart());
             LocalDateTime prevEnd = getStartOfPeriod(task.getEndTime());
             for (long i = 1; i <= freeDuration; i++) {
-                addTimeNode(TimeNodePlace.BEGINNING, task, currentPeriod, freeTime);
+                addNewTimeNode(TimeNodePlace.BEGINNING, task, currentPeriod, freeTime);
                 freeTime.get(currentPeriod).setNextStart(nextStart);
                 freeTime.get(currentPeriod).setPrevEnd(prevEnd);
                 currentPeriod = currentPeriod.minusMinutes(timeLimitInMinutes);
             }
             for (long i = 1; i <= busyDuration; i++) {
-                addTimeNode(TimeNodePlace.BEGINNING, task, currentPeriod, busyTime);
+                addNewTimeNode(TimeNodePlace.BEGINNING, task, currentPeriod, busyTime);
                 currentPeriod = currentPeriod.minusMinutes(timeLimitInMinutes);
             }
         }
@@ -123,7 +122,7 @@ public class TimeLineChecker {
         LocalDateTime currentPeriod = getStartOfPeriod(task.getStartTime());
         if (freeDuration <= 0) {
             for (long i = 1; i <= busyDuration; i++) {
-                addTimeNode(TimeNodePlace.END, task, currentPeriod, busyTime);
+                addNewTimeNode(TimeNodePlace.END, task, currentPeriod, busyTime);
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
         } else {
@@ -131,13 +130,13 @@ public class TimeLineChecker {
             LocalDateTime nextStart = getStartOfPeriod(task.getStartTime());
             LocalDateTime prevEnd = getStartOfPeriod(tail.getData().getEndTime());
             for (long i = 1; i <= freeDuration; i++) {
-                addTimeNode(TimeNodePlace.END, task, currentPeriod, freeTime);
+                addNewTimeNode(TimeNodePlace.END, task, currentPeriod, freeTime);
                 freeTime.get(currentPeriod).setNextStart(nextStart);
                 freeTime.get(currentPeriod).setPrevEnd(prevEnd);
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
             for (long i = 1; i <= busyDuration; i++) {
-                addTimeNode(TimeNodePlace.END, task, currentPeriod, busyTime);
+                addNewTimeNode(TimeNodePlace.END, task, currentPeriod, busyTime);
                 currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
             }
         }
@@ -163,13 +162,13 @@ public class TimeLineChecker {
             }
         }
         for (long i = 1; i <= busyDuration; i++) {
-            addTimeNode(TimeNodePlace.MIDDLE, task, currentPeriod, busyTime);
+            addNewTimeNode(TimeNodePlace.MIDDLE, task, currentPeriod, busyTime);
             busyTime.put(currentPeriod, freeTime.remove(currentPeriod));
             currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
         }
     }
 
-    private void addTimeNode(TimeNodePlace timeNodePlace, Task task, LocalDateTime period, HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> time) {
+    private void addNewTimeNode(TimeNodePlace timeNodePlace, Task task, LocalDateTime period, HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> time) {
         final TimeLineNodes<LocalDateTime> newNode;
         switch (timeNodePlace) {
             case BEGINNING:
@@ -200,7 +199,7 @@ public class TimeLineChecker {
         }
     }
 
-    private void removeLinksToNode(LocalDateTime time) {
+    private void removeExcitingNode(LocalDateTime time) {
         TimeLineNodes<LocalDateTime> node = freeTime.get(time);
         if (node.equals(head)) {
             if (node.getNextNode() == null) {
@@ -216,6 +215,57 @@ public class TimeLineChecker {
         } else {
             node.getNextNode().setPrevNode(node.getPrevNode());
             node.getPrevNode().setNextNode(node.getNextNode());
+        }
+    }
+
+    public void removeTimeNode(LocalDateTime time) {
+        if (busyTime.containsKey(time)) {
+            long duration = busyTime.get(time).getData().getDuration();
+            LocalDateTime currentPeriod = busyTime.get(time).getStart();
+            for (long i = 1; i <= duration; i++) {
+                busyTime.remove(currentPeriod);
+                removeExcitingNode(time);
+                currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
+            }
+            LocalDateTime nextTimePeriod = time.plusMinutes(duration).plusMinutes(timeLimitInMinutes);
+            LocalDateTime previousTimePeriod = time.minusMinutes(timeLimitInMinutes);
+            if (freeTime.containsKey(nextTimePeriod) && !freeTime.containsKey(previousTimePeriod)) {
+                currentPeriod = nextTimePeriod;
+                duration = getNumberOfFreePeriods(currentPeriod, freeTime.get(currentPeriod).getNextStart());
+                for (long i = 1; i <= duration; i++) {
+                    freeTime.remove(currentPeriod);
+                    removeExcitingNode(currentPeriod);
+                    currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
+                }
+            } else if (freeTime.containsKey(previousTimePeriod) && !freeTime.containsKey(nextTimePeriod)) {
+                currentPeriod = previousTimePeriod;
+                duration = getNumberOfFreePeriods(freeTime.get(currentPeriod).getPrevEnd(), currentPeriod);
+                for (long i = 1; i <= duration; i++) {
+                    freeTime.remove(currentPeriod);
+                    removeExcitingNode(currentPeriod);
+                    currentPeriod = currentPeriod.minusMinutes(timeLimitInMinutes);
+                }
+            } else if (freeTime.containsKey(previousTimePeriod) && freeTime.containsKey(nextTimePeriod)) {
+                LocalDateTime nextStart = freeTime.get(nextTimePeriod).getNextStart();
+                LocalDateTime previousEnd = freeTime.get(previousTimePeriod).getPrevEnd();
+                for (long i = 1; i <= duration; i++) {
+                    freeTime.put(currentPeriod, null);
+                    freeTime.get(currentPeriod).setPrevEnd(previousEnd);
+                    freeTime.get(currentPeriod).setNextStart(nextStart);
+                }
+                duration = getNumberOfFreePeriods(previousEnd, previousTimePeriod);
+                currentPeriod = previousTimePeriod;
+                for (long i = 1; i <= duration; i++) {
+                    freeTime.get(currentPeriod).setNextStart(nextStart);
+                    currentPeriod = currentPeriod.minusMinutes(timeLimitInMinutes);
+                }
+                duration = getNumberOfFreePeriods(nextTimePeriod, nextStart);
+                currentPeriod = nextTimePeriod;
+                for (long i = 1; i <= duration; i++) {
+                    freeTime.get(currentPeriod).setPrevEnd(previousEnd);
+                    currentPeriod = currentPeriod.plusMinutes(timeLimitInMinutes);
+                }
+            }
         }
     }
 
