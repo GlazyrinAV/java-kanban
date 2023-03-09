@@ -224,23 +224,23 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    private boolean isEpic(int taskID) {
+    protected boolean isEpic(int taskID) {
         return tasks.get(taskID) instanceof EpicTask;
     }
 
-    private boolean isSimpleTask(int taskID) {
+    protected boolean isSimpleTask(int taskID) {
         return tasks.get(taskID) instanceof SimpleTask;
     }
 
-    private boolean isSubTask(int taskID) {
+    protected boolean isSubTask(int taskID) {
         return tasks.get(taskID) instanceof Subtask;
     }
 
-    private EpicTask getEpicBySubtaskId(int subTaskId) {
+    protected EpicTask getEpicBySubtaskId(int subTaskId) {
         return (EpicTask) tasks.get(((Subtask) tasks.get(subTaskId)).getEpicId());
     }
 
-    private EpicTask getEpicByEpicId(int epicTaskId) {
+    protected EpicTask getEpicByEpicId(int epicTaskId) {
         return (EpicTask) tasks.get(epicTaskId);
     }
 }

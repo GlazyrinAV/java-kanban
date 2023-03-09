@@ -218,7 +218,8 @@ public class TimeLineChecker {
         }
     }
 
-    public void removeTimeNode(LocalDateTime time) {
+    public void removeTimeNode(Task task) {
+        LocalDateTime time = getStartOfPeriod(task.getStartTime());
         if (busyTime.containsKey(time)) {
             long duration = busyTime.get(time).getData().getDuration();
             LocalDateTime currentPeriod = busyTime.get(time).getStart();

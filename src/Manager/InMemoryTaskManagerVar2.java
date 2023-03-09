@@ -35,4 +35,27 @@ public class InMemoryTaskManagerVar2 extends InMemoryTaskManager {
                             " пересекается со сроками других задач.");
         }
     }
+
+    @Override
+    public Task removeTaskById(int taskId) {
+        if (tasks.containsKey(taskId)) {
+            if (isSubTask(taskId)) {
+                prioritizedTasks.remove(taskId);
+                getEpicBySubtaskId(taskId).removeSubTask(taskId);
+                checker.removeTimeNode(tasks.get(taskId));
+                return tasks.remove(taskId);
+            } else if (isEpic(taskId)) {
+                for (int subTaskId : getEpicByEpicId(taskId).getSubTasksIds()) {
+                    tasks.remove(subTaskId);
+                    checker.removeTimeNode(tasks.get(subTaskId));
+                }
+                return tasks.remove(taskId);
+            } else {
+                prioritizedTasks.remove(taskId);
+                checker.removeTimeNode(tasks.get(taskId));
+                return tasks.remove(taskId);
+            }
+        }
+        return null;
+    }
 }
