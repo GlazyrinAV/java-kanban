@@ -8,21 +8,18 @@ import java.net.http.HttpResponse;
 
 public class KVTaskClient {
     public static final int PORT = 8078;
-
     String url = "http://localhost:" + PORT;
-    URI registerUri = URI.create(url + "/register");
-
     private final String apiToken;
     HttpClient httpClient;
-    HttpResponse.BodyHandler<String> handler;
+    HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
 
     public KVTaskClient() throws IOException, InterruptedException {
+        URI registerUri = URI.create(url + "/register");
         httpClient = HttpClient.newHttpClient();
         HttpRequest registerRequest = HttpRequest.newBuilder()
                 .GET()
                 .uri(registerUri)
                 .build();
-        handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = httpClient.send(registerRequest, handler);
         apiToken = response.body();
     }
@@ -34,8 +31,8 @@ public class KVTaskClient {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .uri(saveUri)
                 .build();
-        handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = httpClient.send(saveRequest, handler);
+        System.out.println(response.statusCode());
     }
 
     protected String load(String key) throws IOException, InterruptedException {
@@ -44,8 +41,8 @@ public class KVTaskClient {
                 .GET()
                 .uri(loadUri)
                 .build();
-        handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = httpClient.send(loadRequest, handler);
+        System.out.println(response.statusCode());
         return  response.body();
     }
 }
