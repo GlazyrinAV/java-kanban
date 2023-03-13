@@ -34,6 +34,20 @@ public class HttpTaskServer {
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
+    static class DateAdapter extends TypeAdapter<LocalDateTime> {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        @Override
+        public void write(JsonWriter jsonWriter, LocalDateTime time) throws IOException {
+            jsonWriter.value(time.format(formatter));
+        }
+
+        @Override
+        public LocalDateTime read(JsonReader jsonReader) {
+            return LocalDateTime.parse(jsonReader.toString(), formatter);
+        }
+    }
+
     class TaskHandler implements HttpHandler {
         Gson gson = new Gson();
         Gson gsonBuilder = gson.newBuilder()
@@ -49,23 +63,27 @@ public class HttpTaskServer {
             switch (method) {
                 case "GET" -> {
                     System.out.println("Началась обработка GET");
-                    if (requestType.equals("task")) {
-                        String response = getTaskById(exchange.getRequestURI().getRawQuery());
-                        exchange.sendResponseHeaders(200, 0);
-                        try (OutputStream os = exchange.getResponseBody()) {
-                            os.write(response.getBytes(DEFAULT_CHARSET));
+                    switch (requestType) {
+                        case "task" -> {
+                            String response = getTaskById(exchange.getRequestURI().getRawQuery());
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
+                            }
                         }
-                    } else if (requestType.equals("tasks")) {
-                        String response = getAllTasks();
-                        exchange.sendResponseHeaders(200, 0);
-                        try (OutputStream os = exchange.getResponseBody()) {
-                            os.write(response.getBytes(DEFAULT_CHARSET));
+                        case "tasks" -> {
+                            String response = getAllTasks();
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
+                            }
                         }
-                    } else if (requestType.equals("history")) {
-                        String response = getHistory();
-                        exchange.sendResponseHeaders(200, 0);
-                        try (OutputStream os = exchange.getResponseBody()) {
-                            os.write(response.getBytes(DEFAULT_CHARSET));
+                        case "history" -> {
+                            String response = getHistory();
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
+                            }
                         }
                     }
                 }
@@ -83,17 +101,13 @@ public class HttpTaskServer {
                         String response = removeTaskById(exchange.getRequestURI().getRawQuery());
                         exchange.sendResponseHeaders(200, 0);
                         try (OutputStream os = exchange.getResponseBody()) {
-                            if (response != null) {
-                                os.write(response.getBytes(DEFAULT_CHARSET));
-                            }
+                            os.write(response.getBytes(DEFAULT_CHARSET));
                         }
                     } else if (requestType.equals("tasks")) {
                         String response = clearAllTasks();
                         exchange.sendResponseHeaders(200, 0);
                         try (OutputStream os = exchange.getResponseBody()) {
-                            if (response != null) {
-                                os.write(response.getBytes(DEFAULT_CHARSET));
-                            }
+                            os.write(response.getBytes(DEFAULT_CHARSET));
                         }
                     }
                 }
@@ -176,20 +190,6 @@ public class HttpTaskServer {
                 }
             }
             return "Задача не добавлена";
-        }
-    }
-
-    static class DateAdapter extends TypeAdapter<LocalDateTime> {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
-        @Override
-        public void write(JsonWriter jsonWriter, LocalDateTime time) throws IOException {
-            jsonWriter.value(time.format(formatter));
-        }
-
-        @Override
-        public LocalDateTime read(JsonReader jsonReader) {
-            return LocalDateTime.parse(jsonReader.toString(), formatter);
         }
     }
 }
