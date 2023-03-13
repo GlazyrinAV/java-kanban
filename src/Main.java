@@ -1,9 +1,14 @@
+import Manager.Managers;
+import Manager.TaskManager;
 import Server.HttpTaskServer;
 
 import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        TaskManager manager2 = Managers.getWithAutoSave();
+//        manager2.newSimpleTask( new NewTask("1", "1", LocalDateTime.of(2023, Month.MARCH, 13, 15,00), 30));
+//        manager2.newSimpleTask( new NewTask("1", "1", LocalDateTime.of(2023, Month.MARCH, 13, 15,00), 30));
         new HttpTaskServer().startTasksServer();
 //
 //        var manager3 = Managers.getDefaultWithTimePeriods();
