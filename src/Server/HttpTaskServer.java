@@ -15,6 +15,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -52,10 +53,18 @@ public class HttpTaskServer {
                         response = getHistory();
                     }
                     exchange.sendResponseHeaders(200, 0);
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        if (response != null) {
+                            os.write(response.getBytes(StandardCharsets.UTF_8));
+                        }
+                    }
                 }
                 case ("POST") -> {
-                    createTask(exchange);
+                    response = createTask(exchange);
                     exchange.sendResponseHeaders(201, 0);
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(response.getBytes(StandardCharsets.UTF_8));
+                    }
                 }
                 case ("DELETE") -> {
                     if (requestType.equals("task") && !request[3].contains("?id=")) {
@@ -64,6 +73,11 @@ public class HttpTaskServer {
                         response = "Список задач очищен.";
                     }
                     exchange.sendResponseHeaders(204, 0);
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        if (response != null) {
+                            os.write(response.getBytes(StandardCharsets.UTF_8));
+                        }
+                    }
                 }
                 default -> {
                 }
@@ -71,9 +85,8 @@ public class HttpTaskServer {
         }
 
         private String getTaskById(String[] request) {
-            int taskId = 0;
             String[] splitRequest = request[3].split("=");
-            taskId = Integer.parseInt(splitRequest[1]);
+            int taskId = Integer.parseInt(splitRequest[1]);
             Task task = manager.getTaskById(taskId);
             return gson.toJson(task);
         }
@@ -87,20 +100,18 @@ public class HttpTaskServer {
         }
 
         private String removeTaskById(String[] request) {
-            int taskId = 0;
             String[] splitRequest = request[3].split("=");
-            taskId = Integer.parseInt(splitRequest[1]);
+            int taskId = Integer.parseInt(splitRequest[1]);
             manager.removeTaskById(taskId);
             return "Задача " + taskId + " удалена.";
         }
 
-        private void createTask(HttpExchange exchange) throws IOException {
+        private String createTask(HttpExchange exchange) throws IOException {
             String[] request = exchange.getRequestURI().getPath().split("/");
             InputStream inputStream = exchange.getRequestBody();
             String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
             JsonElement je = JsonParser.parseString(body);
             String newTaskType = request[2];
-            Integer epicId = null;
             if (je.isJsonObject()) {
                 JsonObject jo = je.getAsJsonObject();
                 if (jo.get("taskId").getAsBigInteger() != null && jo.get("saveSubTasks").getAsString() == null) {
@@ -113,10 +124,12 @@ public class HttpTaskServer {
                         default -> {
                         }
                     }
+                    return "Задача обновлена.";
                 } else if (jo.get("taskId").getAsBigInteger() != null && jo.get("saveSubTasks").getAsString() != null) {
                     int taskId = jo.get("taskId").getAsInt();
                     boolean saveSubTasks = jo.get("saveSubTasks").getAsBoolean();
                     manager.updateTask(taskId, saveSubTasks);
+                    return "Эпик обновлен.";
                 } else {
                     String taskTitle = jo.get("taskTitle").getAsString();
                     String taskDescription = jo.get("taskDescription").getAsString();
@@ -129,15 +142,17 @@ public class HttpTaskServer {
                                 manager.newEpic(new NewTask(taskTitle, taskDescription, taskStart, taskDuration));
                         case "subtask" -> {
                             if (je.isJsonObject()) {
-                                epicId = jo.get("epicId").getAsInt();
+                                int epicId = jo.get("epicId").getAsInt();
                                 manager.newSubtask(new NewTask(taskTitle, taskDescription, taskStart, taskDuration), epicId);
                             }
                         }
                         default -> {
                         }
                     }
+                    return "Задача создана.";
                 }
             }
+            return "Задача не добавлена";
         }
     }
 }
