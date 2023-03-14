@@ -3,6 +3,7 @@ package Model;
 import java.time.LocalDateTime;
 
 public class NewTask {
+
     private final String taskTitle;
     private final String taskDescription;
 

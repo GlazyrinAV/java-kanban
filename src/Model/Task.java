@@ -3,6 +3,8 @@ package Model;
 import java.time.LocalDateTime;
 
 public abstract class Task {
+
+    protected TaskType taskType;
     private final String taskTitle;
     private final String taskDescription;
     private final int taskIdNumber;
@@ -20,6 +22,7 @@ public abstract class Task {
      * @param task - объект класса NewTask для создания новых задач
      */
     public Task(NewTask task) {
+        this.taskType = null;
         this.taskTitle = task.getTaskTitle();
         this.taskDescription = task.getTaskDescription();
         this.taskIdNumber = idSequence++;
@@ -33,6 +36,7 @@ public abstract class Task {
      * Номер остается прежним и указывается при обновлении
      */
     public Task(Task epicTask) {
+        this.taskType = epicTask.taskType;
         this.taskTitle = epicTask.taskTitle;
         this.taskDescription = epicTask.taskDescription;
         this.taskIdNumber = epicTask.taskIdNumber;
@@ -48,6 +52,7 @@ public abstract class Task {
      * @param taskStatus      - статус обновляемой задачи
      */
     public Task(Task task, TaskStatus taskStatus) {
+        this.taskType = task.taskType;
         this.taskTitle = task.taskTitle;
         this.taskDescription = task.taskDescription;
         this.taskIdNumber = task.getTaskIdNumber();

@@ -4,6 +4,9 @@ import Exceptions.HttpExceptions;
 import Server.HttpTaskServer;
 import Server.KVTaskClient;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,13 +32,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     protected void save() {
-        String data = getHistoryForSave() + getHistoryForSave();
+        String data = getHistoryForSave() + "//" + getHistoryForSave();
         kvTaskClient.put("1", data);
     }
 
     @Override
     protected void load() {
-        String data = kvTaskClient.load("1");
+        String[] data = kvTaskClient.load("1").split("//");
+        JsonArray jsonElements = JsonParser.parseString(data[0]).getAsJsonArray();
+        for (JsonElement element : jsonElements) {
+
+        }
     }
 
     private String getTasksForSave() {

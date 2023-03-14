@@ -1,6 +1,5 @@
 import Manager.Managers;
 import Manager.TaskManager;
-import Server.KVServer;
 
 import java.io.IOException;
 
@@ -10,8 +9,7 @@ public class Main {
 //        manager2.newSimpleTask( new NewTask("1", "1", LocalDateTime.of(2023, Month.MARCH, 13, 15,00), 30));
 //        manager2.newSimpleTask( new NewTask("1", "1", LocalDateTime.of(2023, Month.MARCH, 13, 15,00), 30));
 
-//        new HttpTaskServer().startTasksServer();
-        new KVServer().start();
+//        new KVServer().start();
 //
 //        var manager3 = Managers.getDefaultWithTimePeriods();
 ////        manager3.newSimpleTask(new NewTask("1", "1", LocalDateTime.of(2023, Month.FEBRUARY, 28, 21, 53), 30));

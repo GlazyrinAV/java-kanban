@@ -18,6 +18,7 @@ public class EpicTask extends Task {
      */
     public EpicTask(NewTask task) {
         super(task);
+        this.taskType = TaskType.EPIC;
         this.startTime = null;
         this.duration = 0;
         updateStatus();
@@ -29,6 +30,7 @@ public class EpicTask extends Task {
      */
     public EpicTask(Task epic) {
         super(epic);
+        taskType = TaskType.EPIC;
         updateStatus();
         setEpicTimeAndDuration();
     }

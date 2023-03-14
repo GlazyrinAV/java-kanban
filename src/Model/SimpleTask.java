@@ -13,6 +13,7 @@ public class SimpleTask extends Task {
      */
     public SimpleTask(NewTask task) {
         super(task);
+        taskType = TaskType.TASK;
     }
 
     /**
@@ -24,10 +25,12 @@ public class SimpleTask extends Task {
      */
     public SimpleTask(Task simpleTask, TaskStatus taskStatus) {
         super(simpleTask, taskStatus);
+        taskType = TaskType.TASK;
     }
 
     public SimpleTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber,
                       LocalDateTime startTime, long duration) {
         super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration);
+        taskType = TaskType.TASK;
     }
 }
