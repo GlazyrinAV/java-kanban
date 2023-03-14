@@ -1,6 +1,6 @@
 package Server;
 
-import Manager.Managers;
+import Exceptions.HttpExceptions;
 import Manager.TaskManager;
 import Model.NewTask;
 import Model.Task;
@@ -23,7 +23,16 @@ import java.time.format.DateTimeFormatter;
 
 public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    TaskManager manager = Managers.getWithAutoSave();
+    private final TaskManager manager;
+
+    public HttpTaskServer(TaskManager manager) {
+        this.manager = manager;
+        try {
+            startTasksServer();
+        } catch (IOException e) {
+            throw new HttpExceptions.ErrorLoadingTaskServer("Ошибка при загрузке TaskServer");
+        }
+    }
 
     public void startTasksServer() throws IOException {
         HttpServer httpServer = HttpServer.create();

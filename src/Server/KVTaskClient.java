@@ -1,5 +1,7 @@
 package Server;
 
+import Exceptions.HttpExceptions;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,37 +15,49 @@ public class KVTaskClient {
     private final HttpClient httpClient;
     private final HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
 
-    public KVTaskClient(String url) throws IOException, InterruptedException {
-        this.url = url + ":" + PORT;
-        URI registerUri = URI.create(url + "/register");
-        httpClient = HttpClient.newHttpClient();
-        HttpRequest registerRequest = HttpRequest.newBuilder()
-                .GET()
-                .uri(registerUri)
-                .build();
-        HttpResponse<String> response = httpClient.send(registerRequest, handler);
-        apiToken = response.body();
+    public KVTaskClient(String url) {
+        try {
+            this.url = url + ":" + PORT;
+            URI registerUri = URI.create(url + "/register");
+            httpClient = HttpClient.newHttpClient();
+            HttpRequest registerRequest = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(registerUri)
+                    .build();
+            HttpResponse<String> response = httpClient.send(registerRequest, handler);
+            apiToken = response.body();
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorLoadingKVTaskClient("Ошибка при закгрузке KVClient.");
+        }
     }
 
-    public void put(String key, String json) throws IOException, InterruptedException {
+    public void put(String key, String json) {
         URI saveUri = URI.create(url + "/save/" + key + "?API_TOKEN=" + apiToken);
         HttpRequest saveRequest = HttpRequest.newBuilder()
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .uri(saveUri)
                 .build();
-        HttpResponse<String> response = httpClient.send(saveRequest, handler);
-        System.out.println(response.statusCode());
+        try {
+            HttpResponse<String> response = httpClient.send(saveRequest, handler);
+            System.out.println(response.statusCode());
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInKVTaskClient("Ошибка при получении данных KVTaskClient");
+        }
     }
 
-    public String load(String key) throws IOException, InterruptedException {
+    public String load(String key) {
         URI loadUri = URI.create(url + "/load/" + key + "?API_TOKEN=" + apiToken);
         HttpRequest loadRequest = HttpRequest.newBuilder()
                 .GET()
                 .uri(loadUri)
                 .build();
-        HttpResponse<String> response = httpClient.send(loadRequest, handler);
-        System.out.println(response.statusCode());
-        return response.body();
+        try {
+            HttpResponse<String> response = httpClient.send(loadRequest, handler);
+            System.out.println(response.statusCode());
+            return response.body();
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInKVTaskClient("Ошибка при отправке запроса в KVTaskClient.");
+        }
     }
 }

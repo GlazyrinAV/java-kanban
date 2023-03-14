@@ -73,9 +73,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     /**
      * Сохраняет задачи и историю просмотров в файл-хранилище
+     *
      * @throws ManagerExceptions.ManagerSaveException - ошибка при сохранении данных
      */
-    private void save() throws ManagerExceptions.ManagerSaveException {
+    protected void save() throws ManagerExceptions.ManagerSaveException {
         List<String> dataToBeSaved = new ArrayList<>();
         for (Task task : getAllTasks().values()) {
             dataToBeSaved.add(new SupportFunctions().taskToString(task));
@@ -100,7 +101,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      *
      * @throws ManagerExceptions.ManagerLoadException - ошибка при загрузке данных
      */
-    private void load() throws ManagerExceptions.ManagerLoadException {
+    protected void load() throws ManagerExceptions.ManagerLoadException {
         List<String> dataFromStorage;
         try {
             dataFromStorage = new Reader().readDataFromFile();
