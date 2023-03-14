@@ -1,6 +1,5 @@
 package Server;
 
-import Exceptions.HttpExceptions;
 import Manager.Managers;
 import Manager.TaskManager;
 import Model.NewTask;
@@ -25,14 +24,16 @@ import java.time.format.DateTimeFormatter;
 public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager manager;
+    private final KVServer kvServer;
 
     public HttpTaskServer() {
-        this.manager = Managers.getWithHttpManager();
         try {
-            startTasksServer();
+            this.kvServer = new KVServer();
+            kvServer.start();
         } catch (IOException e) {
-            throw new HttpExceptions.ErrorLoadingTaskServer("Ошибка при загрузке TaskServer");
+            throw new RuntimeException(e);
         }
+        this.manager = Managers.getWithHttpManager();
     }
 
     public void startTasksServer() throws IOException {
