@@ -1,7 +1,7 @@
 package Manager;
 
 import Exceptions.HttpExceptions;
-import Model.Task;
+import Model.*;
 import Server.HttpTaskServer;
 import Server.KVTaskClient;
 import com.google.gson.Gson;
@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class HttpTaskManager extends FileBackedTasksManager {
@@ -84,15 +85,24 @@ public class HttpTaskManager extends FileBackedTasksManager {
         HashMap<Integer, Task> tasksFromData = gson.fromJson(data, type);
         for (int taskId : tasksFromData.keySet()) {
             Task task = tasksFromData.get(taskId);
+            String title = task.getTaskTitle();
+            String description = task.getTaskDescription();
+            TaskStatus status = task.getTaskStatus();
+            LocalDateTime start = task.getStartTime();
+            long duration = task.getDuration();
             switch (tasksFromData.get(taskId).getTaskType()) {
                 case TASK:
-                    newSimpleTask();
+                    tasks.put(taskId, new SimpleTask(title, description, status, taskId, start, duration));
+                    prioritizedTasks.add(taskId);
                     break;
                 case EPIC:
-                    newEpic();
+                    tasks.put(taskId, new EpicTask(title, description, status, taskId, start, duration));
                     break;
                 case SUBTASK:
-                    newSubtask();
+                    int epicId = ((Subtask) task).getEpicId();
+                    tasks.put(taskId, new Subtask(title, description, status, taskId, epicId, start, duration));
+                    ((EpicTask) tasks.get(epicId)).addSubTask(taskId, status, start, duration);
+                    prioritizedTasks.add(taskId);
                     break;
                 default:
             }
@@ -100,6 +110,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private void restoreHistoryFromData(String data) {
-
+        String[] historyData = data.split(",");
+        for (String line : historyData) {
+            historyManager.addHistory(Integer.parseInt(line));
+        }
     }
 }
