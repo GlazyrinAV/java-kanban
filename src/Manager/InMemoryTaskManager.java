@@ -40,7 +40,6 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime start = task.getStartTime();
         long duration = task.getDuration();
         SimpleTask newTask = new SimpleTask(new NewTask(title, description, start, duration));
-        tasks.put(newTask.getTaskIdNumber(), newTask);
         addTaskToPrioritizedTasks(newTask);
     }
 
@@ -59,7 +58,6 @@ public class InMemoryTaskManager implements TaskManager {
             LocalDateTime start = task.getStartTime();
             long duration = task.getDuration();
             Subtask newSubtask = new Subtask(new NewTask(title, description, start, duration), epicId);
-            tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
             addTaskToPrioritizedTasks(newSubtask);
             getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus(), start, duration);
         } else if (!tasks.containsKey(epicId)) {
@@ -161,8 +159,10 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
         if (start == null || end == null || prioritizedTasks.isEmpty()) {
+            tasks.put(task.getTaskIdNumber(), task);
             addTaskTime(task);
         } else if (checkTimeOverlay(task)) {
+            tasks.put(task.getTaskIdNumber(), task);
             addTaskTime(task);
         } else {
             throw new ManagerExceptions.TaskTimeOverlayException(

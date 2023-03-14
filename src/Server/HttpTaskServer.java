@@ -28,12 +28,6 @@ public class HttpTaskServer {
     private final TaskManager manager;
 
     public HttpTaskServer() {
-        try {
-            KVServer kvServer = new KVServer();
-            kvServer.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         this.manager = Managers.getWithHttpManager();
     }
 
@@ -172,20 +166,30 @@ public class HttpTaskServer {
                     String taskTitle = jo.get("taskTitle").getAsString();
                     String taskDescription = jo.get("taskDescription").getAsString();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                    LocalDateTime taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
-                    long taskDuration = jo.get("duration").getAsLong();
+                    LocalDateTime taskStart = null;
+                    if (jo.get("startTime") != null) {
+                        taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
+                    }
+                    long taskDuration = 0;
+                    if (jo.get("duration") != null) {
+                        taskDuration = jo.get("duration").getAsLong();
+                    }
                     NewTask newTask = new NewTask(taskTitle, taskDescription, taskStart, taskDuration);
-                    if (newTaskType.equals("task")) {
-                        manager.newSimpleTask(newTask);
-                        return "Задача создана.";
-                    } else if (newTaskType.equals("epic")) {
-                        manager.newEpic(newTask);
-                        return "Задача создана.";
-                    } else if (newTaskType.equals("subtask")) {
-                        if (je.isJsonObject()) {
-                            int epicId = jo.get("epicId").getAsInt();
-                            manager.newSubtask(newTask, epicId);
+                    switch (newTaskType) {
+                        case "task" -> {
+                            manager.newSimpleTask(newTask);
                             return "Задача создана.";
+                        }
+                        case "epic" -> {
+                            manager.newEpic(newTask);
+                            return "Задача создана.";
+                        }
+                        case "subtask" -> {
+                            if (je.isJsonObject()) {
+                                int epicId = jo.get("epicId").getAsInt();
+                                manager.newSubtask(newTask, epicId);
+                                return "Задача создана.";
+                            }
                         }
                     }
                 }

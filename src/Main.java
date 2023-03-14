@@ -1,10 +1,11 @@
 import Server.HttpTaskServer;
+import Server.KVServer;
 
 import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-//        new KVServer().start();
+        new KVServer().start();
         new HttpTaskServer().startTasksServer();
 
 //        TaskManager manager2 = Managers.getWithAutoSave();
