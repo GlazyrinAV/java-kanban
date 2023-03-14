@@ -1,18 +1,19 @@
 package Manager;
 
 import Exceptions.HttpExceptions;
+import Model.Task;
 import Server.HttpTaskServer;
 import Server.KVTaskClient;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
 
 public class HttpTaskManager extends FileBackedTasksManager {
 
@@ -32,17 +33,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     protected void save() {
-        String data = getHistoryForSave() + "//" + getHistoryForSave();
+        String data = getTasksForSave() + "//" + getHistoryForSave();
         kvTaskClient.put("1", data);
     }
 
     @Override
     protected void load() {
         String[] data = kvTaskClient.load("1").split("//");
-        JsonArray jsonElements = JsonParser.parseString(data[0]).getAsJsonArray();
-        for (JsonElement element : jsonElements) {
-
-        }
+        String taskData = data[0];
+        String historyData = data[1];
+        restoreTaskFromData(taskData);
+        restoreHistoryFromData(historyData);
     }
 
     private String getTasksForSave() {
@@ -75,5 +76,18 @@ public class HttpTaskManager extends FileBackedTasksManager {
         } catch (IOException | InterruptedException exception) {
             throw new HttpExceptions.ErrorInHttpTaskManager("Ошибка при выгрузке истории.");
         }
+    }
+
+    private void restoreTaskFromData(String data) {
+        Type type = new TypeToken<HashMap<Integer, Task>>() {
+        }.getType();
+        HashMap<Integer, Task> tasksFromData = gson.fromJson(data, type);
+        for (int taskId : tasksFromData.keySet()) {
+
+        }
+    }
+
+    private void restoreHistoryFromData(String data) {
+
     }
 }
