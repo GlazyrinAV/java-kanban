@@ -10,8 +10,8 @@ import java.util.HashMap;
 
 public class TimeLineChecker {
 
-    HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> freeTime;
-    HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> busyTime;
+    private final HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> freeTime;
+    private final HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> busyTime;
     int timeLimitInMinutes = 5;
     private TimeLineNodes<LocalDateTime> head;
     private TimeLineNodes<LocalDateTime> tail;
@@ -171,7 +171,7 @@ public class TimeLineChecker {
     private void addNewTimeNode(TimeNodePlace timeNodePlace, Task task, LocalDateTime period, HashMap<LocalDateTime, TimeLineNodes<LocalDateTime>> time) {
         final TimeLineNodes<LocalDateTime> newNode;
         switch (timeNodePlace) {
-            case BEGINNING:
+            case BEGINNING -> {
                 final TimeLineNodes<LocalDateTime> oldHead = head;
                 newNode = new TimeLineNodes<>(task, oldHead, null);
                 head = newNode;
@@ -181,11 +181,9 @@ public class TimeLineChecker {
                     oldHead.setPrevNode(newNode);
                 }
                 time.put(period, newNode);
-                break;
-            case MIDDLE:
-                freeTime.get(getStartOfPeriod(task.getStartTime())).setData(task);
-                break;
-            case END:
+            }
+            case MIDDLE -> freeTime.get(getStartOfPeriod(task.getStartTime())).setData(task);
+            case END -> {
                 final TimeLineNodes<LocalDateTime> oldTail = tail;
                 newNode = new TimeLineNodes<>(task, null, oldTail);
                 tail = newNode;
@@ -195,7 +193,7 @@ public class TimeLineChecker {
                     oldTail.setNextNode(newNode);
                 }
                 time.put(period, newNode);
-                break;
+            }
         }
     }
 

@@ -41,8 +41,8 @@ public class HttpTaskServer {
     }
 
     class TaskHandler implements HttpHandler {
-        Gson gson = new Gson();
-        Gson gsonBuilder = gson.newBuilder()
+        private final Gson gson = new Gson();
+        private final Gson gsonBuilder = gson.newBuilder()
                 .serializeNulls()
                 .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
                 .create();

@@ -7,7 +7,7 @@ import Utils.TimeLineChecker;
 import java.time.LocalDateTime;
 
 public class InMemoryTaskManagerWithTimePeriods extends InMemoryTaskManager {
-    TimeLineChecker checker;
+    private final TimeLineChecker checker;
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра

@@ -82,7 +82,7 @@ public class EpicTask extends Task {
     }
 
     /**
-     * определяет статус эпика через проверку статусов подзадач, хранящихся в TaskManager
+     * Определяет статус эпика через проверку статусов подзадач, хранящихся в TaskManager
      */
     private void updateStatus() {
         if (getSubTasksIds().isEmpty()) {

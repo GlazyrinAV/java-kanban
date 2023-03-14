@@ -183,26 +183,6 @@ public class InMemoryTaskManager implements TaskManager {
         taskTimeLine.remove(tasks.get(taskId).getEndTime());
     }
 
-    public List<Integer> getSubTasksOfEpicById(int epicId) {
-        if (isEpic(epicId)) {
-            return getEpicByEpicId(epicId).getSubTasksIds();
-        } else {
-            return null; // maybe null
-        }
-    }
-
-    public Integer getTaskIdByName(String name) {
-        if (!tasks.isEmpty()) {
-            for (int taskID : tasks.keySet()) {
-                if (tasks.get(taskID).getTaskTitle().equals(name)) {
-//                    historyManager.addHistory(taskID);
-                    return taskID;
-                }
-            }
-        }
-        return null; // maybe null
-    }
-
     private boolean checkTimeOverlay(Task task) {
         LocalDateTime start = task.getStartTime();
         LocalDateTime end = task.getEndTime();
