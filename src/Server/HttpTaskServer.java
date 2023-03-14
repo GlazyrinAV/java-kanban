@@ -1,5 +1,6 @@
 package Server;
 
+import Exceptions.ManagerExceptions;
 import Manager.Managers;
 import Manager.TaskManager;
 import Model.NewTask;
@@ -57,8 +58,12 @@ public class HttpTaskServer {
                     System.out.println("Началась обработка GET");
                     switch (requestType) {
                         case "task" -> {
-                            String response = getTaskById(exchange.getRequestURI().getRawQuery());
-                            sendGoodResponse(exchange, response);
+                            if (exchange.getRequestURI().getRawQuery().contains("id=")) {
+                                String response = getTaskById(exchange.getRequestURI().getRawQuery());
+                                sendGoodResponse(exchange, response);
+                            } else {
+                             sendBadResponse(exchange, "Неправильная форма запроса для поиска задачи.");
+                            }
                         }
                         case "tasks" -> {
                             String response = getAllTasks();
@@ -113,7 +118,11 @@ public class HttpTaskServer {
             String[] splitRequest = request.split("=");
             int taskId = Integer.parseInt(splitRequest[1]);
             Task task = manager.getTaskById(taskId);
-            return gsonBuilder.toJson(task);
+            if (task != null) {
+                return gsonBuilder.toJson(task);
+            } else {
+                return "Задача с данным номером не найдена.";
+            }
         }
 
         private String getAllTasks() {
@@ -193,18 +202,27 @@ public class HttpTaskServer {
             NewTask newTask = new NewTask(taskTitle, taskDescription, taskStart, taskDuration);
             switch (newTaskType) {
                 case "task" -> {
-                    manager.newSimpleTask(newTask);
-                    return "Задача создана.";
+                    try {
+                        manager.newSimpleTask(newTask);
+                        return "Задача создана.";
+                    } catch (ManagerExceptions.TaskTimeOverlayException e) {
+                        return "Задача пересекается по времени с другими задачами.";
+                    }
+
                 }
                 case "epic" -> {
                     manager.newEpic(newTask);
                     return "Задача создана.";
                 }
                 case "subtask" -> {
-                    if (je.isJsonObject()) {
-                        int epicId = jo.get("epicId").getAsInt();
-                        manager.newSubtask(newTask, epicId);
-                        return "Задача создана.";
+                    try {
+                        if (je.isJsonObject()) {
+                            int epicId = jo.get("epicId").getAsInt();
+                            manager.newSubtask(newTask, epicId);
+                            return "Задача создана.";
+                        }
+                    } catch (ManagerExceptions.TaskTimeOverlayException e) {
+                        return "Задача пересекается по времени с другими задачами.";
                     }
                 }
             }
