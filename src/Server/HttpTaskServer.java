@@ -5,9 +5,11 @@ import Manager.TaskManager;
 import Model.NewTask;
 import Model.Task;
 import Model.TaskStatus;
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
+import Utils.DateAdapter;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -24,11 +26,10 @@ import java.time.format.DateTimeFormatter;
 public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager manager;
-    private final KVServer kvServer;
 
     public HttpTaskServer() {
         try {
-            this.kvServer = new KVServer();
+            KVServer kvServer = new KVServer();
             kvServer.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -45,20 +46,6 @@ public class HttpTaskServer {
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
-    static class DateAdapter extends TypeAdapter<LocalDateTime> {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
-        @Override
-        public void write(JsonWriter jsonWriter, LocalDateTime time) throws IOException {
-            jsonWriter.value(time.format(formatter));
-        }
-
-        @Override
-        public LocalDateTime read(JsonReader jsonReader) {
-            return LocalDateTime.parse(jsonReader.toString(), formatter);
-        }
-    }
-
     class TaskHandler implements HttpHandler {
         Gson gson = new Gson();
         Gson gsonBuilder = gson.newBuilder()
@@ -68,66 +55,64 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            try (exchange) {
-                String method = exchange.getRequestMethod();
-                String[] request = exchange.getRequestURI().getPath().split("/");
-                String requestType = request[2];
-                switch (method) {
-                    case "GET" -> {
-                        System.out.println("Началась обработка GET");
-                        switch (requestType) {
-                            case "task" -> {
-                                String response = getTaskById(exchange.getRequestURI().getRawQuery());
-                                exchange.sendResponseHeaders(200, 0);
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes(DEFAULT_CHARSET));
-                                }
+            String method = exchange.getRequestMethod();
+            String[] request = exchange.getRequestURI().getPath().split("/");
+            String requestType = request[2];
+            switch (method) {
+                case "GET" -> {
+                    System.out.println("Началась обработка GET");
+                    switch (requestType) {
+                        case "task" -> {
+                            String response = getTaskById(exchange.getRequestURI().getRawQuery());
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
                             }
-                            case "tasks" -> {
-                                String response = getAllTasks();
-                                exchange.sendResponseHeaders(200, 0);
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes(DEFAULT_CHARSET));
-                                }
+                        }
+                        case "tasks" -> {
+                            String response = getAllTasks();
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
                             }
-                            case "history" -> {
-                                String response = getHistory();
-                                exchange.sendResponseHeaders(200, 0);
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes(DEFAULT_CHARSET));
-                                }
+                        }
+                        case "history" -> {
+                            String response = getHistory();
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
                             }
                         }
                     }
-                    case "POST" -> {
-                        System.out.println("Началась обработка POST");
-                        String response = createTask(exchange);
-                        exchange.sendResponseHeaders(200, 0);
-                        try (OutputStream os = exchange.getResponseBody()) {
-                            os.write(response.getBytes(DEFAULT_CHARSET));
-                        }
+                }
+                case "POST" -> {
+                    System.out.println("Началась обработка POST");
+                    String response = createTask(exchange);
+                    exchange.sendResponseHeaders(200, 0);
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(response.getBytes(DEFAULT_CHARSET));
                     }
-                    case "DELETE" -> {
-                        System.out.println("Началась обработка DELETE");
-                        switch (requestType) {
-                            case "task" -> {
-                                String response = removeTaskById(exchange.getRequestURI().getRawQuery());
-                                exchange.sendResponseHeaders(200, 0);
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes(DEFAULT_CHARSET));
-                                }
-                            }
-                            case "tasks" -> {
-                                String response = clearAllTasks();
-                                exchange.sendResponseHeaders(200, 0);
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes(DEFAULT_CHARSET));
-                                }
+                }
+                case "DELETE" -> {
+                    System.out.println("Началась обработка DELETE");
+                    switch (requestType) {
+                        case "task" -> {
+                            String response = removeTaskById(exchange.getRequestURI().getRawQuery());
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
                             }
                         }
+                        case "tasks" -> {
+                            String response = clearAllTasks();
+                            exchange.sendResponseHeaders(200, 0);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes(DEFAULT_CHARSET));
+                            }
+                        }
                     }
-                    default -> {
-                    }
+                }
+                default -> {
                 }
             }
         }
@@ -160,54 +145,52 @@ public class HttpTaskServer {
         }
 
         private String createTask(HttpExchange exchange) throws IOException {
-            try (exchange) {
-                String[] request = exchange.getRequestURI().getPath().split("/");
-                InputStream inputStream = exchange.getRequestBody();
-                String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
-                JsonElement je = JsonParser.parseString(body);
-                String newTaskType = request[2];
-                if (je.isJsonObject()) {
-                    JsonObject jo = je.getAsJsonObject();
-                    if (body.contains("taskId") && !body.contains("saveSubTasks")) {
-                        int taskId = jo.get("taskId").getAsInt();
-                        String status = jo.get("taskStatus").getAsString();
-                        switch (status) {
-                            case "NEW" -> manager.updateTask(taskId, TaskStatus.NEW);
-                            case "IN_PROGRESS" -> manager.updateTask(taskId, TaskStatus.IN_PROGRESS);
-                            case "DONE" -> manager.updateTask(taskId, TaskStatus.DONE);
-                            default -> {
-                            }
+            String[] request = exchange.getRequestURI().getPath().split("/");
+            InputStream inputStream = exchange.getRequestBody();
+            String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+            JsonElement je = JsonParser.parseString(body);
+            String newTaskType = request[2];
+            if (je.isJsonObject()) {
+                JsonObject jo = je.getAsJsonObject();
+                if (body.contains("taskId") && !body.contains("saveSubTasks")) {
+                    int taskId = jo.get("taskId").getAsInt();
+                    String status = jo.get("taskStatus").getAsString();
+                    switch (status) {
+                        case "NEW" -> manager.updateTask(taskId, TaskStatus.NEW);
+                        case "IN_PROGRESS" -> manager.updateTask(taskId, TaskStatus.IN_PROGRESS);
+                        case "DONE" -> manager.updateTask(taskId, TaskStatus.DONE);
+                        default -> {
                         }
-                        return "Задача обновлена.";
-                    } else if (body.contains("taskId") && body.contains("saveSubTasks")) {
-                        int taskId = jo.get("taskId").getAsInt();
-                        boolean saveSubTasks = jo.get("saveSubTasks").getAsBoolean();
-                        manager.updateTask(taskId, saveSubTasks);
-                        return "Эпик обновлен.";
-                    } else {
-                        String taskTitle = jo.get("taskTitle").getAsString();
-                        String taskDescription = jo.get("taskDescription").getAsString();
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                        LocalDateTime taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
-                        long taskDuration = jo.get("duration").getAsLong();
-                        NewTask newTask = new NewTask(taskTitle, taskDescription, taskStart, taskDuration);
-                        switch (newTaskType) {
-                            case "task" -> manager.newSimpleTask(newTask);
-                            case "epic" -> manager.newEpic(newTask);
-                            case "subtask" -> {
-                                if (je.isJsonObject()) {
-                                    int epicId = jo.get("epicId").getAsInt();
-                                    manager.newSubtask(newTask, epicId);
-                                }
-                            }
-                            default -> {
-                            }
-                        }
+                    }
+                    return "Задача обновлена.";
+                } else if (body.contains("taskId") && body.contains("saveSubTasks")) {
+                    int taskId = jo.get("taskId").getAsInt();
+                    boolean saveSubTasks = jo.get("saveSubTasks").getAsBoolean();
+                    manager.updateTask(taskId, saveSubTasks);
+                    return "Эпик обновлен.";
+                } else {
+                    String taskTitle = jo.get("taskTitle").getAsString();
+                    String taskDescription = jo.get("taskDescription").getAsString();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                    LocalDateTime taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
+                    long taskDuration = jo.get("duration").getAsLong();
+                    NewTask newTask = new NewTask(taskTitle, taskDescription, taskStart, taskDuration);
+                    if (newTaskType.equals("task")) {
+                        manager.newSimpleTask(newTask);
                         return "Задача создана.";
+                    } else if (newTaskType.equals("epic")) {
+                        manager.newEpic(newTask);
+                        return "Задача создана.";
+                    } else if (newTaskType.equals("subtask")) {
+                        if (je.isJsonObject()) {
+                            int epicId = jo.get("epicId").getAsInt();
+                            manager.newSubtask(newTask, epicId);
+                            return "Задача создана.";
+                        }
                     }
                 }
-                return "Задача не добавлена";
             }
+            return "Ошибка при создании задачи.";
         }
     }
 }

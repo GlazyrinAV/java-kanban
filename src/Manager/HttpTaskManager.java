@@ -2,6 +2,7 @@ package Manager;
 
 import Model.*;
 import Server.KVTaskClient;
+import Utils.DateAdapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -11,8 +12,8 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private KVTaskClient kvTaskClient;
     private final Gson gson = new Gson();
+    private KVTaskClient kvTaskClient;
 
     public HttpTaskManager(InMemoryHistoryManager history, String url) {
         super(history, url);
@@ -42,7 +43,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private String getTasksForSave() {
-        return gson.toJson(getAllTasks());
+        Gson gsonBuilder = gson.newBuilder()
+                .serializeNulls()
+                .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
+                .create();
+        return gsonBuilder.toJson(getAllTasks());
     }
 
     private String getHistoryForSave() {
