@@ -62,7 +62,7 @@ public class HttpTaskServer {
                                 String response = getTaskById(exchange.getRequestURI().getRawQuery());
                                 sendGoodResponse(exchange, response);
                             } else {
-                             sendBadResponse(exchange, "Неправильная форма запроса для поиска задачи.");
+                                sendBadResponse(exchange, "Неправильная форма запроса для поиска задачи.");
                             }
                         }
                         case "tasks" -> {
@@ -85,8 +85,12 @@ public class HttpTaskServer {
                     System.out.println("Началась обработка DELETE");
                     switch (requestType) {
                         case "task" -> {
-                            String response = removeTaskById(exchange.getRequestURI().getRawQuery());
-                            sendGoodResponse(exchange, response);
+                            if (exchange.getRequestURI().getRawQuery().contains("id=")) {
+                                String response = removeTaskById(exchange.getRequestURI().getRawQuery());
+                                sendGoodResponse(exchange, response);
+                            } else {
+                                sendBadResponse(exchange, "Неправильная форма запроса для удаления задачи.");
+                            }
                         }
                         case "tasks" -> {
                             String response = clearAllTasks();
