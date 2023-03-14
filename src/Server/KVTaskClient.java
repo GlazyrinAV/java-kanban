@@ -27,7 +27,7 @@ public class KVTaskClient {
             HttpResponse<String> response = httpClient.send(registerRequest, handler);
             apiToken = response.body();
         } catch (IOException | InterruptedException exception) {
-            throw new HttpExceptions.ErrorLoadingKVTaskClient("Ошибка при закгрузке KVClient.");
+            throw new HttpExceptions.ErrorLoadingKVTaskClient("Ошибка при загрузке KVClient.");
         }
     }
 

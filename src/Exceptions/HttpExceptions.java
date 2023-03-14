@@ -19,4 +19,10 @@ public class HttpExceptions {
             super(message);
         }
     }
+
+    public static class ErrorInHttpTaskManager extends RuntimeException {
+        public ErrorInHttpTaskManager(final String message) {
+            super(message);
+        }
+    }
 }
