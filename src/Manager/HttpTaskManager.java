@@ -83,7 +83,19 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }.getType();
         HashMap<Integer, Task> tasksFromData = gson.fromJson(data, type);
         for (int taskId : tasksFromData.keySet()) {
-
+            Task task = tasksFromData.get(taskId);
+            switch (tasksFromData.get(taskId).getTaskType()) {
+                case TASK:
+                    newSimpleTask();
+                    break;
+                case EPIC:
+                    newEpic();
+                    break;
+                case SUBTASK:
+                    newSubtask();
+                    break;
+                default:
+            }
         }
     }
 
