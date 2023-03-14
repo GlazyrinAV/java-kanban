@@ -73,6 +73,10 @@ public class HttpTaskServer {
                             String response = getHistory();
                             sendGoodResponse(exchange, response);
                         }
+                        case "priority" -> {
+                            String response = getTasksByPriority();
+                            sendGoodResponse(exchange, response);
+                        }
                         default -> sendBadResponse(exchange,
                                 "Для метода " + exchange.getRequestMethod() + " неправильно указан запрос.");
                     }
@@ -116,6 +120,10 @@ public class HttpTaskServer {
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(result.getBytes(DEFAULT_CHARSET));
             }
+        }
+
+        private String getTasksByPriority() {
+            return gson.toJson(manager.getPrioritizedTasks());
         }
 
         private String getTaskById(String request) {

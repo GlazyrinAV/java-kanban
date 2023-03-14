@@ -151,7 +151,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     /**
      * Добавление задачи в отсортированный список задач
-     *
      * @param task - добавляемая задача
      * @throws ManagerExceptions.TaskTimeOverlayException - исключение при наличии пересечений добавляемой задачи
      */

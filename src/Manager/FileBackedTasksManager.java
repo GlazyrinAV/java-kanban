@@ -76,7 +76,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     /**
      * Сохраняет задачи и историю просмотров в файл-хранилище
-     *
      * @throws ManagerExceptions.ManagerSaveException - ошибка при сохранении данных
      */
     protected void save() throws ManagerExceptions.ManagerSaveException {
