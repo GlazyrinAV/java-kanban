@@ -58,56 +58,54 @@ public class HttpTaskServer {
                     switch (requestType) {
                         case "task" -> {
                             String response = getTaskById(exchange.getRequestURI().getRawQuery());
-                            exchange.sendResponseHeaders(200, 0);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes(DEFAULT_CHARSET));
-                            }
+                            sendGoodResponse(exchange, response);
                         }
                         case "tasks" -> {
                             String response = getAllTasks();
-                            exchange.sendResponseHeaders(200, 0);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes(DEFAULT_CHARSET));
-                            }
+                            sendGoodResponse(exchange, response);
                         }
                         case "history" -> {
                             String response = getHistory();
-                            exchange.sendResponseHeaders(200, 0);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes(DEFAULT_CHARSET));
-                            }
+                            sendGoodResponse(exchange, response);
                         }
+                        default -> sendBadResponse(exchange,
+                                "Для метода " + exchange.getRequestMethod() + " неправильно указан запрос.");
                     }
                 }
                 case "POST" -> {
                     System.out.println("Началась обработка POST");
-                    String response = createTask(exchange);
-                    exchange.sendResponseHeaders(200, 0);
-                    try (OutputStream os = exchange.getResponseBody()) {
-                        os.write(response.getBytes(DEFAULT_CHARSET));
-                    }
+                    createTask(exchange);
                 }
                 case "DELETE" -> {
                     System.out.println("Началась обработка DELETE");
                     switch (requestType) {
                         case "task" -> {
                             String response = removeTaskById(exchange.getRequestURI().getRawQuery());
-                            exchange.sendResponseHeaders(200, 0);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes(DEFAULT_CHARSET));
-                            }
+                            sendGoodResponse(exchange, response);
                         }
                         case "tasks" -> {
                             String response = clearAllTasks();
-                            exchange.sendResponseHeaders(200, 0);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes(DEFAULT_CHARSET));
-                            }
+                            sendGoodResponse(exchange, response);
                         }
+                        default -> sendBadResponse(exchange,
+                                "Для метода " + exchange.getRequestMethod() + " неправильно указан запрос.");
                     }
                 }
-                default -> {
-                }
+                default -> sendBadResponse(exchange, "Метод " + exchange.getRequestMethod() + " не реализован.");
+            }
+        }
+
+        private void sendGoodResponse(HttpExchange exchange, String response) throws IOException {
+            exchange.sendResponseHeaders(200, 0);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes(DEFAULT_CHARSET));
+            }
+        }
+
+        private void sendBadResponse(HttpExchange exchange, String result) throws IOException {
+            exchange.sendResponseHeaders(400, 0);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(result.getBytes(DEFAULT_CHARSET));
             }
         }
 
@@ -138,7 +136,7 @@ public class HttpTaskServer {
             return "Список задач очищен.";
         }
 
-        private String createTask(HttpExchange exchange) throws IOException {
+        private void createTask(HttpExchange exchange) throws IOException {
             String[] request = exchange.getRequestURI().getPath().split("/");
             InputStream inputStream = exchange.getRequestBody();
             String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
@@ -147,50 +145,66 @@ public class HttpTaskServer {
             if (je.isJsonObject()) {
                 JsonObject jo = je.getAsJsonObject();
                 if (body.contains("taskId") && !body.contains("saveSubTasks")) {
-                    int taskId = jo.get("taskId").getAsInt();
-                    String status = jo.get("taskStatus").getAsString();
-                    switch (status) {
-                        case "NEW" -> manager.updateTask(taskId, TaskStatus.NEW);
-                        case "IN_PROGRESS" -> manager.updateTask(taskId, TaskStatus.IN_PROGRESS);
-                        case "DONE" -> manager.updateTask(taskId, TaskStatus.DONE);
-                        default -> {
-                        }
-                    }
-                    return "Задача обновлена.";
+                    sendGoodResponse(exchange, updateTask(jo));
                 } else if (body.contains("taskId") && body.contains("saveSubTasks")) {
-                    int taskId = jo.get("taskId").getAsInt();
-                    boolean saveSubTasks = jo.get("saveSubTasks").getAsBoolean();
-                    manager.updateTask(taskId, saveSubTasks);
-                    return "Эпик обновлен.";
+                    sendGoodResponse(exchange, updateEpic(jo));
                 } else {
-                    String taskTitle = jo.get("taskTitle").getAsString();
-                    String taskDescription = jo.get("taskDescription").getAsString();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                    LocalDateTime taskStart = null;
-                    if (jo.get("startTime") != null) {
-                        taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
-                    }
-                    long taskDuration = 0;
-                    if (jo.get("duration") != null) {
-                        taskDuration = jo.get("duration").getAsLong();
-                    }
-                    NewTask newTask = new NewTask(taskTitle, taskDescription, taskStart, taskDuration);
-                    switch (newTaskType) {
-                        case "task" -> {
-                            manager.newSimpleTask(newTask);
-                            return "Задача создана.";
-                        }
-                        case "epic" -> {
-                            manager.newEpic(newTask);
-                            return "Задача создана.";
-                        }
-                        case "subtask" -> {
-                            if (je.isJsonObject()) {
-                                int epicId = jo.get("epicId").getAsInt();
-                                manager.newSubtask(newTask, epicId);
-                                return "Задача создана.";
-                            }
-                        }
+                    sendGoodResponse(exchange, createTasks(je, newTaskType));
+                }
+            } else {
+                sendBadResponse(exchange, "Полученные данные не позволяют создать задачу.");
+            }
+        }
+
+        private String updateTask(JsonObject jo) {
+            int taskId = jo.get("taskId").getAsInt();
+            String status = jo.get("taskStatus").getAsString();
+            switch (status) {
+                case "NEW" -> manager.updateTask(taskId, TaskStatus.NEW);
+                case "IN_PROGRESS" -> manager.updateTask(taskId, TaskStatus.IN_PROGRESS);
+                case "DONE" -> manager.updateTask(taskId, TaskStatus.DONE);
+                default -> {
+                    return "Ошибка при обновлении задачи";
+                }
+            }
+            return "Задача обновлена.";
+        }
+
+        private String updateEpic(JsonObject jo) {
+            int taskId = jo.get("taskId").getAsInt();
+            boolean saveSubTasks = jo.get("saveSubTasks").getAsBoolean();
+            manager.updateTask(taskId, saveSubTasks);
+            return "Эпик обновлен.";
+        }
+
+        private String createTasks(JsonElement je, String newTaskType) {
+            JsonObject jo = je.getAsJsonObject();
+            String taskTitle = jo.get("taskTitle").getAsString();
+            String taskDescription = jo.get("taskDescription").getAsString();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            LocalDateTime taskStart = null;
+            if (jo.get("startTime") != null) {
+                taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
+            }
+            long taskDuration = 0;
+            if (jo.get("duration") != null) {
+                taskDuration = jo.get("duration").getAsLong();
+            }
+            NewTask newTask = new NewTask(taskTitle, taskDescription, taskStart, taskDuration);
+            switch (newTaskType) {
+                case "task" -> {
+                    manager.newSimpleTask(newTask);
+                    return "Задача создана.";
+                }
+                case "epic" -> {
+                    manager.newEpic(newTask);
+                    return "Задача создана.";
+                }
+                case "subtask" -> {
+                    if (je.isJsonObject()) {
+                        int epicId = jo.get("epicId").getAsInt();
+                        manager.newSubtask(newTask, epicId);
+                        return "Задача создана.";
                     }
                 }
             }
