@@ -7,13 +7,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-    public static final int PORT = 8078;
-    String url = "http://localhost:" + PORT;
+    private static final int PORT = 8078;
+    private final String url;
     private final String apiToken;
-    HttpClient httpClient;
-    HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+    private final HttpClient httpClient;
+    private final HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
 
-    public KVTaskClient() throws IOException, InterruptedException {
+    public KVTaskClient(String url) throws IOException, InterruptedException {
+        this.url = url + ":" + PORT;
         URI registerUri = URI.create(url + "/register");
         httpClient = HttpClient.newHttpClient();
         HttpRequest registerRequest = HttpRequest.newBuilder()
@@ -24,7 +25,7 @@ public class KVTaskClient {
         apiToken = response.body();
     }
 
-    protected void put(String key, String json) throws IOException, InterruptedException {
+    public void put(String key, String json) throws IOException, InterruptedException {
         URI saveUri = URI.create(url + "/save/" + key + "?API_TOKEN=" + apiToken);
         HttpRequest saveRequest = HttpRequest.newBuilder()
                 .header("Content-Type", "application/json")
@@ -35,7 +36,7 @@ public class KVTaskClient {
         System.out.println(response.statusCode());
     }
 
-    protected String load(String key) throws IOException, InterruptedException {
+    public String load(String key) throws IOException, InterruptedException {
         URI loadUri = URI.create(url + "/load/" + key + "?API_TOKEN=" + apiToken);
         HttpRequest loadRequest = HttpRequest.newBuilder()
                 .GET()
@@ -43,6 +44,6 @@ public class KVTaskClient {
                 .build();
         HttpResponse<String> response = httpClient.send(loadRequest, handler);
         System.out.println(response.statusCode());
-        return  response.body();
+        return response.body();
     }
 }

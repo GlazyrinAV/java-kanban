@@ -1,5 +1,7 @@
 package Manager;
 
+import java.io.IOException;
+
 public final class Managers {
     private Managers() {
     }
@@ -18,5 +20,9 @@ public final class Managers {
 
     public static InMemoryTaskManagerWithTimePeriods getDefaultWithTimePeriods() {
         return new InMemoryTaskManagerWithTimePeriods(getDefaultHistory());
+    }
+
+    public static HttpTaskManager getWithHttpManager() throws IOException, InterruptedException {
+        return new HttpTaskManager(getDefaultHistory(), "http://localhost");
     }
 }
