@@ -18,7 +18,7 @@ public class KVTaskClient {
     public KVTaskClient(String url) {
         try {
             this.url = url + ":" + PORT;
-            URI registerUri = URI.create(url + "/register");
+            URI registerUri = URI.create(this.url + "/register");
             httpClient = HttpClient.newHttpClient();
             HttpRequest registerRequest = HttpRequest.newBuilder()
                     .GET()

@@ -13,7 +13,7 @@ public final class Managers {
     }
 
     public static FileBackedTasksManager getWithAutoSave() {
-        return new FileBackedTasksManager(getDefaultHistory());
+        return new FileBackedTasksManager(getDefaultHistory(), "./Resources/Data.csv");
     }
 
     public static InMemoryTaskManagerWithTimePeriods getDefaultWithTimePeriods() {

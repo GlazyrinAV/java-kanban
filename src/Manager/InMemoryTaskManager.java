@@ -25,7 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
-     *
      * @param history - объект класса менеджер историй просмотра
      */
     public InMemoryTaskManager(InMemoryHistoryManager history) {

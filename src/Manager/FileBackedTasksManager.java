@@ -16,8 +16,11 @@ import java.util.StringJoiner;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    public FileBackedTasksManager(InMemoryHistoryManager history) {
+    protected final String path;
+
+    public FileBackedTasksManager(InMemoryHistoryManager history, String path) {
         super(history);
+        this.path = path;
         load();
     }
 

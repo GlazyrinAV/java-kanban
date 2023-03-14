@@ -1,6 +1,7 @@
 package Server;
 
 import Exceptions.HttpExceptions;
+import Manager.Managers;
 import Manager.TaskManager;
 import Model.NewTask;
 import Model.Task;
@@ -24,14 +25,9 @@ import java.time.format.DateTimeFormatter;
 public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager manager;
-    private final int PORT = 8080;
 
-    public int getPORT() {
-        return PORT;
-    }
-
-    public HttpTaskServer(TaskManager manager) {
-        this.manager = manager;
+    public HttpTaskServer() {
+        this.manager = Managers.getWithHttpManager();
         try {
             startTasksServer();
         } catch (IOException e) {
@@ -41,6 +37,7 @@ public class HttpTaskServer {
 
     public void startTasksServer() throws IOException {
         HttpServer httpServer = HttpServer.create();
+        int PORT = 8080;
         httpServer.bind(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TaskHandler());
         httpServer.start();

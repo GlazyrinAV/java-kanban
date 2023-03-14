@@ -11,13 +11,11 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private final KVTaskClient kvTaskClient;
+    private KVTaskClient kvTaskClient;
     private final Gson gson = new Gson();
 
     public HttpTaskManager(InMemoryHistoryManager history, String url) {
-        super(history);
-        kvTaskClient = new KVTaskClient(url);
-        load();
+        super(history, url);
     }
 
     @Override
@@ -28,11 +26,19 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     protected void load() {
-        String[] data = kvTaskClient.load("1").split("//");
-        String taskData = data[0];
-        String historyData = data[1];
-        restoreTaskFromData(taskData);
-        restoreHistoryFromData(historyData);
+        kvTaskClient = new KVTaskClient(path);
+        String dataFromKVServer = kvTaskClient.load("1");
+        if (!dataFromKVServer.isEmpty()) {
+            String[] data = kvTaskClient.load("1").split("//");
+            String taskData = data[0];
+            String historyData = data[1];
+            if (!taskData.isEmpty()) {
+                restoreTaskFromData(taskData);
+            }
+            if (!historyData.isEmpty()) {
+                restoreHistoryFromData(historyData);
+            }
+        }
     }
 
     private String getTasksForSave() {

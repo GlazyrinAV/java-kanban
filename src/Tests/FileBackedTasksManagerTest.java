@@ -24,6 +24,7 @@ import java.util.List;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
 
+    private final String path = "./Resources/Data.csv";
     private final Path dataFile = Path.of("./Resources/Data.csv");
     private Path testFile;
 
@@ -31,7 +32,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void createTaskManager() throws IOException {
         resetIdCounter();
         deleteDataForTest();
-        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager(), path));
     }
 
     @DisplayName("Запись обычная с историей")
@@ -86,7 +87,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         getTestManager().newSimpleTask(new NewTask("2", "2"));
         getTestManager().updateTask(1, TaskStatus.IN_PROGRESS);
         getTestManager().getTaskById(1);
-        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager(), path));
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>(List.of(1)));
         boolean isTaskIsPresent =
                 checkTask(getTestManager().getTaskById(1), "1", "1", 1,
@@ -102,7 +103,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void dataReadFromFileWithDataAndNoHistory() {
         getTestManager().newSimpleTask(new NewTask("1", "1"));
         getTestManager().newSimpleTask(new NewTask("2", "2"));
-        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager(), path));
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
         boolean isTaskIsPresent =
                 checkTask(getTestManager().getTaskById(1), "1", "1", 1,
@@ -117,7 +118,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void dataReadFromFileWithEpicWithNoSubTasks() {
         getTestManager().newEpic(new NewTask("1", "1"));
-        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager(), path));
         boolean isHistoryIsPresent = getTestManager().getHistory().equals(new ArrayList<>());
         boolean isTaskIsPresent =
                 checkTask(getTestManager().getTaskById(1), "1", "1", 1,
@@ -131,7 +132,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void newTaskIdAfterReadingDataFromFile() {
         getTestManager().newSimpleTask(new NewTask("1", "1"));
         getTestManager().newSimpleTask(new NewTask("2", "2"));
-        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager(), path));
         getTestManager().newSimpleTask(new NewTask("Test", "Test"));
         boolean isTaskIdCorrect = getTestManager().getTaskById(3).getTaskTitle().equals("Test");
         Assertions.assertTrue(isTaskIdCorrect, "Ошибка в нумерации новых задач после чтения данных.");
@@ -166,7 +167,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     public void dataReadWithTimeData() {
         getTestManager().newSimpleTask(new NewTask("1", "1",
                 LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30));
-        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager(), path));
         Task task = getTestManager().getTaskById(1);
         Assertions.assertTrue(checkTask(task, "1", "1", 1,
                         TaskStatus.NEW, LocalDateTime.of(2022, Month.APRIL, 12, 8, 12), 30),
@@ -177,7 +178,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void dataReadWithNoTimeData() {
         getTestManager().newSimpleTask(new NewTask("1", "1"));
-        setManager(new FileBackedTasksManager(new InMemoryHistoryManager()));
+        setManager(new FileBackedTasksManager(new InMemoryHistoryManager(), path));
         Task task = getTestManager().getTaskById(1);
         Assertions.assertTrue(checkTask(task, "1", "1", 1, TaskStatus.NEW, null, 0),
                 "Ошибка при чтении данных из файла о задаче без данных о времени выполнения.");
