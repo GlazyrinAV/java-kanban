@@ -94,10 +94,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private void restoreHistoryFromData(String data) {
-        if (!data.equals("[]")) {
-            String[] historyData = data.split(",");
-            for (String line : historyData) {
-                historyManager.addHistory(Integer.parseInt(line));
+        JsonElement element = JsonParser.parseString(data);
+        if (element.isJsonNull()) {
+            for (JsonElement line : element.getAsJsonArray()) {
+                JsonObject jsonObject = line.getAsJsonObject();
+                int taskId = jsonObject.get("taskIdNumber").getAsInt();
+                historyManager.addHistory(taskId);
             }
         }
     }

@@ -132,7 +132,10 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     public void dataReadFromFileWithEpicWithNoSubTasks() throws IOException {
         createTask(TaskType.EPIC);
         createTask(TaskType.SUBTASK);
-        Task task = httpTaskManager.getTasksForTests().get(1);
+
+        /////
+
+
         restartTaskServer();
         requestTaskById(1);
     }
