@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager manager;
+    private HttpServer httpServer;
 
     public HttpTaskServer() {
         this.manager = Managers.getWithHttpManager();
@@ -37,12 +38,17 @@ public class HttpTaskServer {
     }
 
     public void startTasksServer() throws IOException {
-        HttpServer httpServer = HttpServer.create();
+        httpServer = HttpServer.create();
         int PORT = 8080;
         httpServer.bind(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TaskHandler());
         httpServer.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+    }
+
+    public void stopTaskServer() {
+        System.out.println("TaskServer остановлен.");
+        httpServer.stop(0);
     }
 
     class TaskHandler implements HttpHandler {

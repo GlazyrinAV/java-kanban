@@ -45,6 +45,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     public void closeKVServer() {
         resetIdCounter();
         kvServer.stop();
+        server.stopTaskServer();
     }
 
     @DisplayName("запрос на создание обычной задачи")
@@ -80,7 +81,11 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @DisplayName("Запись при пустом списке")
     @Test
-    public void dataWriteWithNoTasks() {
+    public void dataWriteWithNoTasks() throws IOException {
+        server.stopTaskServer();
+        server = new HttpTaskServer();
+        server.startTasksServer();
+        Assertions.assertTrue(httpTaskManager.getAllTasks().isEmpty(), "Ошибка при сохранении пустого списка.");
     }
 
     @DisplayName("Запись эпика без подзадач")
