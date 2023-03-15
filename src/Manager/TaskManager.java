@@ -69,14 +69,12 @@ public interface TaskManager {
 
     /**
      * Метод возвращает список задач в приоритетном характере
-     *
      * @return - упорядоченный список задач
      */
     Set<Integer> getPrioritizedTasks();
 
     /**
      * Получение истории вызовов задач
-     *
      * @return - список вызванных задач
      */
     Collection<Integer> getHistory();

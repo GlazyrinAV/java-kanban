@@ -1,10 +1,9 @@
 package Tests;
 
 import Exceptions.HttpExceptions;
+import Manager.HttpTaskManager;
 import Manager.TaskManager;
-import Model.NewTask;
-import Model.Task;
-import Model.TaskStatus;
+import Model.*;
 import Server.HttpTaskServer;
 import Server.KVServer;
 import Utils.DateAdapter;
@@ -22,9 +21,12 @@ import java.time.Month;
 
 public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
+    HttpTaskManager httpTaskManager;
+    HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+    HttpClient httpClient = HttpClient.newHttpClient();
     private KVServer kvServer;
-
-    HttpTaskServer server;
+    ;
+    private HttpTaskServer server;
 
     @BeforeEach
     public void createTaskManager() throws IOException {
@@ -33,6 +35,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         kvServer.start();
         server = new HttpTaskServer();
         server.startTasksServer();
+        httpTaskManager = (HttpTaskManager) server.getManager();
     }
 
     @AfterEach
@@ -40,20 +43,40 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         kvServer.stop();
     }
 
-    @DisplayName("Запись обычная с историей")
+    @DisplayName("запрос на создание обычной задачи")
     @Test
-    public void dataWriteBase() {
-        createSimpleTask();
+    public void requestForSimpleTask() {
+        createTask(TaskType.TASK);
         Task task = server.getManager().getTaskById(1);
         Assertions.assertTrue(checkTask(task, "1", "1", 1, TaskStatus.NEW,
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 30),
-                "Ошибка при обработке запроса на создание новой задачи.");
+                "Ошибка при обработке запроса на создание простой задачи.");
+    }
+
+    @DisplayName("запрос на создание пустого эпика")
+    @Test
+    public void requestForEpicTask() {
+        createTask(TaskType.EPIC);
+        Task task = server.getManager().getTaskById(1);
+        Assertions.assertTrue(checkTask(task, "1", "1", 1, TaskStatus.NEW,
+                        null, 0),
+                "Ошибка при обработке запроса на создание пустого эпика.");
+    }
+
+    @DisplayName("запрос на создание новой подзадачи")
+    @Test
+    public void requestForSubTask() {
+        createTask(TaskType.EPIC);
+        createTask(TaskType.SUBTASK);
+        Task task = httpTaskManager.getTasksForTests().get(2);
+        Assertions.assertTrue(checkTask(task, "1", "1", 2, TaskStatus.NEW,
+                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 10, 22), 30),
+                "Ошибка при обработке запроса на создание новой подзадачи.");
     }
 
     @DisplayName("Запись при пустом списке")
     @Test
     public void dataWriteWithNoTasks() {
-
     }
 
     @DisplayName("Запись эпика без подзадач")
@@ -128,25 +151,46 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     }
 
-    private void createSimpleTask() {
+    private void createTask(TaskType type) {
         Gson gsonBuilder = new GsonBuilder()
                 .serializeNulls()
                 .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
                 .create();
-        NewTask task = new NewTask("1", "1",
-                LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 30);
+        Task task = null;
+        URI uri = null;
+        NewTask newTask;
+        switch (type) {
+            case TASK:
+                uri = URI.create("http://localhost:8080/tasks/task/");
+                newTask = new NewTask("3", "3",
+                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30);
+                task = new SimpleTask(newTask);
+                break;
+            case EPIC:
+                uri = URI.create("http://localhost:8080/tasks/epic/");
+                newTask = new NewTask("1", "1",
+                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 9, 0), 30);
+                task = new EpicTask(newTask);
+                break;
+            case SUBTASK:
+                uri = URI.create("http://localhost:8080/tasks/subtask/");
+                newTask = new NewTask("2", "2",
+                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 10, 0), 30);
+                task = new Subtask(newTask, 1);
+                break;
+        }
+        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(gsonBuilder.toJson(task));
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .POST(publisher)
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
         try {
-            URI uri = URI.create("http://localhost:8080/tasks/task");
-            HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(gsonBuilder.toJson(task));
-            HttpRequest request = HttpRequest.newBuilder()
-                    .POST(publisher)
-                    .uri(uri)
-                    .build();
-            httpClient.send(request, handler);
+            HttpResponse<String> response = httpClient.send(request, handler);
+            System.out.println(response.statusCode());
         } catch (IOException | InterruptedException exception) {
             throw new HttpExceptions.ErrorInTestManager("Ошибка при отправке запроса на созданиие новой задачи.");
         }
+
     }
 }

@@ -22,7 +22,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     @Override
     protected void save() {
         String data = getTasksForSave() + "//" + getHistoryForSave();
-        kvTaskClient.put("1", data);
+        kvTaskClient.put("Alex", data);
     }
 
     @Override
@@ -85,5 +85,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
         for (String line : historyData) {
             historyManager.addHistory(Integer.parseInt(line));
         }
+    }
+
+    public HashMap<Integer, Task> getTasksForTests() {
+        return super.tasks;
     }
 }
