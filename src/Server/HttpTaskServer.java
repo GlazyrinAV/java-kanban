@@ -162,22 +162,24 @@ public class HttpTaskServer {
         }
 
         private void createTask(HttpExchange exchange) throws IOException {
-            String[] request = exchange.getRequestURI().getPath().split("/");
-            InputStream inputStream = exchange.getRequestBody();
-            String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
-            JsonElement je = JsonParser.parseString(body);
-            String newTaskType = request[2];
-            if (je.isJsonObject()) {
-                JsonObject jo = je.getAsJsonObject();
-                if (body.contains("taskId") && !body.contains("saveSubTasks")) {
-                    sendGoodResponse(exchange, updateTask(jo));
-                } else if (body.contains("taskId") && body.contains("saveSubTasks")) {
-                    sendGoodResponse(exchange, updateEpic(jo));
+            try (exchange) {
+                String[] request = exchange.getRequestURI().getPath().split("/");
+                InputStream inputStream = exchange.getRequestBody();
+                String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+                JsonElement je = JsonParser.parseString(body);
+                String newTaskType = request[2];
+                if (je.isJsonObject()) {
+                    JsonObject jo = je.getAsJsonObject();
+                    if (body.contains("taskId") && !body.contains("saveSubTasks")) {
+                        sendGoodResponse(exchange, updateTask(jo));
+                    } else if (body.contains("taskId") && body.contains("saveSubTasks")) {
+                        sendGoodResponse(exchange, updateEpic(jo));
+                    } else {
+                        sendGoodResponse(exchange, createTasks(je, newTaskType));
+                    }
                 } else {
-                    sendGoodResponse(exchange, createTasks(je, newTaskType));
+                    sendBadResponse(exchange, "Полученные данные не позволяют создать задачу.");
                 }
-            } else {
-                sendBadResponse(exchange, "Полученные данные не позволяют создать задачу.");
             }
         }
 
