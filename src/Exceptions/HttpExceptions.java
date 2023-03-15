@@ -13,4 +13,10 @@ public class HttpExceptions {
             super(message);
         }
     }
+
+    public static class ErrorInTestManager extends RuntimeException {
+        public ErrorInTestManager(final String message) {
+            super(message);
+        }
+    }
 }
