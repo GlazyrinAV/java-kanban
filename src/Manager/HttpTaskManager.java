@@ -4,6 +4,9 @@ import Model.*;
 import Server.KVTaskClient;
 import Utils.DateAdapter;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -21,23 +24,29 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     protected void save() {
-        String data = getTasksForSave() + "//" + getHistoryForSave();
+        JsonObject tempData = new JsonObject();
+        tempData.addProperty("SavedTasks", getTasksForSave());
+        tempData.addProperty("SavedHistory", getHistoryForSave());
+        String data = gson.toJson(tempData);
         kvTaskClient.put("Alex", data);
     }
 
     @Override
     protected void load() {
         kvTaskClient = new KVTaskClient(path);
-        String dataFromKVServer = kvTaskClient.load("1");
+        String dataFromKVServer = kvTaskClient.load("Alex");
         if (!dataFromKVServer.isEmpty()) {
-            String[] data = kvTaskClient.load("1").split("//");
-            String taskData = data[0];
-            String historyData = data[1];
-            if (!taskData.isEmpty()) {
-                restoreTaskFromData(taskData);
-            }
-            if (!historyData.isEmpty()) {
-                restoreHistoryFromData(historyData);
+            JsonElement jsonElement = JsonParser.parseString(dataFromKVServer);
+            if (jsonElement.isJsonObject()) {
+                JsonObject tempData = jsonElement.getAsJsonObject();
+                String taskData = tempData.getAsJsonObject("SavedTasks").getAsString();
+                String historyData = tempData.getAsJsonObject("SavedHistory").getAsString();
+                if (!taskData.isEmpty()) {
+                    restoreTaskFromData(taskData);
+                }
+                if (!historyData.isEmpty()) {
+                    restoreHistoryFromData(historyData);
+                }
             }
         }
     }
@@ -55,8 +64,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private void restoreTaskFromData(String data) {
-        Type type = new TypeToken<HashMap<Integer, Task>>() {
-        }.getType();
+        Type type = new TypeToken<HashMap<Integer, Task>>(){}.getType();
         HashMap<Integer, Task> tasksFromData = gson.fromJson(data, type);
         for (int taskId : tasksFromData.keySet()) {
             Task task = tasksFromData.get(taskId);

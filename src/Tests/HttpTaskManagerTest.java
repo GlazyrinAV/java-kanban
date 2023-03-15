@@ -23,12 +23,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
-    private HttpTaskManager httpTaskManager;
     private final HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
     private final HttpClient httpClient = HttpClient.newHttpClient();
+    private HttpTaskManager httpTaskManager;
     private KVServer kvServer;
     private HttpTaskServer server;
 
@@ -48,17 +50,17 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         server.stopTaskServer();
     }
 
-    @DisplayName("запрос на создание обычной задачи")
+    @DisplayName("Запрос на создание обычной задачи")
     @Test
     public void requestForSimpleTask() {
         createTask(TaskType.TASK);
         Task task = httpTaskManager.getTasksForTests().get(1);
         Assertions.assertTrue(checkTask(task, "3", "3", 1, TaskStatus.NEW,
-                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 00), 30),
+                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30),
                 "Ошибка при обработке запроса на создание простой задачи.");
     }
 
-    @DisplayName("запрос на создание пустого эпика")
+    @DisplayName("Запрос на создание пустого эпика")
     @Test
     public void requestForEpicTask() {
         createTask(TaskType.EPIC);
@@ -68,35 +70,46 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка при обработке запроса на создание пустого эпика.");
     }
 
-    @DisplayName("запрос на создание новой подзадачи")
+    @DisplayName("Запрос на создание новой подзадачи")
     @Test
     public void requestForSubTask() {
         createTask(TaskType.EPIC);
         createTask(TaskType.SUBTASK);
         Task task = httpTaskManager.getTasksForTests().get(2);
         Assertions.assertTrue(checkTask(task, "2", "2", 2, TaskStatus.NEW,
-                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 10, 00), 30),
+                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 10, 0), 30),
                 "Ошибка при обработке запроса на создание новой подзадачи.");
     }
 
     @DisplayName("Запись при пустом списке")
     @Test
     public void dataWriteWithNoTasks() throws IOException {
-        server.stopTaskServer();
-        server = new HttpTaskServer();
-        server.startTasksServer();
+        restartTaskServer();
         Assertions.assertTrue(httpTaskManager.getAllTasks().isEmpty(), "Ошибка при сохранении пустого списка.");
+    }
+
+    @DisplayName("Запись при наличии задач и истории")
+    @Test
+    public void dataWriteWithTasksAndHistory() throws IOException {
+        createTask(TaskType.TASK);
+        requestTaskById(1);
+        restartTaskServer();
+        Task task = httpTaskManager.getTasksForTests().get(1);
+        boolean isTaskPresent = checkTask(task, "3", "3", 1, TaskStatus.NEW,
+                LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30);
+        boolean isHistoryPresent = httpTaskManager.getHistory().equals(new ArrayList<>(List.of(1)));
+        Assertions.assertTrue(isTaskPresent && isHistoryPresent, "Ошибка при загрузке задач и истории.");
+    }
+
+    @DisplayName("Запись без истории")
+    @Test
+    public void dataWriteWithNoHistory() {
     }
 
     @DisplayName("Запись эпика без подзадач")
     @Test
     public void dataWriteWithEpicWithNoSubTasks() {
 
-    }
-
-    @DisplayName("Запись без истории")
-    @Test
-    public void dataWriteWithNoHistory() {
     }
 
     @DisplayName("Чтение пустого файла")
@@ -160,6 +173,19 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     }
 
+    private void requestTaskById(int taskId) {
+        URI uri = URI.create("http://localhost:8080/tasks/task?id=" + taskId);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+        try {
+            httpClient.send(request, handler);
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager("Ошибка при отправке запроса на получение задачи по номеру.");
+        }
+    }
+
     private void createTask(TaskType type) {
         Gson gsonBuilder = new GsonBuilder()
                 .serializeNulls()
@@ -198,7 +224,13 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         try {
             httpClient.send(request, handler);
         } catch (IOException | InterruptedException exception) {
-            throw new HttpExceptions.ErrorInTestManager("Ошибка при отправке запроса на созданиие новой задачи.");
+            throw new HttpExceptions.ErrorInTestManager("Ошибка при отправке запроса на создание новой задачи.");
         }
+    }
+
+    private void restartTaskServer() throws IOException {
+        server.stopTaskServer();
+        server = new HttpTaskServer();
+        server.startTasksServer();
     }
 }
