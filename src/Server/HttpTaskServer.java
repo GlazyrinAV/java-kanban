@@ -32,6 +32,10 @@ public class HttpTaskServer {
         this.manager = Managers.getWithHttpManager();
     }
 
+    public TaskManager getManager() {
+        return manager;
+    }
+
     public void startTasksServer() throws IOException {
         HttpServer httpServer = HttpServer.create();
         int PORT = 8080;

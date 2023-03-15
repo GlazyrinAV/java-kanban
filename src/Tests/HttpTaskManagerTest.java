@@ -1,34 +1,38 @@
 package Tests;
 
 import Exceptions.HttpExceptions;
-import Manager.HttpTaskManager;
-import Manager.InMemoryHistoryManager;
 import Manager.TaskManager;
+import Model.NewTask;
 import Model.Task;
+import Model.TaskStatus;
+import Server.HttpTaskServer;
 import Server.KVServer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import Utils.DateAdapter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
-    KVServer kvServer;
+    private KVServer kvServer;
+
+    HttpTaskServer server;
 
     @BeforeEach
     public void createTaskManager() throws IOException {
         resetIdCounter();
         kvServer = new KVServer();
         kvServer.start();
-        String path = "http://localhost";
-        setManager(new HttpTaskManager(new InMemoryHistoryManager(), path));
+        server = new HttpTaskServer();
+        server.startTasksServer();
     }
 
     @AfterEach
@@ -40,7 +44,10 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void dataWriteBase() {
         createSimpleTask();
-
+        Task task = server.getManager().getTaskById(1);
+        Assertions.assertTrue(checkTask(task, "1", "1", 1, TaskStatus.NEW,
+                        LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 30),
+                "Ошибка при обработке запроса на создание новой задачи.");
     }
 
     @DisplayName("Запись при пустом списке")
@@ -110,19 +117,34 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         Task.resetCounterForTest();
     }
 
-    private String createSimpleTask() {
+    private boolean checkTask(Task task, String title, String description, int id, TaskStatus status,
+                              LocalDateTime starTime, int duration) {
+        return (task.getTaskTitle().equals(title)) &&
+                (task.getTaskDescription().equals(description)) &&
+                (task.getTaskIdNumber() == id) &&
+                (task.getTaskStatus().equals(status)) &&
+                ((task.getStartTime() == null && starTime == null) || task.getStartTime().equals(starTime)) &&
+                (task.getDuration() == duration);
+
+    }
+
+    private void createSimpleTask() {
+        Gson gsonBuilder = new GsonBuilder()
+                .serializeNulls()
+                .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
+                .create();
+        NewTask task = new NewTask("1", "1",
+                LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 22), 30);
         try {
-            Path path = Path.of("./ResourcesForTest/Test7.csv");
-            URI registerUri = URI.create("localhost:8080/tasks/task");
+            URI uri = URI.create("http://localhost:8080/tasks/task");
             HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
             HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofFile(path);
-            HttpRequest registerRequest = HttpRequest.newBuilder()
-                    .uri(registerUri)
+            HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(gsonBuilder.toJson(task));
+            HttpRequest request = HttpRequest.newBuilder()
                     .POST(publisher)
+                    .uri(uri)
                     .build();
-            HttpResponse<String> response = httpClient.send(registerRequest, handler);
-            return response.body();
+            httpClient.send(request, handler);
         } catch (IOException | InterruptedException exception) {
             throw new HttpExceptions.ErrorInTestManager("Ошибка при отправке запроса на созданиие новой задачи.");
         }
