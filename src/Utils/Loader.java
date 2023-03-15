@@ -126,15 +126,15 @@ public class Loader {
         boolean isEpic = line[1].equals("EPIC");
         boolean isSubTask = line[1].equals("SUBTASK");
         if (isTask) {
-            tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
+            tasks.put(taskId, new SimpleTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration, TaskType.TASK));
             prioritizedTasks.add(taskId);
         }
         else if (isEpic) {
-            tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration));
+            tasks.put(taskId, new EpicTask(taskTitle, taskDescription, taskStatus, taskId, startTime, duration, TaskType.EPIC));
         }
         else if (isSubTask) {
             int subtaskEpicId = Integer.parseInt(line[5]);
-            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId, startTime, duration));
+            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId, startTime, duration, TaskType.SUBTASK));
             ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus, startTime, duration);
             prioritizedTasks.add(taskId);
         }

@@ -6,9 +6,9 @@ import java.util.*;
 
 public class EpicTask extends Task {
 
-    private final HashMap<Integer, TaskStatus> subTasks = new HashMap<>();
-    private final TreeMap<LocalDateTime, Integer> subTasksStartTime = new TreeMap<>(Comparator.naturalOrder());
-    private final HashMap<Integer, Long> subTasksDuration = new HashMap<>();
+    private final transient HashMap<Integer, TaskStatus> subTasks = new HashMap<>();
+    private final transient TreeMap<LocalDateTime, Integer> subTasksStartTime = new TreeMap<>(Comparator.naturalOrder());
+    private final transient HashMap<Integer, Long> subTasksDuration = new HashMap<>();
 
     /**
      * Конструктор для создания новых эпиков.
@@ -36,8 +36,8 @@ public class EpicTask extends Task {
     }
 
     public EpicTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber,
-                    LocalDateTime startTime, long duration) {
-        super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration);
+                    LocalDateTime startTime, long duration, TaskType taskType) {
+        super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration, taskType);
     }
 
     public void addSubTask(int subTaskId, TaskStatus status, LocalDateTime startTime, long duration) {

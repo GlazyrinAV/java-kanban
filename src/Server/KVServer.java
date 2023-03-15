@@ -53,7 +53,7 @@ public class KVServer {
 					return;
 				}
 				Gson gson = new Gson();
-				String response = gson.toJson(data.get(key));
+				String response = data.get(key);
 				System.out.println("Данные по ключу " + key + " успешно загружены!");
 				h.sendResponseHeaders(200, 0);
 				try (OutputStream os = h.getResponseBody()) {

@@ -103,56 +103,56 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @DisplayName("Запись без истории")
     @Test
-    public void dataWriteWithNoHistory() {
+    public void dataWriteWithNoHistory() throws IOException {
+        createTask(TaskType.TASK);
+        restartTaskServer();
+        Task task = httpTaskManager.getTasksForTests().get(1);
+        boolean isTaskPresent = checkTask(task, "3", "3", 1, TaskStatus.NEW,
+                LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30);
+        boolean isHistoryPresent = httpTaskManager.getHistory().isEmpty();
+        Assertions.assertTrue(isTaskPresent && isHistoryPresent, "Ошибка при загрузке задач и истории.");
     }
 
-    @DisplayName("Запись эпика без подзадач")
+    @DisplayName("Запрос сохраненного эпика без подзадач")
     @Test
-    public void dataWriteWithEpicWithNoSubTasks() {
-
+    public void dataWriteWithEpicWithNoSubTasks() throws IOException {
+        Gson gson = new GsonBuilder()
+                .serializeNulls()
+                .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
+                .create();
+        createTask(TaskType.EPIC);
+        String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
+        restartTaskServer();
+        String task2 = requestTaskById(1);
+        Assertions.assertEquals(task, task2);
     }
 
-    @DisplayName("Чтение пустого файла")
+    @DisplayName("Запрос сохраненного эпика с подзадачами")
     @Test
-    public void dataReadFromFileWithNoData() {
+    public void dataReadFromFileWithEpicWithNoSubTasks() throws IOException {
+        createTask(TaskType.EPIC);
+        createTask(TaskType.SUBTASK);
+        Task task = httpTaskManager.getTasksForTests().get(1);
+        restartTaskServer();
+        requestTaskById(1);
     }
 
-    @DisplayName("Чтение файла с данными и историей")
-    @Test
-    public void dataReadFromFileWithDataAndHistory() {
-    }
-
-    @DisplayName("Чтение данных без истории")
-    @Test
-    public void dataReadFromFileWithDataAndNoHistory() {
-    }
-
-    @DisplayName("Чтение файла с эпиком без подзадач")
-    @Test
-    public void dataReadFromFileWithEpicWithNoSubTasks() {
-    }
-
-    @DisplayName("Чтение файла с эпиком без подзадач")
-    @Test
-    public void newTaskIdAfterReadingDataFromFile() {
-    }
-
-    @DisplayName("Время выполнения задач Запись в файл задач со временем")
+    @DisplayName("Время выполнения задач. Запись в файл задач со временем")
     @Test
     public void dataWriteWithTimeData() {
     }
 
-    @DisplayName("Время выполнения задач Запись в файл задач без времени")
+    @DisplayName("Время выполнения задач. Запись в файл задач без времени")
     @Test
     public void dataWriteWithNoTimeData() {
     }
 
-    @DisplayName("Время выполнения задач Чтение из файла задач со временем")
+    @DisplayName("Время выполнения задач. Чтение из файла задач со временем")
     @Test
     public void dataReadWithTimeData() {
     }
 
-    @DisplayName("Время выполнения задач Чтение из файла задач без времени")
+    @DisplayName("Время выполнения задач. Чтение из файла задач без времени")
     @Test
     public void dataReadWithNoTimeData() {
 
@@ -173,14 +173,15 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     }
 
-    private void requestTaskById(int taskId) {
+    private String requestTaskById(int taskId) {
         URI uri = URI.create("http://localhost:8080/tasks/task?id=" + taskId);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .GET()
                 .build();
         try {
-            httpClient.send(request, handler);
+            HttpResponse<String> response = httpClient.send(request, handler);
+            return response.body();
         } catch (IOException | InterruptedException exception) {
             throw new HttpExceptions.ErrorInTestManager("Ошибка при отправке запроса на получение задачи по номеру.");
         }
@@ -230,6 +231,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     private void restartTaskServer() throws IOException {
         server.stopTaskServer();
+        resetIdCounter();
         server = new HttpTaskServer();
         server.startTasksServer();
     }

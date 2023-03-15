@@ -29,8 +29,7 @@ public class SimpleTask extends Task {
     }
 
     public SimpleTask(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber,
-                      LocalDateTime startTime, long duration) {
-        super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration);
-        taskType = TaskType.TASK;
+                      LocalDateTime startTime, long duration, TaskType taskType) {
+        super(taskTitle, taskDescription, taskStatus, taskIdNumber, startTime, duration, taskType);
     }
 }

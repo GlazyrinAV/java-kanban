@@ -69,7 +69,7 @@ public abstract class Task {
      * @param taskIdNumber    - номер задачи
      */
     public Task(String taskTitle, String taskDescription, TaskStatus taskStatus, int taskIdNumber,
-                LocalDateTime startTime, long duration) {
+                LocalDateTime startTime, long duration, TaskType taskType) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.taskIdNumber = taskIdNumber;
@@ -77,6 +77,7 @@ public abstract class Task {
         idSequence = taskIdNumber + 1;
         this.startTime = startTime;
         this.duration = duration;
+        this.taskType = taskType;
     }
 
     public String getTaskTitle() {
