@@ -59,6 +59,7 @@ public class InMemoryTaskManager implements TaskManager {
             LocalDateTime start = task.getStartTime();
             long duration = task.getDuration();
             Subtask newSubtask = new Subtask(new NewTask(title, description, start, duration), epicId);
+            tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
             addTaskToPrioritizedTasks(newSubtask);
             getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus(), start, duration);
         } else if (!tasks.containsKey(epicId)) {
