@@ -4,7 +4,6 @@ import Exceptions.ManagerExceptions;
 import Manager.TaskManager;
 import Model.NewTask;
 import Model.Subtask;
-import Model.Task;
 import Model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -239,11 +238,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void removeTaskByIdBase() {
         testManager.newSimpleTask(new NewTask("1", "1"));
-        Task task = testManager.removeTaskById(1);
-        boolean isEqual = task.getTaskTitle().equals("1")
-                && task.getTaskDescription().equals("1")
-                && task.getTaskStatus().equals(TaskStatus.NEW);
-        Assertions.assertTrue(isEqual, "Ошибка при удалении задачи по номеру.");
+        testManager.removeTaskById(1);
+        Assertions.assertTrue(testManager.getAllTasks().isEmpty(), "Ошибка при удалении задачи по номеру.");
     }
 
     @DisplayName("removeTaskById При пустом списке задач")

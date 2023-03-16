@@ -30,22 +30,31 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     private final HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
     private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
+            .create();
+    private final Gson gson2 = new GsonBuilder()
+            .serializeNulls()
+            .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
+            .create();
     private HttpTaskManager httpTaskManager;
     private KVServer kvServer;
     private HttpTaskServer server;
 
+
     @BeforeEach
     public void createTaskManager() throws IOException {
+        resetIdCounter();
         kvServer = new KVServer();
         kvServer.start();
         server = new HttpTaskServer();
         server.startTasksServer();
+        setManager(server.getManager());
         httpTaskManager = (HttpTaskManager) server.getManager();
     }
 
     @AfterEach
     public void closeKVServer() {
-        resetIdCounter();
         kvServer.stop();
         server.stopTaskServer();
     }
@@ -116,15 +125,11 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     @DisplayName("Запрос сохраненного эпика без подзадач")
     @Test
     public void dataWriteWithEpicWithNoSubTasks() throws IOException {
-        Gson gson = new GsonBuilder()
-                .serializeNulls()
-                .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
-                .create();
         createTask(TaskType.EPIC);
-        String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
+        String task = gson2.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
         String task2 = requestTaskById(1);
-        Assertions.assertEquals(task, task2);
+        Assertions.assertEquals(task, task2, "Ошибка при сохранении пустого эпика.");
     }
 
     @DisplayName("Запрос сохраненного эпика с подзадачами")
@@ -132,33 +137,39 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     public void dataReadFromFileWithEpicWithNoSubTasks() throws IOException {
         createTask(TaskType.EPIC);
         createTask(TaskType.SUBTASK);
-
-        /////
-
-
+        String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
-        requestTaskById(1);
+        String task2 = requestTaskById(1);
+        Assertions.assertEquals(task, task2, "Ошибка при сохранении эпика с подзадачами.");
     }
 
-    @DisplayName("Время выполнения задач. Запись в файл задач со временем")
+    @DisplayName("Время выполнения задач. Сохранение задачи со временем")
     @Test
-    public void dataWriteWithTimeData() {
+    public void dataWriteWithTimeData() throws IOException {
+        createTask(TaskType.TASK);
+        String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
+        restartTaskServer();
+        String task2 = requestTaskById(1);
+        Assertions.assertEquals(task, task2, "Ошибка при сохранении задачи со временем.");
     }
 
-    @DisplayName("Время выполнения задач. Запись в файл задач без времени")
+    @DisplayName("Время выполнения задач. Сохранение задачи без времени")
     @Test
-    public void dataWriteWithNoTimeData() {
+    public void dataWriteWithNoTimeData() throws IOException {
+        createTaskWithoutTime();
+        String task = gson2.toJson(httpTaskManager.getTasksForTests().get(1));
+        restartTaskServer();
+        String task2 = requestTaskById(1);
+        Assertions.assertEquals(task, task2, "Ошибка при сохранении задачи со временем.");
     }
 
-    @DisplayName("Время выполнения задач. Чтение из файла задач со временем")
+    @DisplayName("Время выполнения задач. Сохранение задачи со временем")
     @Test
-    public void dataReadWithTimeData() {
-    }
-
-    @DisplayName("Время выполнения задач. Чтение из файла задач без времени")
-    @Test
-    public void dataReadWithNoTimeData() {
-
+    public void TimeOverlayWithTwoTasks() {
+        createTask(TaskType.TASK);
+        String response = createTask(TaskType.TASK);
+        String answer = "Задача пересекается по времени с другими задачами.";
+        Assertions.assertEquals(response, answer, "Ошибка при создании задач с пересечением по времени.");
     }
 
     private void resetIdCounter() {
@@ -190,11 +201,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         }
     }
 
-    private void createTask(TaskType type) {
-        Gson gsonBuilder = new GsonBuilder()
-                .serializeNulls()
-                .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
-                .create();
+    private String createTask(TaskType type) {
         String body = null;
         NewTask newTask;
         URI uri = null;
@@ -203,21 +210,21 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
                 uri = URI.create("http://localhost:8080/tasks/task/");
                 newTask = new NewTask("3", "3",
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30);
-                body = gsonBuilder.toJson(newTask);
+                body = gson.toJson(newTask);
                 break;
             case EPIC:
                 uri = URI.create("http://localhost:8080/tasks/epic/");
                 newTask = new NewTask("1", "1",
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 9, 0), 30);
-                body = gsonBuilder.toJson(newTask);
+                body = gson.toJson(newTask);
                 break;
             case SUBTASK:
                 uri = URI.create("http://localhost:8080/tasks/subtask/");
                 newTask = new NewTask("2", "2",
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 10, 0), 30);
-                JsonObject jsonObject = JsonParser.parseString(gsonBuilder.toJson(newTask)).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseString(gson.toJson(newTask)).getAsJsonObject();
                 jsonObject.addProperty("epicId", 1);
-                body = gsonBuilder.toJson(jsonObject);
+                body = gson.toJson(jsonObject);
                 break;
         }
         HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(body);
@@ -226,9 +233,27 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
                 .POST(publisher)
                 .build();
         try {
-            httpClient.send(request, handler);
+            HttpResponse<String> response = httpClient.send(request, handler);
+            return response.body();
         } catch (IOException | InterruptedException exception) {
             throw new HttpExceptions.ErrorInTestManager("Ошибка при отправке запроса на создание новой задачи.");
+        }
+    }
+
+    private void createTaskWithoutTime() {
+        URI uri = URI.create("http://localhost:8080/tasks/task/");
+        NewTask newTask = new NewTask("4", "4", null, 0);
+        String body = gson.toJson(newTask);
+        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .POST(publisher)
+                .build();
+        try {
+            httpClient.send(request, handler);
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager
+                    ("Ошибка при отправке запроса на создание новой задачи без времени.");
         }
     }
 
