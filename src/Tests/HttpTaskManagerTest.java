@@ -144,7 +144,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
                 .uri(uri)
                 .GET()
                 .build();
-        String data2 = "";
+        String data2;
         try {
             HttpResponse<String> response = httpClient.send(request, handler);
             data2 = response.body();
@@ -338,26 +338,26 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         NewTask newTask;
         URI uri = null;
         switch (type) {
-            case TASK:
+            case TASK -> {
                 uri = URI.create("http://localhost:8080/tasks/task/");
                 newTask = new NewTask("3", "3",
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30);
                 body = gson.toJson(newTask);
-                break;
-            case EPIC:
+            }
+            case EPIC -> {
                 uri = URI.create("http://localhost:8080/tasks/epic/");
                 newTask = new NewTask("1", "1",
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 9, 0), 30);
                 body = gson.toJson(newTask);
-                break;
-            case SUBTASK:
+            }
+            case SUBTASK -> {
                 uri = URI.create("http://localhost:8080/tasks/subtask/");
                 newTask = new NewTask("2", "2",
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 10, 0), 30);
                 JsonObject jsonObject = JsonParser.parseString(gson.toJson(newTask)).getAsJsonObject();
                 jsonObject.addProperty("epicId", 1);
                 body = gson.toJson(jsonObject);
-                break;
+            }
         }
         HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(body);
         HttpRequest request = HttpRequest.newBuilder()
