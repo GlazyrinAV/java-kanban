@@ -113,7 +113,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @DisplayName("Запрос на обновление эпика")
     @Test
-    public void requestUpdateEpic() throws IOException {
+    public void requestUpdateEpic() {
         createTask(TaskType.EPIC);
         createTask(TaskType.SUBTASK);
         URI uri = URI.create("http://localhost:8080/tasks/task/");
@@ -135,8 +135,25 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @DisplayName("Запрос всех задач")
     @Test
-    public void requestGetAllTasks() throws IOException {
-
+    public void requestGetAllTasks() {
+        createTask(TaskType.TASK);
+        createTaskWithoutTime();
+        String data1 = gson2.toJson(httpTaskManager.getAllTasks());
+        URI uri = URI.create("http://localhost:8080/tasks/tasks/");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+        String data2 = "";
+        try {
+            HttpResponse<String> response = httpClient.send(request, handler);
+            data2 = response.body();
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager
+                    ("Ошибка при отправке запроса на получение всех задач.");
+        }
+        Assertions.assertEquals(data1, data2,
+                "Ошибка при получении всех задач.");
     }
 
     @DisplayName("Запрос удаление всех задач")
