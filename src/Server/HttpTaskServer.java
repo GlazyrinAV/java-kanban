@@ -50,8 +50,8 @@ public class HttpTaskServer {
     }
 
     class TaskHandler implements HttpHandler {
-        private final Gson gson = new Gson();
-        private final Gson gsonBuilder = gson.newBuilder()
+
+        private final Gson gson = new Gson().newBuilder()
                 .serializeNulls()
                 .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
                 .create();
@@ -139,14 +139,14 @@ public class HttpTaskServer {
             int taskId = Integer.parseInt(splitRequest[1]);
             Task task = manager.getTaskById(taskId);
             if (task != null) {
-                return gsonBuilder.toJson(task);
+                return gson.toJson(task);
             } else {
                 return "Задача с данным номером не найдена.";
             }
         }
 
         private String getAllTasks() {
-            return gsonBuilder.toJson(manager.getAllTasks());
+            return gson.toJson(manager.getAllTasks());
         }
 
         private String getHistory() {
