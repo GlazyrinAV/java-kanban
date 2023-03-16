@@ -11,7 +11,6 @@ public class InMemoryTaskManagerWithTimePeriods extends InMemoryTaskManager {
 
     /**
      * Конструктор менеджера задач, в который необходимо передавать объект менеджер историй просмотра
-     *
      * @param history - объект класса менеджер историй просмотра
      */
     public InMemoryTaskManagerWithTimePeriods(InMemoryHistoryManager history) {

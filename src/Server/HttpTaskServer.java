@@ -28,11 +28,9 @@ public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager manager;
     private HttpServer httpServer;
-
     public HttpTaskServer() {
         this.manager = Managers.getWithHttpManager();
     }
-
     public TaskManager getManager() {
         return manager;
     }
@@ -232,7 +230,6 @@ public class HttpTaskServer {
                     } catch (ManagerExceptions.TaskTimeOverlayException e) {
                         return "Задача пересекается по времени с другими задачами.";
                     }
-
                 }
                 case "epic" -> {
                     manager.newEpic(newTask);
