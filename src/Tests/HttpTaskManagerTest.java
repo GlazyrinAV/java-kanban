@@ -178,14 +178,48 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @DisplayName("Запрос на удаление задачи по номеру")
     @Test
-    public void requestRemoveTaskById() throws IOException {
-
+    public void requestRemoveTaskById() {
+        createTask(TaskType.TASK);
+        createTaskWithoutTime();
+        URI uri = URI.create("http://localhost:8080/tasks/task?id=1");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .DELETE()
+                .build();
+        try {
+            httpClient.send(request, handler);
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager
+                    ("Ошибка при отправке запроса на удаление задачи по номеру.");
+        }
+        String data1 = "{\"2\":{\"taskType\":\"TASK\",\"taskTitle\":\"4\",\"taskDescription\":\"4\",\"taskIdNumber\":2,\"taskStatus\":\"NEW\",\"startTime\":null,\"duration\":0}}";
+        String data2 = gson2.toJson(httpTaskManager.getAllTasks());
+        Assertions.assertEquals(data1, data2,
+                "Ошибка при удалении задачи по номеру.");
     }
 
     @DisplayName("Запрос на получение приоритета")
     @Test
-    public void requestGetPriority() throws IOException {
-
+    public void requestGetPriority() {
+        createTask(TaskType.EPIC);
+        createTask(TaskType.SUBTASK);
+        createTask(TaskType.TASK);
+        createTaskWithoutTime();
+        URI uri = URI.create("http://localhost:8080/tasks/priority");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+        try {
+            httpClient.send(request, handler);
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager
+                    ("Ошибка при отправке запроса на получение приоритетов.");
+        }
+        String data1 = "[3,2,4]";
+        String data2 = gson2.toJson(httpTaskManager.getPrioritizedTasks());
+        Assertions.assertEquals(data1, data2,
+                "Ошибка при получении приоритетов.");
     }
 
     @DisplayName("Запись при пустом списке")
