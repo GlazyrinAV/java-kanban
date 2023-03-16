@@ -158,8 +158,22 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @DisplayName("Запрос удаление всех задач")
     @Test
-    public void requestClearAllTasks() throws IOException {
-
+    public void requestClearAllTasks() {
+        createTask(TaskType.TASK);
+        createTaskWithoutTime();
+        URI uri = URI.create("http://localhost:8080/tasks/tasks/");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .DELETE()
+                .build();
+        try {
+            httpClient.send(request, handler);
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager
+                    ("Ошибка при отправке запроса на удаление всех задач.");
+        }
+        Assertions.assertTrue(httpTaskManager.getTasksForTests().isEmpty(),
+                "Ошибка при удалении всех задач.");
     }
 
     @DisplayName("Запрос на удаление задачи по номеру")
