@@ -40,6 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime start = task.getStartTime();
         long duration = task.getDuration();
         SimpleTask newTask = new SimpleTask(new NewTask(title, description, start, duration));
+        tasks.put(newTask.getTaskIdNumber(), newTask);
         addTaskToPrioritizedTasks(newTask);
     }
 
