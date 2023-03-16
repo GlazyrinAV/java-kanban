@@ -14,7 +14,10 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private final Gson gson = new Gson();
+    Gson gson = new Gson().newBuilder()
+            .serializeNulls()
+            .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
+            .create();
     private KVTaskClient kvTaskClient;
 
     public HttpTaskManager(InMemoryHistoryManager history, String url) {
@@ -51,11 +54,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private String getTasksForSave() {
-        Gson gsonBuilder = gson.newBuilder()
-                .serializeNulls()
-                .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
-                .create();
-        return gsonBuilder.toJson(getAllTasks().values());
+        return gson.toJson(getAllTasks().values());
     }
 
     private String getHistoryForSave() {
