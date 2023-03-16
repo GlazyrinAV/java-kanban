@@ -9,14 +9,14 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final InMemoryHistoryManager historyManager;
-    protected final TreeSet<Integer> prioritizedTasks;
+    protected TreeSet<Integer> prioritizedTasks;
     private final TreeMap<LocalDateTime, Task> taskTimeLine;
 
     final Comparator<Integer> timeComparator = (o1, o2) -> {
-        if (tasks.get(o1).getStartTime() == null) {
+        if (tasks.get(o1) == null || tasks.get(o1).getStartTime() == null) {
             return 1;
         }
-        if (tasks.get(o2).getStartTime() == null) {
+        if (tasks.get(o2) == null || tasks.get(o2).getStartTime() == null) {
             return -1;
         } else {
             return tasks.get(o1).getStartTime().compareTo(tasks.get(o2).getStartTime());
