@@ -90,6 +90,73 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
                 "Ошибка при обработке запроса на создание новой подзадачи.");
     }
 
+    @DisplayName("Запрос на обновление задачи")
+    @Test
+    public void requestUpdateTask() {
+        createTask(TaskType.TASK);
+        URI uri = URI.create("http://localhost:8080/tasks/task/");
+        String body = "{\"taskId\":1,\"taskStatus\":\"DONE\"}";
+        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .POST(publisher)
+                .build();
+        try {
+            httpClient.send(request, handler);
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager
+                    ("Ошибка при отправке запроса на обновление задачи.");
+        }
+        Assertions.assertEquals(httpTaskManager.getTasksForTests().get(1).getTaskStatus(), TaskStatus.DONE,
+                "Ошибка при обновлении статуса задачи.");
+    }
+
+    @DisplayName("Запрос на обновление эпика")
+    @Test
+    public void requestUpdateEpic() throws IOException {
+        createTask(TaskType.EPIC);
+        createTask(TaskType.SUBTASK);
+        URI uri = URI.create("http://localhost:8080/tasks/task/");
+        String body = "{\"taskId\":2,\"taskStatus\":\"DONE\"}";
+        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .POST(publisher)
+                .build();
+        try {
+            httpClient.send(request, handler);
+        } catch (IOException | InterruptedException exception) {
+            throw new HttpExceptions.ErrorInTestManager
+                    ("Ошибка при отправке запроса на обновление подзадачи.");
+        }
+        Assertions.assertEquals(httpTaskManager.getTasksForTests().get(1).getTaskStatus(), TaskStatus.DONE,
+                "Ошибка при обновлении статуса эпика.");
+    }
+
+    @DisplayName("Запрос всех задач")
+    @Test
+    public void requestGetAllTasks() throws IOException {
+
+    }
+
+    @DisplayName("Запрос удаление всех задач")
+    @Test
+    public void requestClearAllTasks() throws IOException {
+
+    }
+
+    @DisplayName("Запрос на удаление задачи по номеру")
+    @Test
+    public void requestRemoveTaskById() throws IOException {
+
+    }
+
+    @DisplayName("Запрос на получение приоритета")
+    @Test
+    public void requestGetPriority() throws IOException {
+
+    }
+
     @DisplayName("Запись при пустом списке")
     @Test
     public void dataWriteWithNoTasks() throws IOException {
