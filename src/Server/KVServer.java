@@ -1,6 +1,5 @@
 package Server;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -52,7 +51,6 @@ public class KVServer {
 					h.sendResponseHeaders(400, 0);
 					return;
 				}
-				Gson gson = new Gson();
 				String response = data.get(key);
 				System.out.println("Данные по ключу " + key + " успешно загружены!");
 				h.sendResponseHeaders(200, 0);

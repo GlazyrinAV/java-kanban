@@ -104,10 +104,6 @@ public abstract class Task {
         taskStatus = newStatus;
     }
 
-    public TaskType getTaskType() {
-        return taskType;
-    }
-
     public LocalDateTime getStartTime() {
         return startTime;
     }

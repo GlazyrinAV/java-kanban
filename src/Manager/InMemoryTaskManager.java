@@ -9,7 +9,7 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final InMemoryHistoryManager historyManager;
-    protected TreeSet<Integer> prioritizedTasks;
+    protected final TreeSet<Integer> prioritizedTasks;
     private final TreeMap<LocalDateTime, Task> taskTimeLine;
 
     final Comparator<Integer> timeComparator = (o1, o2) -> {

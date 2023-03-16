@@ -64,7 +64,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     public void requestForSimpleTask() {
         createTask(TaskType.TASK);
         Task task = httpTaskManager.getTasksForTests().get(1);
-        Assertions.assertTrue(checkTask(task, "3", "3", 1, TaskStatus.NEW,
+        Assertions.assertTrue(checkTask(task, "3", "3", 1,
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30),
                 "Ошибка при обработке запроса на создание простой задачи.");
     }
@@ -74,7 +74,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     public void requestForEpicTask() {
         createTask(TaskType.EPIC);
         Task task = httpTaskManager.getTasksForTests().get(1);
-        Assertions.assertTrue(checkTask(task, "1", "1", 1, TaskStatus.NEW,
+        Assertions.assertTrue(checkTask(task, "1", "1", 1,
                         null, 0),
                 "Ошибка при обработке запроса на создание пустого эпика.");
     }
@@ -85,7 +85,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         createTask(TaskType.EPIC);
         createTask(TaskType.SUBTASK);
         Task task = httpTaskManager.getTasksForTests().get(2);
-        Assertions.assertTrue(checkTask(task, "2", "2", 2, TaskStatus.NEW,
+        Assertions.assertTrue(checkTask(task, "2", "2", 2,
                         LocalDateTime.of(2023, Month.FEBRUARY, 28, 10, 0), 30),
                 "Ошибка при обработке запроса на создание новой подзадачи.");
     }
@@ -233,10 +233,10 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void dataWriteWithTasksAndHistory() throws IOException {
         createTask(TaskType.TASK);
-        requestTaskById(1);
+        requestTaskById();
         restartTaskServer();
         Task task = httpTaskManager.getTasksForTests().get(1);
-        boolean isTaskPresent = checkTask(task, "3", "3", 1, TaskStatus.NEW,
+        boolean isTaskPresent = checkTask(task, "3", "3", 1,
                 LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30);
         boolean isHistoryPresent = httpTaskManager.getHistory().equals(new ArrayList<>(List.of(1)));
         Assertions.assertTrue(isTaskPresent && isHistoryPresent, "Ошибка при загрузке задач и истории.");
@@ -248,7 +248,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         createTask(TaskType.TASK);
         restartTaskServer();
         Task task = httpTaskManager.getTasksForTests().get(1);
-        boolean isTaskPresent = checkTask(task, "3", "3", 1, TaskStatus.NEW,
+        boolean isTaskPresent = checkTask(task, "3", "3", 1,
                 LocalDateTime.of(2023, Month.FEBRUARY, 28, 8, 0), 30);
         boolean isHistoryPresent = httpTaskManager.getHistory().isEmpty();
         Assertions.assertTrue(isTaskPresent && isHistoryPresent, "Ошибка при загрузке задач и истории.");
@@ -260,7 +260,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         createTask(TaskType.EPIC);
         String task = gson2.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
-        String task2 = requestTaskById(1);
+        String task2 = requestTaskById();
         Assertions.assertEquals(task, task2, "Ошибка при сохранении пустого эпика.");
     }
 
@@ -271,7 +271,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         createTask(TaskType.SUBTASK);
         String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
-        String task2 = requestTaskById(1);
+        String task2 = requestTaskById();
         Assertions.assertEquals(task, task2, "Ошибка при сохранении эпика с подзадачами.");
     }
 
@@ -281,7 +281,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         createTask(TaskType.TASK);
         String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
-        String task2 = requestTaskById(1);
+        String task2 = requestTaskById();
         Assertions.assertEquals(task, task2, "Ошибка при сохранении задачи со временем.");
     }
 
@@ -291,7 +291,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         createTaskWithoutTime();
         String task = gson2.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
-        String task2 = requestTaskById(1);
+        String task2 = requestTaskById();
         Assertions.assertEquals(task, task2, "Ошибка при сохранении задачи со временем.");
     }
 
@@ -308,19 +308,18 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         Task.resetCounterForTest();
     }
 
-    private boolean checkTask(Task task, String title, String description, int id, TaskStatus status,
+    private boolean checkTask(Task task, String title, String description, int id,
                               LocalDateTime starTime, int duration) {
         return (task.getTaskTitle().equals(title)) &&
                 (task.getTaskDescription().equals(description)) &&
                 (task.getTaskIdNumber() == id) &&
-                (task.getTaskStatus().equals(status)) &&
+                (task.getTaskStatus().equals(TaskStatus.NEW)) &&
                 ((task.getStartTime() == null && starTime == null) || task.getStartTime().equals(starTime)) &&
                 (task.getDuration() == duration);
-
     }
 
-    private String requestTaskById(int taskId) {
-        URI uri = URI.create("http://localhost:8080/tasks/task?id=" + taskId);
+    private String requestTaskById() {
+        URI uri = URI.create("http://localhost:8080/tasks/task?id=1");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .GET()
