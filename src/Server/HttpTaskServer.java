@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -67,7 +68,7 @@ public class HttpTaskServer {
                         System.out.println("Началась обработка GET");
                         switch (requestType) {
                             case "task" -> {
-                                if (exchange.getRequestURI().getRawQuery().contains("id=")) {
+                                if (Pattern.matches("id=\\d+$", exchange.getRequestURI().getRawQuery())) {
                                     String response = getTaskById(exchange.getRequestURI().getRawQuery());
                                     sendGoodResponse(exchange, response);
                                 } else {
