@@ -31,6 +31,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     private final HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final Gson gson = new GsonBuilder()
+            .serializeNulls()
             .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
             .create();
     private final Gson gson2 = new GsonBuilder()

@@ -58,61 +58,67 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            String method = exchange.getRequestMethod();
-            String[] request = exchange.getRequestURI().getPath().split("/");
-            String requestType = request[2];
-            switch (method) {
-                case "GET" -> {
-                    System.out.println("Началась обработка GET");
-                    switch (requestType) {
-                        case "task" -> {
-                            if (exchange.getRequestURI().getRawQuery().contains("id=")) {
-                                String response = getTaskById(exchange.getRequestURI().getRawQuery());
-                                sendGoodResponse(exchange, response);
-                            } else {
-                                sendBadResponse(exchange, "Неправильная форма запроса для поиска задачи.");
+            try {
+                String method = exchange.getRequestMethod();
+                String[] request = exchange.getRequestURI().getPath().split("/");
+                String requestType = request[2];
+                switch (method) {
+                    case "GET" -> {
+                        System.out.println("Началась обработка GET");
+                        switch (requestType) {
+                            case "task" -> {
+                                if (exchange.getRequestURI().getRawQuery().contains("id=")) {
+                                    String response = getTaskById(exchange.getRequestURI().getRawQuery());
+                                    sendGoodResponse(exchange, response);
+                                } else {
+                                    sendBadResponse(exchange, "Неправильная форма запроса для поиска задачи.");
+                                }
                             }
-                        }
-                        case "tasks" -> {
-                            String response = getAllTasks();
-                            sendGoodResponse(exchange, response);
-                        }
-                        case "history" -> {
-                            String response = getHistory();
-                            sendGoodResponse(exchange, response);
-                        }
-                        case "priority" -> {
-                            String response = getTasksByPriority();
-                            sendGoodResponse(exchange, response);
-                        }
-                        default -> sendBadResponse(exchange,
-                                "Для метода " + exchange.getRequestMethod() + " неправильно указан запрос.");
-                    }
-                }
-                case "POST" -> {
-                    System.out.println("Началась обработка POST");
-                    createTask(exchange);
-                }
-                case "DELETE" -> {
-                    System.out.println("Началась обработка DELETE");
-                    switch (requestType) {
-                        case "task" -> {
-                            if (exchange.getRequestURI().getRawQuery().contains("id=")) {
-                                String response = removeTaskById(exchange.getRequestURI().getRawQuery());
+                            case "tasks" -> {
+                                String response = getAllTasks();
                                 sendGoodResponse(exchange, response);
-                            } else {
-                                sendBadResponse(exchange, "Неправильная форма запроса для удаления задачи.");
                             }
+                            case "history" -> {
+                                String response = getHistory();
+                                sendGoodResponse(exchange, response);
+                            }
+                            case "priority" -> {
+                                String response = getTasksByPriority();
+                                sendGoodResponse(exchange, response);
+                            }
+                            default -> sendBadResponse(exchange,
+                                    "Для метода " + exchange.getRequestMethod() + " неправильно указан запрос.");
                         }
-                        case "tasks" -> {
-                            String response = clearAllTasks();
-                            sendGoodResponse(exchange, response);
-                        }
-                        default -> sendBadResponse(exchange,
-                                "Для метода " + exchange.getRequestMethod() + " неправильно указан запрос.");
                     }
+                    case "POST" -> {
+                        System.out.println("Началась обработка POST");
+                        createTask(exchange);
+                    }
+                    case "DELETE" -> {
+                        System.out.println("Началась обработка DELETE");
+                        switch (requestType) {
+                            case "task" -> {
+                                if (exchange.getRequestURI().getRawQuery().contains("id=")) {
+                                    String response = removeTaskById(exchange.getRequestURI().getRawQuery());
+                                    sendGoodResponse(exchange, response);
+                                } else {
+                                    sendBadResponse(exchange, "Неправильная форма запроса для удаления задачи.");
+                                }
+                            }
+                            case "tasks" -> {
+                                String response = clearAllTasks();
+                                sendGoodResponse(exchange, response);
+                            }
+                            default -> sendBadResponse(exchange,
+                                    "Для метода " + exchange.getRequestMethod() + " неправильно указан запрос.");
+                        }
+                    }
+                    default -> sendBadResponse(exchange, "Метод " + exchange.getRequestMethod() + " не реализован.");
                 }
-                default -> sendBadResponse(exchange, "Метод " + exchange.getRequestMethod() + " не реализован.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                exchange.close();
             }
         }
 
@@ -214,11 +220,11 @@ public class HttpTaskServer {
             String taskDescription = jo.get("taskDescription").getAsString();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
             LocalDateTime taskStart = null;
-            if (jo.get("startTime") != null) {
+            if (!jo.get("startTime").isJsonNull()) {
                 taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
             }
             long taskDuration = 0;
-            if (jo.get("duration") != null) {
+            if (!jo.get("duration").isJsonNull()) {
                 taskDuration = jo.get("duration").getAsLong();
             }
             NewTask newTask = new NewTask(taskTitle, taskDescription, taskStart, taskDuration);
