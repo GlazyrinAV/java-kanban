@@ -57,8 +57,8 @@ public class HttpTaskServer {
                 .create();
 
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            try {
+        public void handle(HttpExchange exchange) {
+            try (exchange) {
                 String method = exchange.getRequestMethod();
                 String[] request = exchange.getRequestURI().getPath().split("/");
                 String requestType = request[2];
@@ -117,22 +117,24 @@ public class HttpTaskServer {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                exchange.close();
             }
         }
 
         private void sendGoodResponse(HttpExchange exchange, String response) throws IOException {
             exchange.sendResponseHeaders(200, 0);
-            try (OutputStream os = exchange.getResponseBody()) {
+            try (exchange; OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes(DEFAULT_CHARSET));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
         private void sendBadResponse(HttpExchange exchange, String result) throws IOException {
             exchange.sendResponseHeaders(400, 0);
-            try (OutputStream os = exchange.getResponseBody()) {
+            try (exchange; OutputStream os = exchange.getResponseBody()) {
                 os.write(result.getBytes(DEFAULT_CHARSET));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -171,8 +173,8 @@ public class HttpTaskServer {
             return "Список задач очищен.";
         }
 
-        private void createTask(HttpExchange exchange) throws IOException {
-            try (exchange) {
+        private void createTask(HttpExchange exchange) {
+            try (exchange; exchange) {
                 String[] request = exchange.getRequestURI().getPath().split("/");
                 InputStream inputStream = exchange.getRequestBody();
                 String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
@@ -190,6 +192,8 @@ public class HttpTaskServer {
                 } else {
                     sendBadResponse(exchange, "Полученные данные не позволяют создать задачу.");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
