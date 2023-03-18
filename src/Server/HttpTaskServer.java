@@ -220,10 +220,10 @@ public class HttpTaskServer {
             String taskDescription = jo.get("taskDescription").getAsString();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
             LocalDateTime taskStart = null;
+            long taskDuration = 0;
             if (!jo.get("startTime").isJsonNull()) {
                 taskStart = LocalDateTime.parse(jo.get("startTime").getAsString(), formatter);
             }
-            long taskDuration = 0;
             if (!jo.get("duration").isJsonNull()) {
                 taskDuration = jo.get("duration").getAsLong();
             }

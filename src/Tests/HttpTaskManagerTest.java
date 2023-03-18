@@ -34,10 +34,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
             .serializeNulls()
             .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
             .create();
-    private final Gson gson2 = new GsonBuilder()
-            .serializeNulls()
-            .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
-            .create();
+
     private HttpTaskManager httpTaskManager;
     private KVServer kvServer;
     private HttpTaskServer server;
@@ -139,7 +136,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     public void requestGetAllTasks() {
         createTask(TaskType.TASK);
         createTaskWithoutTime();
-        String data1 = gson2.toJson(httpTaskManager.getAllTasks());
+        String data1 = gson.toJson(httpTaskManager.getAllTasks());
         URI uri = URI.create("http://localhost:8080/tasks/tasks/");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
@@ -194,7 +191,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
                     ("Ошибка при отправке запроса на удаление задачи по номеру.");
         }
         String data1 = "{\"2\":{\"taskType\":\"TASK\",\"taskTitle\":\"4\",\"taskDescription\":\"4\",\"taskIdNumber\":2,\"taskStatus\":\"NEW\",\"startTime\":null,\"duration\":0}}";
-        String data2 = gson2.toJson(httpTaskManager.getAllTasks());
+        String data2 = gson.toJson(httpTaskManager.getAllTasks());
         Assertions.assertEquals(data1, data2,
                 "Ошибка при удалении задачи по номеру.");
     }
@@ -218,7 +215,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
                     ("Ошибка при отправке запроса на получение приоритетов.");
         }
         String data1 = "[3,2,4]";
-        String data2 = gson2.toJson(httpTaskManager.getPrioritizedTasks());
+        String data2 = gson.toJson(httpTaskManager.getPrioritizedTasks());
         Assertions.assertEquals(data1, data2,
                 "Ошибка при получении приоритетов.");
     }
@@ -259,7 +256,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void dataWriteWithEpicWithNoSubTasks() throws IOException {
         createTask(TaskType.EPIC);
-        String task = gson2.toJson(httpTaskManager.getTasksForTests().get(1));
+        String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
         String task2 = requestTaskById();
         Assertions.assertEquals(task, task2, "Ошибка при сохранении пустого эпика.");
@@ -290,7 +287,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void dataWriteWithNoTimeData() throws IOException {
         createTaskWithoutTime();
-        String task = gson2.toJson(httpTaskManager.getTasksForTests().get(1));
+        String task = gson.toJson(httpTaskManager.getTasksForTests().get(1));
         restartTaskServer();
         String task2 = requestTaskById();
         Assertions.assertEquals(task, task2, "Ошибка при сохранении задачи со временем.");
