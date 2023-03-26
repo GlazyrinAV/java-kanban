@@ -3,18 +3,18 @@ package Manager;
 import Model.*;
 import Server.KVTaskClient;
 import Utils.DateAdapter;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    Gson gson = new Gson().newBuilder()
+    private final Gson gson = new GsonBuilder()
             .serializeNulls()
             .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
             .create();
@@ -62,44 +62,36 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private void restoreTaskFromData(String data) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        Gson gson = new GsonBuilder()
+                .serializeNulls()
+                .registerTypeAdapter(LocalDateTime.class, new DateAdapter())
+                .create();
         JsonElement element = JsonParser.parseString(data);
         for (JsonElement line : element.getAsJsonArray()) {
             JsonObject jsonObject = line.getAsJsonObject();
             int taskId = jsonObject.get("taskIdNumber").getAsInt();
-            String title = jsonObject.get("taskTitle").getAsString();
-            String description = jsonObject.get("taskDescription").getAsString();
-            TaskStatus status = TaskStatus.valueOf(jsonObject.get("taskStatus").getAsString());
-            LocalDateTime start;
-            if (!jsonObject.get("startTime").isJsonNull()) {
-                start = LocalDateTime.parse(jsonObject.get("startTime").getAsString(), formatter);
-            } else {
-                start = null;
-            }
-            long duration = jsonObject.get("duration").getAsLong();
             TaskType taskType = TaskType.valueOf(jsonObject.get("taskType").getAsString());
             if (Objects.requireNonNull(taskType) == TaskType.TASK) {
-                tasks.put(taskId, new SimpleTask(title, description, status, taskId, start, duration, taskType));
+                tasks.put(taskId, gson.fromJson(jsonObject, SimpleTask.class));
                 prioritizedTasks.add(taskId);
             } else if (taskType == TaskType.EPIC) {
-                tasks.put(taskId, new EpicTask(title, description, status, taskId, start, duration, taskType));
+                tasks.put(taskId, gson.fromJson(jsonObject, EpicTask.class));
             } else if (taskType == TaskType.SUBTASK) {
                 int epicId = jsonObject.get("epicId").getAsInt();
-                tasks.put(taskId, new Subtask(title, description, status, taskId, epicId, start, duration, taskType));
-                ((EpicTask) tasks.get(epicId)).addSubTask(taskId, status, start, duration);
+                Subtask newTask = gson.fromJson(jsonObject, Subtask.class);
+                        tasks.put(taskId, newTask);
+                ((EpicTask) tasks.get(epicId)).addSubTask(taskId, newTask);
                 prioritizedTasks.add(taskId);
             }
         }
     }
 
     private void restoreHistoryFromData(String data) {
-        JsonElement element = JsonParser.parseString(data);
-        if (element.isJsonNull()) {
-            for (JsonElement line : element.getAsJsonArray()) {
-                JsonObject jsonObject = line.getAsJsonObject();
-                int taskId = jsonObject.get("taskIdNumber").getAsInt();
-                historyManager.addHistory(taskId);
-            }
+        Gson gson = new Gson();
+        Type dataList = new TypeToken<ArrayList<Integer>>(){}.getType();
+        List<Integer> historyFromData = gson.fromJson(data, dataList);
+        for (int taskId : historyFromData) {
+            historyManager.addHistory(taskId);
         }
     }
 

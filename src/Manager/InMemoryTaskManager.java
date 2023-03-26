@@ -61,7 +61,7 @@ public class InMemoryTaskManager implements TaskManager {
             Subtask newSubtask = new Subtask(new NewTask(title, description, start, duration), epicId);
             tasks.put(newSubtask.getTaskIdNumber(), newSubtask);
             addTaskToPrioritizedTasks(newSubtask);
-            getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask.getTaskStatus(), start, duration);
+            getEpicByEpicId(epicId).addSubTask(newSubtask.getTaskIdNumber(), newSubtask);
         } else if (!tasks.containsKey(epicId)) {
             throw new ManagerExceptions.NoSuchEpicException("Эпика с номером " + epicId + " не существует.");
         } else if (!isEpic(epicId)) {
@@ -74,9 +74,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(taskId) && isSimpleTask(taskId)) {
             tasks.put(taskId, new SimpleTask(tasks.get(taskId), taskStatus));
         } else if (tasks.containsKey(taskId) && isSubTask(taskId)) {
-            tasks.put(taskId, new Subtask(tasks.get(taskId), taskStatus));
-            Task task = tasks.get(taskId);
-            getEpicBySubtaskId(taskId).addSubTask(taskId, taskStatus, task.getStartTime(), task.getDuration());
+            Subtask newSubTask = new Subtask(tasks.get(taskId), taskStatus);
+            tasks.put(taskId, newSubTask);
+            getEpicBySubtaskId(taskId).addSubTask(taskId, newSubTask);
         } else if (!tasks.containsKey(taskId)) {
             throw new ManagerExceptions.NoSuchTasksException
                     ("При обновлении задача с номером " + taskId + " не найдена.");
@@ -92,8 +92,8 @@ public class InMemoryTaskManager implements TaskManager {
             if (isEpic(epicId)) {
                 EpicTask newEpic = new EpicTask(tasks.get(epicId));
                 for (int subTaskId : getEpicByEpicId(epicId).getSubTasksIds()) {
-                    Task subTask = tasks.get(subTaskId);
-                    newEpic.addSubTask(subTaskId, subTask.getTaskStatus(), subTask.getStartTime(), subTask.getDuration());
+                    Subtask subTask = (Subtask) tasks.get(subTaskId);
+                    newEpic.addSubTask(subTaskId, subTask);
                 }
                 tasks.put(epicId, newEpic);
             }

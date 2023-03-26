@@ -134,8 +134,9 @@ public class Loader {
         }
         else if (isSubTask) {
             int subtaskEpicId = Integer.parseInt(line[5]);
-            tasks.put(taskId, new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId, startTime, duration, TaskType.SUBTASK));
-            ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, taskStatus, startTime, duration);
+            Subtask newSubTask = new Subtask(taskTitle, taskDescription, taskStatus, taskId, subtaskEpicId, startTime, duration, TaskType.SUBTASK);
+            tasks.put(taskId, newSubTask);
+            ((EpicTask) tasks.get(subtaskEpicId)).addSubTask(taskId, newSubTask);
             prioritizedTasks.add(taskId);
         }
     }
