@@ -2,6 +2,7 @@ package Tests;
 
 import Exceptions.HttpExceptions;
 import Manager.HttpTaskManager;
+import Manager.Managers;
 import Manager.TaskManager;
 import Model.NewTask;
 import Model.Task;
@@ -45,7 +46,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
         resetIdCounter();
         kvServer = new KVServer();
         kvServer.start();
-        server = new HttpTaskServer();
+        server = new HttpTaskServer(Managers.getWithHttpManager());
         server.startTasksServer();
         setManager(server.getManager());
         httpTaskManager = (HttpTaskManager) server.getManager();
@@ -389,7 +390,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     private void restartTaskServer() throws IOException {
         server.stopTaskServer();
         resetIdCounter();
-        server = new HttpTaskServer();
+        server = new HttpTaskServer(Managers.getWithHttpManager());
         server.startTasksServer();
     }
 }
